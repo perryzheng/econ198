@@ -1,0 +1,194 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.09.19.04.23;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@% loads data, then does fmincon on the set of returns that you want 
+
+function y = a_fmincon_only(samplemonths, CVaR_lowp)
+
+    % load
+    load('rebalanceResults.mat') % has fmincon: Rebalance_CVaREF
+    load('exportresults_1_2_0.05.mat') % has all the portfolios
+    load('simulations_1_2.mat') % has all the simulations
+    load('importdata_1_2.mat')
+
+
+    % need to make the given unsmoothed weights (mean variance) returns the set returns for
+    % fmincon
+    
+    %% CVaR EF for given Mean-Variance portfolio weights
+    clear global 
+    global lowp
+
+    lowp = CVaR_lowp;
+    NumPorts = 25;
+    RiskFreeRate = 0.015;
+    cashconstraints = 0;
+    constraintdummy = cashconstraints;
+    global globalEFconstraints
+    globalEFconstraints = class_constraintcreator_01(fundNames, constraintdummy);
+
+    global globalsamplemonths
+    globalsamplemonths = samplemonths;
+    
+    
+    
+        figure
+        hold on
+        grid on
+        %histNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+        %    NumPorts, histSims.arithRawFinalFundValue, histNormMeanVarEF.portWts, RiskFreeRate, lowp);    
+        %EFplotter(histNormWtsCVaREF, 'g')
+        unshistNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+            NumPorts, histSims.arithRawFinalFundValue, unshistNormMeanVarEF.portWts, RiskFreeRate, lowp);      
+        EFplotter(unshistNormWtsCVaREF, 'w')
+        %tcopNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+        %    NumPorts, histSims.arithRawFinalFundValue, tcopNormMeanVarEF.portWts, RiskFreeRate, lowp);     
+        %EFplotter(tcopNormWtsCVaREF, 'r')
+
+        global tcopfinalfundvalue;
+        tcopfinalfundvalue = histSims.arithRawFinalFundValue; 
+    
+    %% CVaR via fmincon
+
+        
+        returns = unshistNormWtsCVaREF.portReturns;
+        portweights = unshistNormWtsCVaREF.portWts;
+        % tcopNormWtsCVaREF.portWts
+        % tcopNormMeanVarEF.portReturns
+        
+        'fmincon'
+        compound_dummy = 0; % do compounding?
+        fminconCVaREF = subc_fminconCVaREF(samplemonths, NumPorts,...
+                    portweights, returns, RiskFreeRate, compound_dummy);
+                
+    % plot fmincon
+        EFplotter(fminconCVaREF, 'k')
+        'end of fmincon'
+
+        title('CVaR Efficient Frontier - normal weights and genetic')         
+        xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+        ylabel('Return (%)')
+
+        %legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF',...
+        %    'With rebalancing', 'compounding - no rebalance', 'fmincon EF', ...
+        %    'Optimal Information Ratio', 'Location', 'SouthEast') 
+        legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF',...
+             'fmincon EF', 'Location', 'SouthEast')
+         
+        %save(saveresults, 'Rebalance_CVaREF', '-append')
+        % only if we are doing rebalancing code
+        
+        hold off
+        % save(savesimulations,'histSims');
+        
+        
+        
+    %% Rebalancing / Compounding Assumptions and Options
+        figure
+        hold on
+        compound_dummy = 1; % 1 = compound, 0 = don't compound
+        
+        global compoundmonth
+        compoundmonth = 12; % 36 to check both scripts
+
+        global rebalanceMonth
+        rebalanceMonth = 12; % 36 to check both scripts
+
+        global glob_tcopdrawReturns % raw (monthly) returns from simulations used for rebalancing
+        global glob_fminconoptions  % fmin con options declared as a global variable
+        glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+     
+        glob_fminconoptions = optimset('Algorithm','active-set', 'TolFun', 1e-19, 'TolCon', 1e-19, ...
+            'TolX', 1e-19, 'MaxFunEvals', 5000, 'MaxIter', 5000, 'UseParallel', 'always');
+
+                
+                
+    %% given weights; do compounding and rebalancing mean-CVaR portfolio 
+        % uses normal MV for unsmoothed historical
+        %weights = unshistNormMeanVarEF.portWts; 
+        weights = fminconCVaREF.portWts;
+        % compounding
+        uns_compoundingGivenWeights = subc_compoundingGivenWeights...
+            (weights,samplemonths,NumPorts, RiskFreeRate, compound_dummy);
+        EFplotter(uns_compoundingGivenWeights, 'w')
+        
+        % rebalancing
+        uns_rebalancingGivenWeights = subc_givenweights_rebalancing_CVaREF...
+            (NumPorts, weights, RiskFreeRate, compound_dummy);
+        EFplotter(uns_rebalancingGivenWeights, 'k')
+        
+                
+    %% CVaR with Rebalancing (fmincon)
+        %tcopNormWtsCVaREF.portWts;
+        %tcopNormWtsCVaREF.portReturns;
+        startweights_compreturns = weights; %= unshistNormMeanVarEF.portWts; %histNormMeanVarEF.portWts; % so rebalancing and compounding start with same weights
+        constraint_compreturns = uns_rebalancingGivenWeights.portReturns; %histNormMeanVarEF.portReturns; % so rebalancing and compounding try same return levels
+
+        'CVaR with rebalancing compounding every 12 months'
+        Rebalance_CVaREF = subc_fminconCVaREFWithRebalancing...
+            (samplemonths, NumPorts, startweights_compreturns, constraint_compreturns, RiskFreeRate, compound_dummy);
+        EFplotter(Rebalance_CVaREF, 'b')
+        save('rebalanceResults','Rebalance_CVaREF');
+    
+    %% CVaR fmincon with Compounding
+        %global glob_tcopdrawReturns % raw (monthly) returns from
+        %simulations used for rebalancing
+        %glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+        
+        'CVaR with compounding'
+        
+        startweights_compreturns = weights; %= unshistNormMeanVarEF.portWts; %histNormMeanVarEF.portWts; % so rebalancing and compounding start with same weights
+        constraint_compreturns = uns_compoundingGivenWeights.portReturns; %histNormMeanVarEF.portReturns; % so rebalancing and compounding try same return levels
+
+        
+        fminconCompoundCVaREF = subc_fminconCVaRwithCompoundingEF...
+            (samplemonths, NumPorts, startweights_compreturns, constraint_compreturns, RiskFreeRate);
+        EFplotter(fminconCompoundCVaREF, 'c')
+    
+        
+        
+    %% rebalancing/compounding graph
+        title('Compounding and Rebalancing Mean-CVaR')  
+        xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+        ylabel('Return (%)')
+
+        %legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF',...
+        %    'With rebalancing', 'compounding - no rebalance', 'fmincon EF', ...
+        %    'Optimal Information Ratio', 'Location', 'SouthEast') 
+        legend('Given Weights Compounding', 'Given Weights Rebalancing', ...
+             'unsmoothed historical MV Given Weights Compounding', 'unsmoothed historical MV Given Weights Rebalancing', ...
+             'fmincon Rebalancing', 'fmincon Compounding', 'Optimal Information Ratio', 'Location', 'SouthEast')
+         
+    
+         
+    %% save
+             
+     saveresults = 'a_fmincononly_results.mat';
+             
+        save(saveresults, 'unshistNormWtsCVaREF', 'fminconCVaREF', ...
+            'uns_compoundingGivenWeights', 'uns_rebalancingGivenWeights', ...
+            'Rebalance_CVaREF', 'fminconCompoundCVaREF')
+
+
+end
+@

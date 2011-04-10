@@ -1,0 +1,204 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.52;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = ab_expectedreturns(samplemonths, numofGPDdraws, lowtailp, hightailp)
+
+    main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 1, 1);
+
+end
+
+
+
+function main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy)
+    tic
+    % import data
+    clear global 
+    global globalsamplemonths
+    globalsamplemonths = samplemonths;
+    importfilename = '2009_11_12_expectedassumptions_10.xls';
+    
+    sheetname = 'Credit blend';
+    writefilename = ['graphs and notes/outputsummary_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.xls'];
+    
+    savefilename = 'creditblendweights.mat'
+    
+    importdummy = importdata(importfilename, sheetname, starttimeperioddummy, endtimeperioddummy, 1);
+
+    fundReturns = importdummy{1};
+    fundNames = importdummy{2};    
+    expectCorr = importdummy{3};
+    expectSigma = importdummy{4};
+    expectReturn = importdummy{5};
+
+    
+    histMonths = size(fundReturns, 1);
+    NumofFunds = size(fundReturns, 2);
+    
+    expectReturn = expectReturn'./12;
+    expectSigma = expectSigma'./sqrt(12);
+    expectCalcCovariance = corr2cov(expectSigma, expectCorr);
+    
+    
+    %% Assumptions 
+    tcopTotalRuns = 1;
+    totalsimulations = tcopTotalRuns*numofGPDdraws;  
+    NumNormPorts = 25;
+    NumPorts = NumNormPorts;
+    RiskFreeRate = 0.03; % assumption for finding Sharpe pt
+    
+    expectedReturnsObj = class_expectedreturns(expectReturn, expectSigma, expectCorr);
+    
+    format short % vs long, how many places after decimal (4)
+    
+    % Constraints on all EF 
+    global globalEFconstraints;
+    constraintdummy = 0;
+    globalEFconstraints = class_constraintcreator_01(fundNames, constraintdummy);
+
+    'historical returns subclass'
+    historicalReturns6fact = subc_histreturns(fundReturns);
+    
+    historicalReturns6fact.corrMatrix;
+     %% Ljung-Box Q test for serial correlation in monthly returns
+    %% piecewise GPD fit to tails and center of historical returns
+    %% computes kendall's tau correlation
+    
+    'simulations class'
+    histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths,...
+        numofGPDdraws, tcopTotalRuns, lowtailp, hightailp);
+    % plot2tcopfinalvalues(histSims)
+    
+
+    
+    %% put simulations into own rawreturns object
+    'simulations returns subclass'
+    
+    % unsmoothed historical raw returns
+    unshistrawReturnsObj = subc_simreturns(histSims.unsmoothedReturns, histSims.RHOHAT, histSims.nuhat);
+    
+    % tcop simulation raw returns
+    tcoprawReturnsObj = subc_simreturns(histSims.tcopdrawRawReturns, histSims.RHOHAT, histSims.nuhat);
+    
+    % mean(tcoprawReturnsObj.arithMoAvg, 3)
+    % mean(tcoprawReturnsObj.geomMoAvg, 3);
+    
+    %% Normal Mean Variance Efficient Frontiers
+    figure
+    hold on
+    grid on
+
+    % historical normal mean variance
+    histNormMeanVarEF = subc_normalmeanvarEF(historicalReturns6fact.arithMoAvg,...
+        NumNormPorts, historicalReturns6fact.covMatrix, RiskFreeRate);
+    EFplotter(histNormMeanVarEF, 'g')
+    
+    % unsmoothed historical normal mean variance
+    unshistNormMeanVarEF = subc_normalmeanvarEF(unshistrawReturnsObj.arithMoAvg,...
+        NumNormPorts, historicalReturns6fact.covMatrix, RiskFreeRate);
+    EFplotter(unshistNormMeanVarEF, 'w')
+    
+    %{
+    title('Mean-Variance Efficient Frontier')         
+    xlabel('Risk (SD %)')
+    ylabel('Return (%)')
+
+    legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Expected Assumptions', 'Optimal Sharpe Ratio', 'Location', 'SouthEast')
+
+    hold off
+    
+    expected assumptions normal mean-variance
+    
+    %figure
+    %hold on
+    legend('Expected Assumptions', 'Optimal Sharpe Ratio', 'Location', 'SouthEast')
+    
+    %}
+    
+    title('Mean-Variance Efficient Frontier')         
+    xlabel('Risk (SD %)')
+    ylabel('Return (%)')
+    
+    % tcopula simulations normal mean variance
+    tcopNormMeanVarEF = subc_normalmeanvarEF(tcoprawReturnsObj.SimAvgArithMoAvgRet,...
+        NumNormPorts, histSims.CovarHAT, RiskFreeRate);
+    % EFplotter(tcopNormMeanVarEF, 'r')
+   
+    % optsharpeplotter(tcopNormMeanVarEF); 
+    optsharpeplotter(unshistNormMeanVarEF);
+    optsharpeplotter(histNormMeanVarEF);
+
+    
+    legend('Historical Raw EF', 'Unsmoothed Historical EF', ...
+        'Optimal Sharpe Ratio', 'Location', 'SouthEast')
+    
+    
+    hold off
+    
+   
+    save(savefilename, 'historicalReturns6fact', 'histSims', ...
+        'unshistrawReturnsObj', 'tcoprawReturnsObj', 'histNormMeanVarEF', ...
+        'unshistNormMeanVarEF')    
+    
+    [historicalReturns6fact.arithAnnAvg ; historicalReturns6fact.StandDev * sqrt(12)];
+end
+
+
+function y = importdata(importfilename, sheetname, starttimeperioddummy, endtimeperioddummy, cashreservedummy)
+
+    expectedreturnsheet = 'exp data';
+    expectedcorrsheet = 'exp data';
+    
+
+    startrow = ['132'];
+    % endrow = ['446'];
+    endrow = ['430'];
+    startcol = ['C'];
+    lastcol = ['E'];
+    
+    equitycol = startcol;
+    
+    importrange = [equitycol startrow ':' lastcol endrow];
+    [fundReturns] = xlsread(importfilename, sheetname, importrange);  
+    [blah, fundNames] = xlsread(importfilename, sheetname, [equitycol '4:' lastcol '4']);
+    
+        % ANNUAL EXPECTEDS
+    [expectCorr, Benchmarks] = xlsread(importfilename, expectedcorrsheet, 'J3:P10');
+    expectSigma = xlsread(importfilename, expectedreturnsheet, 'D4:D10');
+    
+    % TRANSPOSE: must be row vector!
+    expectReturn = xlsread(importfilename, expectedreturnsheet, 'C4:C10');
+    
+    y = {fundReturns, fundNames, expectCorr, expectSigma, expectReturn};
+end
+
+function optsharpeplotter(obj)
+
+        plot(obj.portSDs(obj.optSharpePt, 1)*(sqrt(12) * 100), obj.portReturns(obj.optSharpePt, 1)*(12 * 100), '-o', 'MarkerSize', 10)
+end          
+
+function optinforatioplotter(obj)
+
+        plot(obj.portCVaRs(obj.optSharpePt, 1)*(12) * (3 * 1e9), obj.portReturns(obj.optSharpePt, 1)*(12 * 100), '-o', 'MarkerSize', 10)
+end    
+
+@

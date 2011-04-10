@@ -1,0 +1,33 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.52;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = spendingPlot(simulations, weights, MAperc, MAyears, cap) 
+    numSimulations = size(simulations, 3);
+    spendingHist = zeros(numSimulations,1);
+    for i=1:numSimulations
+        y = spending(simulations(:,:,i),weights, MAperc, MAyears, cap);
+        spendingHist(i,1) = y{1};
+    end
+    scale = (1:numSimulations); %row vector with elements 1 through numSimulations
+    hist(spendingHist,scale);
+end@

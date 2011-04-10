@@ -1,0 +1,28 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.1
+date	2010.02.17.02.27.06;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = run()
+    %y = aaa_CVaR_EF_sim_02(36,150,.1,.9,1,0,1,2,0,.05);
+    %aaa_CVaR_EF_sim_02(36, 150, 0.1, 0.9, 1, 0, 1, 2, 0, 0.15)
+    aaa_CVaR_EF_sim_02(36, 150, 0.1, 0.9, 1, 0, 1, 2, 0, 0.05)
+end@

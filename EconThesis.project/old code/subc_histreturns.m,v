@@ -1,0 +1,60 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.51;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@classdef subc_histreturns < class_rawreturns
+    properties
+        StandDev
+        corrMatrix
+        covMatrix
+    end
+    
+    properties(Dependent = true)
+
+    end
+    
+    methods
+        function histret = subc_histreturns(inReturns)
+            histret = histret@@class_rawreturns(inReturns); 
+            histret.StandDev = std(histret.rawReturns, [], 1);
+            
+            corrmatrixdummy = zeros(histret.NumofFunds, histret.NumofFunds, histret.numCopies);
+            
+            for i = 1:histret.numCopies            
+                corrmatrixdummy(:, :, i) = corr(histret.rawReturns(:, :, i));
+            end
+            
+            histret.corrMatrix = corrmatrixdummy;
+
+            covmatrixdummy = zeros(histret.NumofFunds, histret.NumofFunds, histret.numCopies);
+            
+            for i = 1:histret.numCopies            
+                covmatrixdummy(:, :, i) = corr2cov(histret.StandDev, histret.corrMatrix(:, :, i));
+            end
+            
+            histret.covMatrix = covmatrixdummy;
+        end
+                     
+
+        
+    end
+end@

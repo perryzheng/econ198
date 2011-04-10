@@ -1,0 +1,114 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function testForBackTest() 
+	%xlsread to import all the data from excel
+    filename_weights = './2009-10-08 weights 1973 and 1994 with CVaR - ending May 2008.xls'; 
+	filename_returns = '10-16-09-returns-Jan04-Mar-09';
+    sheetname_weights = '73 - norm wts';
+    sheetname_weights_cvar = '73 - CVaR wts';
+    sheetname_returns = '6 fact since 73';
+    filename_hist_returns = '10-16-09-returns-Jan04-Mar-09';
+    
+    weights = xlsread(filename_weights, sheetname_weights);
+    f_weights = xlsread(filename_weights, sheetname_weights_cvar);
+	returns = xlsread(filename_returns);
+    %b/c of basic xlsread functionality on non-windows platforms, need to
+    %further extract hist_weights
+    
+    hist_weights = abs(weights(1:12,1:6));
+	tcop_weights = abs(weights(20:31, 1:6));
+	uns_weights = abs(weights(1:12,13:18));
+	exp_weights= abs(weights(20:31,13:18));
+	fmincon_weights = abs(f_weights(20:31,13:18));
+
+
+	%figure 1	
+	figure(1)
+	hist_rets = returns(49:63,2:7); %do it for 2008-2009
+	backTest(hist_weights,hist_rets,'ms');
+	%backTest(tcop_weights,hist_rets,'rd');
+	backTest(uns_weights, hist_rets,'go');
+	%backTest(exp_weights, hist_rets, 'c<');
+	backTest(fmincon_weights, hist_rets, 'k>');
+	%legend('historical weights','weights','unsmoothed weights', 'expected weights','fmincon weights');
+	title('Backtesting using results from running simulation on 1994-May2008 on the last 2 years (2008-2009)');
+	xlabel('Standard Deviation');
+	ylabel('Returns');
+	legend('historical weights','unsmoothed weights','fmincon weights');
+
+	%figure 2
+	figure(2)
+	hist_rets = returns(37:63,2:7); %do it for 2007-2009
+	backTest(hist_weights,hist_rets,'ms');
+	%backTest(tcop_weights,hist_rets,'rd');
+	backTest(uns_weights, hist_rets,'go');
+	%backTest(exp_weights, hist_rets, 'c<');
+	backTest(fmincon_weights, hist_rets, 'k>');
+	title('Backtesting using results from running simulation on 1994-May2008 on the last 3 years (2007-2009)');
+	xlabel('Standard Deviation');
+	ylabel('Returns');
+	legend('historical weights','unsmoothed weights','fmincon weights');
+
+	%figure 3
+	figure(3)
+	hist_rets = returns(1:63,2:7); %do it for 2004-2009
+	backTest(hist_weights,hist_rets,'ms');
+	%backTest(tcop_weights,hist_rets,'rd');
+	backTest(uns_weights, hist_rets,'go');
+	%backTest(exp_weights, hist_rets, 'c<');
+	backTest(fmincon_weights, hist_rets, 'k>');
+	title('Backtesting using results from running simulation on 1994-May2008 on the last 6 years (2004-2009)');
+	xlabel('Standard Deviation');
+	ylabel('Returns');
+	legend('historical weights','unsmoothed weights','fmincon weights');
+
+	%figure 4
+	figure(4)
+	hist_rets = returns(1:37,2:7); %do it for 2007-2009
+	backTest(hist_weights,hist_rets,'ms');
+	%backTest(tcop_weights,hist_rets,'rd');
+	backTest(uns_weights, hist_rets,'go');
+	%backTest(exp_weights, hist_rets, 'c<');
+	backTest(fmincon_weights, hist_rets, 'k>');
+	title('Backtesting using results from running simulation on 1994-May2008 on the 2004-2007');
+	xlabel('Standard Deviation');
+	ylabel('Returns');
+	legend('historical weights','unsmoothed weights','fmincon weights');
+
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

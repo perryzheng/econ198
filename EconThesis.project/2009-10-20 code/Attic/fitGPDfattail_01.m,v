@@ -1,0 +1,80 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@% fits piecewise (parametric) GPD distribution to the low tail, center, and
+% uppertail of historical data
+% typically used historical data that has been 'unsmoothed'
+% outputs a 'cell array (row)' of functions
+% call pdf using fct(n, 1).pdf
+% cdf fct(n, 1).cdf
+% inverse cdf fct(n, 1).icdf
+
+% assumes each column of histReturns is a different fund
+
+function y = fitGPDfattail_01(histReturns, lowtailp, hightailp)
+
+    tic
+
+    % original source from GEM
+
+    % get returns
+    returns = histReturns;
+
+      % assumes returns are in column array; each column represents different
+      % sets of returns (could be same fund)
+    Num = size(returns,2);
+    
+    GPDfits = cell(1, Num);  % Cell array of Pareto tail objects
+
+    residuals = zeros(size(returns));
+    
+    for i=1:Num
+        
+        residuals(:,i)=returns(:,i);
+
+        % paretotails fits GDP to tails of the empirical data; center is
+        % empirical distribution
+        GPDfits{i} = paretotails(residuals(:,i), lowtailp, hightailp, 'kernel');
+
+            % THIS IS THE CDF, NOT PDF!!!!
+        % newfit = GPDfits{i}
+
+    end
+
+    y = GPDfits;
+    toc
+end@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

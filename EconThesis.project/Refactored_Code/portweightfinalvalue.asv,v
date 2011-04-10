@@ -1,0 +1,52 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.1
+date	2010.01.31.22.16.47;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Add a lot of rebalance comments to CVaR code.
+@
+text
+@% calculates final fund value for all simulations given a weight --> to be
+% used as input to find cvar
+
+% tcopfinalfundvalue***
+function y = portweightfinalvalue(tcopfinalfundvalue, portweights)
+
+    %portfinalvaluearray = zeros(totalsimulations * tcopTotalRuns, 1);
+    totalsimulations = size(tcopfinalfundvalue, 3);
+
+    portfinalvaluearray = [];
+    % counter = 1;
+    
+    vectorizeGA = size(portweights, 2);
+    weightedfinalfundvalue = zeros(totalsimulations, vectorizeGA);
+
+    for i = 1:totalsimulations
+
+        weightedfinalfundvalue(i, :) = tcopfinalfundvalue(1, :, i) * portweights;
+
+        % counter = counter + 1;
+    end
+    % portfinalvaluearray = [portfinalvaluearray; weightedfinalfundvalue(:, :)];
+
+    portfinalvaluearray = weightedfinalfundvalue;
+    
+    weightedfinalfundvalue;
+    portfinalvaluearray;
+    y = portfinalvaluearray;
+end@

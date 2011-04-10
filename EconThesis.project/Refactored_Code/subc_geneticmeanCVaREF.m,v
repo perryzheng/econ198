@@ -1,0 +1,135 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.01.19.17.05.05;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.01.14.03.34.04;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@"fixed errors in class_simulations; added obj to methods in subc_ ... EF"
+@
+text
+@
+classdef subc_geneticmeanCVaREF < class_efficientfrontiers
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts
+        
+        portWts2
+        portReturns2
+        portCVaRs2
+        
+        sharpeRatio
+        optSharpePt
+    end
+    
+    methods
+        
+        function genCVaREF = subc_geneticmeanCVaREF(inAvgReturns, samplemonths, NumPorts, ...
+                finalfundvalue, startweights, refPortReturns, RiskFreeRate)
+            genCVaREF = genCVaREF@@class_efficientfrontiers();
+            
+            genCVaREF.NumPorts = NumPorts;
+            
+            EFgenetic = CVaR_EF_genetic_01(genCVaREF, samplemonths, NumPorts, ...
+                inAvgReturns, finalfundvalue, startweights, refPortReturns);
+                   
+            genCVaREF.portWts = EFgenetic{1};
+            genCVaREF.portReturns = EFgenetic{2};
+            genCVaREF.portCVaRs = EFgenetic{3};             
+            
+            monthlyarithriskfreerate = RiskFreeRate/12;
+            genCVaREF.sharpeRatio = (genCVaREF.portReturns - monthlyarithriskfreerate) ./ genCVaREF.portCVaRs;
+
+
+            maxsharpe = max(genCVaREF.sharpeRatio);
+
+            genCVaREF.optSharpePt = find(genCVaREF.sharpeRatio == maxsharpe);
+        end
+        
+        function y = CVaR_EF_genetic_01(obj, samplemonths, numEFportfolios, avgMonthReturnstcop,...
+            tcopfinalfundvalue2, NormEFPortWts, NormEFPortReturn)
+            % GENETIC ALGORITHM for CVaR
+            dummy = tcopfinalfundvalue2;
+
+            global tcopfinalfundvalue
+            tcopfinalfundvalue = dummy;
+
+            numofGPDdraws = size(tcopfinalfundvalue, 3);
+            NumofFunds = size(tcopfinalfundvalue, 2);
+            tcopTotalRuns = size(tcopfinalfundvalue, 1);
+
+            geneticCVaR = zeros(numEFportfolios, 1);
+            geneticreturns = NormEFPortReturn;
+
+
+            geneticcalcReturns = zeros(numEFportfolios, 1);
+
+            geneticportweights = zeros(numEFportfolios, NumofFunds);
+            geneticportweights2 = zeros(numEFportfolios, NumofFunds);
+
+            geneticcalcMoReturns = zeros(numEFportfolios, 1);
+            geneticMoCVaR = zeros(numEFportfolios, 1);
+            geneticcalcMoReturns2 = zeros(numEFportfolios, 1);
+            geneticMoCVaR2 = zeros(numEFportfolios, 1);
+
+            for i = 1:numEFportfolios
+                geneticOutput = CVaR_gen_alg_01(avgMonthReturnstcop, NormEFPortReturn(i, 1), NormEFPortWts(i,:));
+
+                geneticportweights(i, :) = geneticOutput{1};
+                % geneticportweights2(i, :) = geneticOutput{3};
+
+                tempgeneticfinalvalue = portweightfinalvalue(tcopfinalfundvalue, geneticportweights(i, :)');
+                % tempgeneticfinalvalue2 = portweightfinalvalue(tcopfinalfundvalue, geneticportweights2(i, :)');
+
+                % ARITHMETIC CVaR MONTHLY!!  (loss per mo)
+                geneticMoCVaR(i, 1) = geneticOutput{2}/(samplemonths/1);
+                % geneticMoCVaR2(i, 1) = geneticOutput{4}/(samplemonths/1);
+
+                % arithmetic - MONTHLY RETURN
+                geneticcalcMoReturns(i, 1) = (mean(tempgeneticfinalvalue, 1) - 1)/ (samplemonths/1);
+            end
+
+            geneticportweights
+            geneticportweights2;
+
+            y = {geneticportweights, geneticcalcMoReturns, geneticMoCVaR};
+        end
+        
+    end
+        
+end@
+
+
+1.1
+log
+@Refactor (simply put all the necessary methods there) naively all the subclasses of efficient_frontier class.
+@
+text
+@d25 1
+a25 1
+            EFgenetic = CVaR_EF_genetic_01(samplemonths, NumPorts, ...
+d41 1
+a41 1
+        function y = CVaR_EF_genetic_01(samplemonths, numEFportfolios, avgMonthReturnstcop,...
+@
+

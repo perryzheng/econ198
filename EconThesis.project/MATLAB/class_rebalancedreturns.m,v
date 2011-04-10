@@ -1,0 +1,39 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@classdef class_rebalancedreturns
+    properties
+        portWts
+    end
+    
+    methods
+        
+        function rebal = class_rebalancedreturns(simulatedrawreturns, portWts)
+            rebal.portWts = portWts;
+            
+            
+            
+        end
+        
+    end
+end@

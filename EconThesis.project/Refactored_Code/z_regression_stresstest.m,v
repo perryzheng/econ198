@@ -1,0 +1,161 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.03.03.01.20.53;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.21.21.54.10;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function y = z_regression_stresstest()
+
+    % equity = a + beta*(CPI-U)
+    % credit = ...
+    
+    % equity = ... *(GDP)
+
+    % find optimal lag:
+    % shift CPI-U/GDP up/down x months (2, 3, 4,...)
+    % find which gives the most accurate regression (lowest p? highest R^2?)
+
+
+
+    % multi-variate regression
+    %[b,SIGMA,RESID,objective] = mvregress(X,Y)
+
+
+    %importfilename = '2009_11_12_expectedassumptions_10.xls';
+    % sheetname = '6 fact since 73';
+    sheetname = 'data';
+    importfilename = 'regression_assumptions.xls';
+    importrange = ['H6' ':' 'N151']; % currently N151 is 1985, need more data
+    [fundReturns] = xlsread(importfilename, sheetname, importrange);  
+    numFunds = size(fundReturns, 2);
+    numreturns = size(fundReturns, 1);
+    
+    GDPCPIrange = ['Q6' ':' 'R151'];
+    [gdpcpiReturns] = xlsread(importfilename, sheetname, GDPCPIrange);     
+    
+    [blah, fundNames] = xlsread(importfilename, sheetname, [ 'H4:' 'N4']);
+    [gdpcpiNames] = ['GDP', 'CPI-U'];
+    
+    GDPreturns = gdpcpiReturns(:, 1);
+    CPIreturns = gdpcpiReturns(:, 2);
+    %{
+    results = zeros(numFunds, 4);
+    % col1 = beta, col2 = bestlag, col3 = R-squared, col4 = p value
+    lags = [0 1 2 3 4 5]; %6 7 8 9 10 11 12];
+    for i = 1:numFunds
+        fundNames(i)
+        tempreturns = fundReturns(:, i);
+        optimalresults = optimallag(tempreturns, GDPreturns, lags);
+        %optimalresults = optimallag(tempreturns, CPIreturns, lags);
+        beta = optimalresults{1}(2); % the constant is the first value
+        Rsquared = optimalresults{5}(1);
+        pvalue = optimalresults{5}(4);
+        bestlag = optimalresults{6};
+        
+        results(i, :) = [beta, bestlag, Rsquared, pvalue];
+    end
+    results
+    %}
+   
+    results = zeros(numFunds, 3);
+    CPIreturns = [ones(numreturns, 1) CPIreturns]; % add constant
+    GDPreturns = [ones(numreturns, 1) GDPreturns]; % add constant
+    
+    for i = 1:numFunds
+        fundNames(i)
+        tempreturns = fundReturns(:, i);
+        %[b,bint,r,rint,stats] = regress(tempreturns, CPIreturns);
+        [b,bint,r,rint,stats] = regress(tempreturns, GDPreturns);
+        b
+        stats 
+
+        beta = b(2); % the constant is the first value
+        Rsquared = stats(1);
+        pvalue = stats(4);
+        
+        results(i, :) = [beta, Rsquared, pvalue];
+        
+    end
+    
+    
+    % 'multi-linear regression'
+    
+    
+    save('z_regression.mat', 'results');
+    
+end
+
+
+function y = optimallag(oneReturn, onepredictor, lags)
+% find the optimal lag for 1 return
+
+    numlags = size(lags, 2);
+    numreturns = size(oneReturn, 1);
+
+    onepredictor = [ones(numreturns, 1) onepredictor]; % add constant
+    bestprob = 1;
+
+    for i = 1:numlags
+        templag = lags(i);        
+        % assumes we are lagging the funds, relative to cpi/gdp
+        lagReturn = oneReturn(1 + templag:numreturns, :);
+        tempend = (numreturns - templag);
+        lagpredictor = onepredictor(1:tempend, :);
+        [b,bint,r,rint,stats] = regress(lagReturn, lagpredictor);
+        stats;
+        
+        newprob = stats(3);
+        % keep the best probability
+        if newprob < bestprob
+            bestlag = lags(i);
+            bestprob = newprob;
+            bestb = b;
+            bestr = r;
+            bestresults = {b,bint,r,rint,stats, bestlag};
+        end
+    end
+    bestlag
+    bestprob
+    y = bestresults;
+
+end
+
+
+
+@
+
+
+1.1
+log
+@'stress test stuff for jing'
+@
+text
+@d12 1
+a12 2
+    % 'multi-linear regression'
+    [b,bint,r,rint,stats] = regress(y,X)
+d17 97
+@
+

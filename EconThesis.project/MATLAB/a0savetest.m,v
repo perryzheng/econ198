@@ -1,0 +1,36 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+starttimeperioddummy = 1;
+endtimeperioddummy = 2;
+
+savefilename = ['/afs/acpub.duke.edu/users/i/d/idw3/AFSDocs/MATLAB/exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+
+abc = 'awfawef'
+cccc = 234315135
+
+save(savefilename, 'abc', 'cccc')
+
+load(savefilename)
+@

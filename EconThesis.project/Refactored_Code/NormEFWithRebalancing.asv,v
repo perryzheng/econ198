@@ -1,0 +1,238 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.2
+date	2010.02.01.04.18.12;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.01.31.19.50.27;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@rebalancing with CVaR
+@
+text
+@%main function for rebalancing in mean-variance framework
+
+%histreturns: numofmonths by numoffunds historical returns matrix
+%weights: numofportfoliopoints by numoffunds mean variance weights matrix with
+%each row corresponding to each portfolio
+%portreturns: numofportfoliopoints by 1 column vector indicating returns
+%for each portfolio
+%port_variance: numofportfoliopoints by 1 column vector indicating
+%portfolio variance for each portfolio
+function y = NormEFWithRebalancing(histreturns, weights, portreturns, port_sd) 
+	%take each portreturn level, we return the weights that would minimize
+	%variance, with the constraint that rebalancing at the end of each end
+	%period that the final return annually should be at least that return level. 
+
+    returns = histreturns;
+    
+	global glob_hist_returns;
+    glob_hist_returns = histreturns; 
+    
+    calc_weights = weights;
+    numoffunds = size(calc_weights,2);
+    numofmonths = size(histreturns, 1);
+    port_ret = portreturns;
+    
+	%declare variance and generate_variance variables
+	variance = zeros(size(port_ret,1), 1);
+    genvariance = zeros(size(port_ret,1), 1);
+    
+	lb = zeros(1,numoffunds);
+	ub = ones(1,numoffunds);
+	aeq = ones(1,numoffunds);
+	beq = 1; 
+    options = optimset('algorithm','active-set', 'tolfun', 1e-19, 'tolcon', 1e-19, ...
+        'tolx', 1e-19, 'maxfunevals', 1000, 'maxiter', 2500, 'useparallel', 'always');
+    
+    rebalancemonth = 12;
+    numofrebalancingperiods = floor(numofmonths/rebalancemonth);
+    %for each portfolio, we run the fmincon simulation to calculate the
+    %lowest variance subject to rebalancing as a constraint
+    
+    %the constraint is that the final portfolio value (finalportvalue) 
+    %from calc_rebalance_cashflow_01 method has
+    %to be at least the value of the current return
+	for i=1:size(port_ret)
+        tic
+		global glob_fv; %global final value
+        glob_fv = (1+port_ret(i)*12)^numofrebalancingperiods;
+
+		startweights = calc_weights(i,:);
+		[min_weights,lowest_variance, exitflag] = fmincon(@@calc_norm_variance, startweights,[], [], aeq, beq,lb,ub,@@my_rebalance_constraint, options);
+		weights_matrix(i,:) = min_weights;
+		variance(i,1) = lowest_variance/(rebalancemonth)
+        toc
+        %{
+        genoptions = gaoptimset('populationsize', 20, ...
+            'generations', 45, 'stallgenlimit', 12, 'tolfun', 1e-17, 'useparallel', 'always',...
+            'vectorize', 'on', 'stalltimelimit', 2400);
+       
+        tic
+        [x fval] = ga(@@calc_norm_variance, numoffunds, [], [], ...
+            aeq, beq, lb, ub, @@my_rebalance_constraint, genoptions); 
+        toc
+        genvariance(i, 1) = fval;
+        %}
+        
+    end
+    
+	original_sd = port_sd;
+	plot(original_sd, port_ret, '-rd','linewidth',2);
+	hold on
+	sd = sqrt(variance);
+	plot(sd, port_ret, '-bx', 'linewidth',2);
+    
+    %gensd = sqrt(genvariance);
+    %plot(gensd, port_ret, '-gx', 'linewidth',1);
+    
+
+	% save(saveaddress, 'weights_matrix', 'sd', 'port_ret', 'original_sd');
+
+    title('mean variance ef with rebalancing');
+    xlabel('standard deviation');
+    ylabel('return (%)');
+	%legend('original historical ef', 'historical ef with rebalancing', 'genetic algorithm ef with rebal');
+    legend('original historical ef', 'historical ef with rebalancing');
+
+    hold off
+    
+    y = {weights_matrix, sd, port_ret, original_sd};
+
+end
+@
+
+
+1.1
+log
+@Add calc_rebalance_cashflows, my_rebalance_constraint, and NormEFWithRebalancing in MATLAB folder
+
+Add calc_norm_variance_helper, calc_norm_variance, calc_rebalance_cashflows, and main_rebalance_NormEF, Mean_Var_EF_Rebalancing, and my_balance_evaluator, my_rebalance_constraint, and NormEFWithRebalancing, and test_helper
+@
+text
+@d1 1
+a1 1
+%Main function for rebalancing in mean-variance framework
+d3 2
+a4 2
+%histreturns: numOfMonths by numOfFunds historical returns matrix
+%weights: NumOfPortfolioPoints by numOfFunds mean variance weights matrix with
+d6 1
+a6 1
+%portreturns: NumOfPortfolioPoints by 1 column vector indicating returns
+d8 1
+a8 1
+%port_variance: NumOfPOrtfolioPOints by 1 column vector indicating
+d11 1
+a11 1
+	%Take each portReturn level, we return the weights that would minimize
+d18 1
+a18 22
+    glob_hist_returns = histreturns;
+    
+    %{
+    %Input data
+    filename_weights = './2009-10-08 weights 1973 and 1994 with CVaR - ending May 2008.xls'; 
+	filename_hist_returns = '2009_09_23_expectedassumptions_06.xls';
+    sheetname_weights = '73 - norm wts';
+    sheetname_returns = '6 fact since 73';
+	saveaddress = './NormEFWithRebalancingOutput.mat';
+    
+    weights = xlsread(filename_weights, sheetname_weights);
+    returns = xlsread(filename_hist_returns, sheetname_returns);
+    given_weights = xlsread(filename_weights, sheetname_weights);
+
+    %b/c of basic xlsread functionality on non-windows platforms, need to
+    %further extract hist_weights
+    calc_weights= abs(given_weights(1:12,1:6));
+	glob_hist_returns = returns(4:438, 8:13);
+	port_ret = weights(1:12, 10);
+	port_variance = weights(1:12,11); %original variance
+	%End of input data
+    %}
+d21 2
+a22 2
+    NumOfFunds = size(calc_weights,2);
+    NumOfMonths = size(histreturns, 1);
+d25 1
+a25 1
+	%Declare variance and generate_variance variables
+d29 3
+a31 3
+	lb = zeros(1,NumOfFunds);
+	ub = ones(1,NumOfFunds);
+	Aeq = ones(1,NumOfFunds);
+d33 2
+a34 6
+    options = optimset('Algorithm','active-set', 'TolFun', 1e-19, 'TolCon', 1e-19, ...
+        'TolX', 1e-19, 'MaxFunEvals', 1000, 'MaxIter', 2500, 'UseParallel', 'always');
+    
+
+    NumOfMonths
+	initial_return = 0.01;
+d36 3
+a38 1
+    %For each portfolio, we run the fmincon simulation to calculate the
+d41 1
+a41 1
+    %The constraint is that the final portfolio value (finalportvalue) 
+d46 3
+a48 6
+		global glob_pr;
+        
+        glob_pr = 1+port_ret(i))NumOfMonths %the portfolio return from the meanvariance 
+        %framework we want to surpass that by rebalancing
+		%initial_return = initial_return+0.005;
+		%glob_pr = initial_return;
+d50 1
+a50 1
+		[min_weights,lowest_variance, exitflag] = fmincon(@@calc_norm_variance, startweights,[], [], Aeq, beq,lb,ub,@@my_rebalance_constraint, options);
+d52 1
+a52 3
+        %min_weights
+        %lowest_variance
+		variance(i,1) = lowest_variance/NumOfMonths;
+d55 3
+a57 4
+        'awesome success'
+        genoptions = gaoptimset('PopulationSize', 20, ...
+            'Generations', 45, 'StallGenLimit', 12, 'TolFun', 1e-17, 'UseParallel', 'always',...
+            'Vectorize', 'on', 'StallTimeLimit', 2400);
+d60 2
+a61 2
+        [x fval] = ga(@@calc_norm_variance, NumOfFunds, [], [], ...
+            Aeq, beq, lb, ub, @@my_rebalance_constraint, genoptions); 
+d69 1
+a69 1
+	plot(original_sd, port_ret, '-rd','LineWidth',2);
+d72 1
+a72 1
+	plot(sd, port_ret, '-bx', 'LineWidth',2);
+d75 1
+a75 1
+    %plot(gensd, port_ret, '-gx', 'LineWidth',1);
+d80 5
+a84 5
+    title('Mean variance EF with Rebalancing');
+    xlabel('Standard Deviation');
+    ylabel('Return (%)');
+	%legend('Original Historical EF', 'Historical EF with Rebalancing', 'Genetic Algorithm EF with rebal');
+    legend('Original Historical EF', 'Historical EF with Rebalancing');
+@
+

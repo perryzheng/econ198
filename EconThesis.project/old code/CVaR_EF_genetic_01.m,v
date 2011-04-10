@@ -1,0 +1,95 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.52;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+
+function y = CVaR_EF_genetic_01(samplemonths, numEFportfolios, avgMonthReturnstcop,...
+    tcopfinalfundvalue2, NormEFPortWts, NormEFPortReturn)
+
+% samplemonths, numEFportfolios, avgMonthReturnstcop, meanfinalCVaR, tcopfinalfundvalue, NormEFPortWts, NormEFPortReturn
+    
+    % GENETIC ALGORITHM for CVaR
+    dummy = tcopfinalfundvalue2;
+    
+    global tcopfinalfundvalue
+    tcopfinalfundvalue = dummy;
+    
+    numofGPDdraws = size(tcopfinalfundvalue, 3);
+    NumofFunds = size(tcopfinalfundvalue, 2);
+    tcopTotalRuns = size(tcopfinalfundvalue, 1);
+    
+    geneticCVaR = zeros(numEFportfolios, 1);
+    geneticreturns = NormEFPortReturn;
+
+    
+    geneticcalcReturns = zeros(numEFportfolios, 1);
+    
+    geneticportweights = zeros(numEFportfolios, NumofFunds);
+    geneticportweights2 = zeros(numEFportfolios, NumofFunds);
+    
+    geneticcalcMoReturns = zeros(numEFportfolios, 1);
+    geneticMoCVaR = zeros(numEFportfolios, 1);
+    geneticcalcMoReturns2 = zeros(numEFportfolios, 1);
+    geneticMoCVaR2 = zeros(numEFportfolios, 1);
+    
+    for i = 1:numEFportfolios
+        geneticOutput = CVaR_gen_alg_01(avgMonthReturnstcop, NormEFPortReturn(i, 1), NormEFPortWts(i,:));
+
+        geneticportweights(i, :) = geneticOutput{1};
+        % geneticportweights2(i, :) = geneticOutput{3};
+        
+        tempgeneticfinalvalue = portweightfinalvalue(tcopfinalfundvalue, geneticportweights(i, :)');
+        % tempgeneticfinalvalue2 = portweightfinalvalue(tcopfinalfundvalue, geneticportweights2(i, :)');
+        
+        % ARITHMETIC CVaR MONTHLY!!  (loss per mo)
+        geneticMoCVaR(i, 1) = geneticOutput{2}/(samplemonths/1);
+        % geneticMoCVaR2(i, 1) = geneticOutput{4}/(samplemonths/1);
+        
+        % arithmetic - MONTHLY RETURN
+        geneticcalcMoReturns(i, 1) = (mean(tempgeneticfinalvalue, 1) - 1)/ (samplemonths/1);
+        % geneticcalcMoReturns2(i, 1) = (mean(tempgeneticfinalvalue2, 1) - 1)/ (samplemonths/1);
+        
+        %{        
+        % ARITHMETIC CVaR ANNUAL!!  (loss per year)
+        geneticCVaR(i, 1) = geneticOutput{2}/(samplemonths/12);
+
+        
+        % avgMonthReturnstcop*geneticOutput{1}';
+
+        % arithmetic - ANNUAL RETURN
+        geneticcalcReturns(i, 1) = (mean(tempgeneticfinalvalue, 1) - 1)/ (samplemonths/12);
+
+        % geometric
+        % geneticcalcReturns(i, 1) = mean(tempgeneticfinalvalue)^(1/(samplemonths/periodspertime)) - 1;
+        %}
+    end
+        
+    geneticportweights
+    geneticportweights2;
+    
+
+
+    y = {geneticportweights, geneticcalcMoReturns, geneticMoCVaR};
+    % y = {geneticportweights, geneticcalcMoReturns, geneticMoCVaR, geneticportweights2, geneticcalcMoReturns2, geneticcalcMoReturns2};
+end
+@

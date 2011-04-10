@@ -1,0 +1,74 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@tic
+options = gaoptimset('InitialPopulation', [], 'PopInitRange',[zeros(1, 5); ones(1, 5)], 'Generations', 450, 'StallGenLimit', 50, 'TolFun', 1e-11)
+
+global globalavgtcopAnnreturn;
+
+
+A = ones(1, 5);
+b = 1;
+
+Aeq = [ones(1, 5); globalavgtcopAnnreturn];
+beq = [1; 0.05];
+
+LB = zeros(1, 5);
+UB = ones(1, 5);
+
+
+[x fval exitflag output] = ga(@@gen_alg_min_cvar, 5, [], [], Aeq, beq, LB, UB, [], options)
+
+
+
+% x = ga(fitnessfcn,nvars,A,b,Aeq,beq,LB,UB,nonlcon,options)
+
+
+
+
+
+NormEFPortWts =  [  0.0686    0.0098         0    0.9216         0
+    0.0536    0.0015         0    0.9449         0
+    0.0445         0         0    0.9197    0.0359
+    0.0353         0         0    0.8884    0.0763
+    0.0262         0         0    0.8571    0.1167
+    0.0171         0         0    0.8258    0.1571
+    0.0080         0         0    0.7945    0.1975
+         0         0         0    0.7591    0.2409
+         0         0         0    0.6958    0.3042
+         0         0         0    0.6326    0.3674
+         0         0         0    0.5693    0.4307
+         0         0         0    0.5061    0.4939
+         0         0         0    0.4428    0.5572
+         0         0         0    0.3796    0.6204
+         0         0         0    0.3163    0.6837
+         0         0         0    0.2530    0.7470
+         0         0         0    0.1898    0.8102
+         0         0         0    0.1265    0.8735
+         0         0         0    0.0633    0.9367
+         0   -0.0000         0         0    1.0000];
+
+
+
+
+toc@

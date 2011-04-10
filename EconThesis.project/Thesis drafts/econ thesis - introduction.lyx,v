@@ -1,0 +1,300 @@
+head	1.3;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.3
+date	2010.04.06.08.10.30;	author idw3;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.04.05.22.06.03;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.04.05.18.16.22;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+The tradeoff between risk and return is the fundamental principle of the
+ investment process.
+ Although choosing individual investment opportunities is important, the
+ top-down analysis of the entire investment portfolio is crucial for maintaining
+ and updating investment goals.
+ The decision of how to allocate capital to a few select asset classes is
+ a very important investment decision; the asset allocation has been shown
+ to influence almost 80% of the portfolio returns 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+[citation]
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Traditional mean-variance asset allocation frameworks use a normal distribution
+ to model returns and variance as a risk measure.
+ While these traditional methods for understanding risk and return have
+ come under fire in the recent financial turmoil, research in alternative
+ models is a growing and promising field.
+ Recent research focuses on other risk measures for capturing downside risk
+ and different probability distributions to account for extreme events.
+ We are interested in building upon the recent asset allocation models by
+ investigating how portfolio rebalancing can be included.
+ 
+\end_layout
+
+\begin_layout Standard
+The central assumption to asset allocation research and implementation is
+ that investors can reasonably model future market behavior using historical
+ data and past events.
+ The historical return data are fit to probability distributions and correlation
+s are used to understand how asset classes behave together.
+ The normal distribution has been popular because of the simplicity of obtaining
+ an analytical solution to the variance minimization and mean return maximizatio
+n problem.
+ The assumption that future returns will follow the same distribution as
+ historical data allows the simulation of future returns.
+ Our research aims to utilize other distributions and joint distributions
+ that better account for extreme events in novel asset allocation frameworks.
+ 
+\end_layout
+
+\begin_layout Standard
+The minimization of risk is required in the asset allocation process.
+ Variance may not be the best risk measure to account for downside risk,
+ since it is a measure of upside and downside volatility.
+ Recent research has utilized other risk measures instead of variance to
+ better account for downside risk.
+ The minimization of these new risk measures has been shown theoretically
+ and demonstrated using simulations.
+ 
+\end_layout
+
+\begin_layout Standard
+Our research goal is to build off of the recent advances in asset allocation
+ research by developing a rebalancing framework.
+ We will investigate how using non-normal probability distributions along
+ with downside risk measures perform in a rebalancing asset allocation optimizat
+ion problem.
+\end_layout
+
+\begin_layout Standard
+In this paper, we will first present the previous literature and the theoretical
+ framework for each concept used in current asset allocation research.
+ Next, we will describe our methods and implementation of the different
+ parts of the asset allocation models.
+ We will then end with our results and discussion.
+\end_layout
+
+\begin_layout Standard
+.
+\end_layout
+
+\begin_layout Standard
+The assumption that returns are distributed normally is especially inadequate
+ for modeling market behavior since it cannot properly account for market
+ crashes.
+ 
+\end_layout
+
+\begin_layout Standard
+The recent financial environment has again put the spotlight on investment
+ risk management.
+ Traditional models for high level investment strategy and risk management
+ have come under fire .
+ 
+\end_layout
+
+\begin_layout Standard
+The tradeoff between risk and return is the fundamental theme for understanding
+ a portfolio of investments in risky assets, and investments are usually
+ grouped by their asset classes in order to understand the aggregate behavior
+ of the asset classes and the portfolio as a whole.
+ The asset allocation policy is the single most important high level decision
+ that dictates the behavior and exposure of the entire portfolio.
+ 
+\end_layout
+
+\begin_layout Standard
+We investigate recent advancements in asset allocation through the use of
+ a new risk measure, non-normality in the probability distributions, and
+ rebalancing.
+\end_layout
+
+\begin_layout Standard
+Investment selection and risk management are closely intertwined in portfolio
+ analysis.
+ The academic and investment community have a variety of quantitative and
+ theoretical tools.
+ The modern investor 
+\end_layout
+
+\begin_layout Itemize
+Investors need to udnerstand entire portfolio
+\end_layout
+
+\begin_layout Itemize
+what some of the recent advances have told us (briefly)
+\end_layout
+
+\begin_layout Itemize
+why they fail in certain situations, as a risk measure
+\end_layout
+
+\begin_layout Itemize
+what my research tries to do, alleviates
+\end_layout
+
+\begin_layout Standard
+The investment process requires both the selection of individual investment
+ opportunities and the analysis of the entire portfolio of investments.
+ Investment has evolved and benefited in the past century from technology,
+ deeper markets, and advancements in 
+\end_layout
+
+\begin_layout Standard
+The balancing of risk and return is critical to all investors, from the
+ individual investor to the instutional investor.
+ The complexity of the analysis depends on the characteristics of the portfolio
+ as a whole.
+ 
+\end_layout
+
+\begin_layout Standard
+Investors, especially large institutional investors, 
+\end_layout
+
+\begin_layout Standard
+The risk management of large instutitional investment portfolios requires
+ a multifaceted approach to understanding the invidual investments along
+ with the portfolio as a whole.
+ While the individual investment research is an important part of the investment
+ process, a thorough understanding of the entire portfolio of investments
+ is critical for risk management and high level investment strategy.
+ How capital is allocated to different asset classes 
+\end_layout
+
+\begin_layout Standard
+When performing high level portfolio analyses, investors typically look
+ at large classes of possible investment vehicles or asset classes.
+ The asset allocation decision sets the tone of the entire investment portfolio
+ through differing levels of exposure to risks and return opportunities.
+ 
+\end_layout
+
+\begin_layout Standard
+We are primarily concerned with improving the portfolio management process
+ through the development of a new asset allocation framework.
+\end_layout
+
+\begin_layout Standard
+The behavior of the portfolio as a whole has been extensively studied in
+ both academia and the investing community.
+ 
+\end_layout
+
+\end_body
+\end_document
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d50 16
+a65 7
+ The central assumption is that investors can reasonably model future market
+ behavior using historical data and past events.
+ The traditional mean-variance asset allocation framework uses a normal
+ distribution to model returns and variance as a risk measure.
+ These traditional methods for understanding risk and return have come under
+ fire in the recent financial turmoil, while research in alternative models
+ is a growing and promising field.
+d70 60
+d131 2
+a132 2
+ for modeling market behavior since it since it cannot properly account
+ for market crashes.
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@d48 11
+d60 101
+@
+

@@ -1,0 +1,1949 @@
+head	1.19;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.19
+date	2010.03.28.16.36.14;	author idw3;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2010.02.24.06.13.43;	author idw3;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2010.02.24.05.04.56;	author idw3;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2010.02.21.23.36.31;	author xz27;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2010.02.17.22.47.34;	author idw3;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2010.02.17.18.27.26;	author idw3;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2010.02.15.06.14.36;	author idw3;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2010.02.10.22.31.10;	author idw3;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2010.02.10.04.46.39;	author xz27;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2010.02.07.23.22.28;	author idw3;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2010.02.07.04.52.56;	author idw3;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2010.02.02.18.06.23;	author idw3;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.01.31.22.16.47;	author xz27;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.01.22.23.04.54;	author idw3;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.01.20.08.35.45;	author idw3;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.01.20.07.57.09;	author idw3;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.01.20.07.13.08;	author idw3;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.01.19.17.05.05;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.12.31.04.39.49;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.19
+log
+@added references; draft 03-28-10 sent to rasiel
+@
+text
+@% main organizing function0,
+
+function aaa_CVaR_EF_sim_02(samplemonths, numofGPDdraws, lowtailp, hightailp, windummy, ...
+    alltimedummy, starttimeperioddummy, endtimeperioddummy, expected_dummy, CVaR_lowp)
+
+    onlyexpect = 0;
+    if onlyexpect == 1
+        expectedonly();
+        return
+    end
+
+    if CVaR_lowp == 99
+        lowps = [0.05, 0.15, 0.25];
+        
+        if alltimedummy == 1
+            main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 1, windummy, expected_dummy, CVaR_lowp);
+            main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 2, windummy, expected_dummy, CVaR_lowp);
+            % main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 1, windummy);
+            % main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 2, windummy);
+        elseif alltimedummy == 0
+            'woooot'
+            for i = 1:size(lowps)
+                lowps(i)
+                main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy, expected_dummy, lowps(i));
+            end
+        end
+    else
+        if alltimedummy == 1
+            main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 1, windummy, expected_dummy, CVaR_lowp);
+            main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 2, windummy, expected_dummy, CVaR_lowp);
+            % main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 1, windummy);
+            % main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 2,
+            % windummy);
+        elseif alltimedummy == 0
+            main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy, expected_dummy, CVaR_lowp);
+        end
+    end
+end    
+
+
+function main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy, expected_dummy, CVaR_lowp)
+    tic
+    % import data
+    clear global 
+    global globalsamplemonths
+    globalsamplemonths = samplemonths;
+    % global dummys
+    % set expected = 1 if we are considering expected returns/SDs
+    global expected
+    expected = 0;
+    if expected == 1
+        expectedonly();
+    end
+    % IF WE ARE USING VIX:
+    global creditNoVIX
+    global creditAndVIX
+    creditNoVIX = 1;
+    creditAndVIX = 0;
+    
+    global meanvarianceonly
+    meanvarianceonly = 0; % only loop through MV, skip CVaR
+    
+    % xlsread to import all the data from an excel
+    importfilename = '2009_11_12_expectedassumptions_10.xls';
+    
+    if windummy == 1
+        saveimportfile = ['importdata_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+        savesimulations = ['simulations_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+        saveresults = ['exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '_' num2str(CVaR_lowp) '.mat']
+    elseif windummy == 0
+        saveimportfile = ['importdata_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+        saveresults = ['exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '_' num2str(CVaR_lowp) '.mat'];
+        savesimulations = ['simulations_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+    end
+    
+    sheetname = '6 fact since 73';
+    % writefilename = 'graphs and note/Output Summary 2009-11-04.xls';
+    writefilename = ['graphs and data/outputsummary_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '_' num2str(CVaR_lowp) '.xls'];
+    % xlswrite(filename, M, sheet, range)
+    writedummy = 0; % to only create an excel file of results from export .mat results file
+    plotterdummy = 0; % to only plot the results from exportresults_.mat; in windows
+    cashreservedummy = 1; % using cash column?
+    cashconstraints = 0;
+    createinputfileonly = 0; % to only create input .mat file; for SSH into linux
+    
+    
+    
+    if windummy == 1   
+        %{
+        %used for adding expected stuff to save
+        importdummy = importdata(importfilename, sheetname, starttimeperioddummy, endtimeperioddummy, cashreservedummy);
+        expectCorr = importdummy{3};
+        expectAnnSigma = importdummy{4};
+        expectAnnReturn = importdummy{5};        
+        expectReturn = expectAnnReturn'./12;
+        expectSigma = expectAnnSigma'./sqrt(12);        
+        expectedReturnsObj = class_expectedreturns(expectReturn, expectSigma, expectCorr);
+        save(saveresults, 'expectedReturnsObj', '-append')  
+        %}
+        % other administrative functions: write and plot
+        if writedummy == 1
+            writedata(saveresults, writefilename, starttimeperioddummy, endtimeperioddummy, expected_dummy)
+            if plotterdummy == 0
+                return
+            end
+        end
+        if plotterdummy == 1
+            importplotter(saveresults, starttimeperioddummy, endtimeperioddummy)
+            return
+        end
+        % imports data from input file
+        importdummy = importdata(importfilename, sheetname, starttimeperioddummy, endtimeperioddummy, cashreservedummy);
+        fundReturns = importdummy{1};
+        fundNames = importdummy{2};
+        expectCorr = importdummy{3};
+        expectAnnSigma = importdummy{4};
+        expectAnnReturn = importdummy{5};
+        expectReturn = expectAnnReturn'./12;
+        expectSigma = expectAnnSigma'./sqrt(12);
+        % saves imported data into .mat objects file
+        
+        'saved to an import file'
+        if createinputfileonly == 1
+            
+            save(saveimportfile, ...
+                'fundReturns', 'fundNames', 'expectCorr', 'expectSigma', 'expectReturn');        
+
+            % if only want to create input .mat file
+            return
+        end
+        
+    elseif windummy == 0 % if in Linux, must have imports .mat file for imported data
+
+        load(saveimportfile)
+    end
+    histMonths = size(fundReturns, 1);
+    NumofFunds = size(fundReturns, 2);
+    
+    
+    expectReturn = expectAnnReturn'./12;
+    expectSigma = expectAnnSigma'./sqrt(12);
+    expectCalcCovariance = corr2cov(expectSigma, expectCorr);
+    %% Assumptions 
+    tcopTotalRuns = 1;
+    totalsimulations = tcopTotalRuns*numofGPDdraws;  
+    NumNormPorts = 25;
+    NumPorts = NumNormPorts;
+    % RiskFreeRate = 0.03; % assumption for finding Sharpe pt
+    format short % vs long, how many places after decimal (4)
+    % Constraints on all EF 
+    global globalEFconstraints;
+    constraintdummy = cashconstraints;
+    globalEFconstraints = class_constraintcreator_01(fundNames, constraintdummy);
+    'historical returns subclass'
+    historicalReturns6fact = subc_histreturns(fundReturns);
+    historicalReturns6fact.corrMatrix;
+    
+    if expected_dummy == 0 
+        RiskFreeRate = historicalReturns6fact.arithAnnAvg(7); % use historical annual cash arithmetic return as the risk free rate
+    elseif expected_dummy == 1
+        RiskFreeRate = expectAnnReturn(7); % use expected annual cash return as the risk free rate
+        expectedReturnsObj = class_expectedreturns(expectReturn, expectSigma, expectCorr);
+    end
+    
+    SharperatioRate = 0.015; % DUMAC's, 0.5 is risk free rate, 1.0 is borrow rate
+    RiskFreeRate = SharperatioRate;
+        
+    EFonly_loadfits = 0; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+    if EFonly_loadfits == 0
+        save(saveimportfile, ...
+            'fundReturns', 'fundNames', 'expectCorr', 'expectSigma', 'expectReturn');
+        %% Ljung-Box Q test for serial correlation in monthly returns
+        %% piecewise GPD fit to tails and center of historical returns
+        %% computes kendall's tau correlation
+        'simulations class'
+        % expected_dummy = 0;
+        % using expected returns/sigmas for t-Copula simulations?
+        if expected_dummy == 0
+            expected_mu_sigma = [];
+            histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths,...
+                numofGPDdraws, tcopTotalRuns, lowtailp, hightailp, expected_dummy, expected_mu_sigma);
+        elseif expected_dummy == 1
+            expected_mu_sigma = {expectReturn, expectSigma};
+            histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths,...
+                numofGPDdraws, tcopTotalRuns, lowtailp, hightailp, expected_dummy, expected_mu_sigma);
+        end
+            
+        % plot2tcopfinalvalues(histSims)
+        %% put simulations into own rawreturns object
+        'simulations returns subclass'
+        % unsmoothed historical raw returns
+        unshistrawReturnsObj = subc_simreturns(histSims.unsmoothedReturns, histSims.RHOHAT, histSims.nuhat);
+        % tcop simulation raw returns
+        tcoprawReturnsObj = subc_simreturns(histSims.tcopdrawRawReturns, histSims.RHOHAT, histSims.nuhat);
+        % mean(tcoprawReturnsObj.arithMoAvg, 3)
+        % mean(tcoprawReturnsObj.geomMoAvg, 3);
+        'saved simulations data'
+    
+        if expected_dummy == 0 
+            save(savesimulations,'histSims', 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj');
+        elseif expected_dummy == 1
+            save(savesimulations,'histSims', 'expectedReturnsObj', 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj');
+        end
+         
+    elseif EFonly_loadfits == 1
+        % load(saveimportfile)
+        load(savesimulations)
+    end
+
+    %return
+    
+    %% Normal Mean Variance Efficient Frontiers
+    meanvariance();    
+        figure
+        hold on
+        grid on
+        % historical normal mean variance
+        histNormMeanVarEF = subc_normalmeanvarEF(historicalReturns6fact.arithMoAvg,...
+            NumNormPorts, historicalReturns6fact.covMatrix, RiskFreeRate);
+        EFplotter(histNormMeanVarEF, 'g')
+        % unsmoothed historical normal mean variance
+        unshistNormMeanVarEF = subc_normalmeanvarEF(unshistrawReturnsObj.arithMoAvg,...
+            NumNormPorts, historicalReturns6fact.covMatrix, RiskFreeRate);
+        EFplotter(unshistNormMeanVarEF, 'w')
+        title('Normal Mean-Variance Efficient Frontiers')        
+        xlabel('Risk (SD %)')
+        ylabel('Return (%)')
+        % tcopula simulations normal mean variance
+        tcopNormMeanVarEF = subc_normalmeanvarEF(tcoprawReturnsObj.SimAvgArithMoAvgRet,...
+            NumNormPorts, histSims.CovarHAT, RiskFreeRate);
+        EFplotter(tcopNormMeanVarEF, 'r')
+        optsharpeplotter(tcopNormMeanVarEF);
+        optsharpeplotter(unshistNormMeanVarEF);
+        optsharpeplotter(histNormMeanVarEF);
+        
+        legend('Historical', 'Unsmoothed Historical', 'Simulation Data',...
+             'Optimal Information Ratio', 'Location', 'SouthEast')
+        
+        hold off
+        %{
+        save(saveresults, 'historicalReturns6fact', 'histSims', ...
+            'unshistrawReturnsObj', 'tcoprawReturnsObj', 'histNormMeanVarEF', ...
+            'unshistNormMeanVarEF', 'expNormMeanVarEF')    
+        %}
+        [historicalReturns6fact.arithAnnAvg ; historicalReturns6fact.StandDev * sqrt(12)];
+    if meanvarianceonly == 1
+        save(saveresults, 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj', ...
+            'histNormMeanVarEF', 'unshistNormMeanVarEF', 'tcopNormMeanVarEF')
+        return
+    end
+    %% CVaR EF for given Mean-Variance portfolio weights
+    
+    global lowp
+    lowp = CVaR_lowp;
+        
+    
+    cvargivenweights();
+        figure
+        hold on
+        grid on
+        histNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+            NumPorts, histSims.arithRawFinalFundValue, histNormMeanVarEF.portWts, RiskFreeRate, lowp);    
+        EFplotter(histNormWtsCVaREF, 'g')
+        unshistNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+            NumPorts, histSims.arithRawFinalFundValue, unshistNormMeanVarEF.portWts, RiskFreeRate, lowp);      
+        EFplotter(unshistNormWtsCVaREF, 'w')
+        tcopNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+            NumPorts, histSims.arithRawFinalFundValue, tcopNormMeanVarEF.portWts, RiskFreeRate, lowp);     
+        EFplotter(tcopNormWtsCVaREF, 'r')
+        global tcopfinalfundvalue;
+        tcopfinalfundvalue = histSims.arithRawFinalFundValue; 
+    
+    %% CVaR via fmincon
+    
+    cvarfmincon();
+        'fmincon'
+        compound_dummy = 0; % do compounding?
+        fminconCVaREF = subc_fminconCVaREF(samplemonths, NumPorts,...
+                    tcopNormWtsCVaREF.portWts, tcopNormMeanVarEF.portReturns, RiskFreeRate, compound_dummy);
+        EFplotter(fminconCVaREF, 'k')
+        'end of fmincon'
+
+        title('CVaR Efficient Frontier - normal weights and genetic')         
+        xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+        ylabel('Return (%)')
+        optinforatioplotter(histNormWtsCVaREF);
+        optinforatioplotter(unshistNormWtsCVaREF);
+        optinforatioplotter(tcopNormWtsCVaREF);
+        optinforatioplotter(fminconCVaREF);
+        %legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF',...
+        %    'With rebalancing', 'compounding - no rebalance', 'fmincon EF', ...
+        %    'Optimal Information Ratio', 'Location', 'SouthEast') 
+        legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF',...
+             'fmincon EF','Optimal Information Ratio', 'Location', 'SouthEast')
+         
+        %save(saveresults, 'Rebalance_CVaREF', '-append')
+        % only if we are doing rebalancing code
+        
+        hold off
+        % save(savesimulations,'histSims');
+    %% Rebalancing / Compounding Assumptions and Options
+        
+        figure
+        hold on
+        compound_dummy = 1; % 1 = compound, 0 = don't compound
+        
+        global compoundmonth
+        compoundmonth = 12; % 36 to check both scripts
+
+        global rebalanceMonth
+        rebalanceMonth = 12; % 36 to check both scripts
+
+        global glob_tcopdrawReturns % raw (monthly) returns from simulations used for rebalancing
+        global glob_fminconoptions  % fmin con options declared as a global variable
+        glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+     
+        glob_fminconoptions = optimset('Algorithm','active-set', 'TolFun', 1e-19, 'TolCon', 1e-19, ...
+                    'TolX', 1e-19, 'MaxFunEvals', 1250, 'MaxIter', 2500, 'UseParallel', 'always');
+    %% given weights; do compounding and rebalancing mean-CVaR portfolio 
+
+        %{
+        NO fmincon
+        for a test: use compound month = 36; should be the same as CVaR for given weights
+        
+        input: set of weights, all simulations
+        output: portfolio CVaR and portfolio return with compounding
+        
+        use the same code as fmincon with compounding (no rebalancing)
+        don't use fmincon, simply calculate the CVaR and return
+        %}
+    
+      	%load('exportresults_1_2.mat')
+        
+        % uses fmincon CVaR weights
+        weights = fminconCVaREF.portWts;
+        % compounding
+        compoundingGivenWeights = subc_compoundingGivenWeights...
+            (weights,samplemonths,NumPorts,...
+                    RiskFreeRate, compound_dummy);
+        EFplotter(compoundingGivenWeights, 'g')
+        % rebalancing
+        rebalancingGivenWeights = subc_givenweights_rebalancing_CVaREF(NumPorts,...
+                weights, RiskFreeRate, compound_dummy)
+        EFplotter(rebalancingGivenWeights, 'r');
+        
+        % uses normal MV for unsmoothed historical
+        weights = unshistNormMeanVarEF.portWts; 
+        % compounding
+        uns_compoundingGivenWeights = subc_compoundingGivenWeights(weights,samplemonths,NumPorts,...
+                    RiskFreeRate, compound_dummy);
+        EFplotter(uns_compoundingGivenWeights, 'w')
+        % rebalancing
+        uns_rebalancingGivenWeights = subc_givenweights_rebalancing_CVaREF(NumPorts,...
+                weights, RiskFreeRate, compound_dummy);
+        EFplotter(uns_rebalancingGivenWeights, 'k')
+        
+
+    %% CVaR with Rebalancing (fmincon)
+    
+        startweights_compreturns = tcopNormWtsCVaREF.portWts; %histNormMeanVarEF.portWts; % so rebalancing and compounding start with same weights
+        constraint_compreturns = tcopNormWtsCVaREF.portReturns; %histNormMeanVarEF.portReturns; % so rebalancing and compounding try same return levels
+
+        'CVaR with rebalancing compounding every 12 months'
+        Rebalance_CVaREF = subc_fminconCVaREFWithRebalancing(samplemonths, NumPorts,...
+                startweights_compreturns, constraint_compreturns, RiskFreeRate, compound_dummy);
+        EFplotter(Rebalance_CVaREF, 'b')
+        save('rebalanceResults','Rebalance_CVaREF');
+    
+    %% CVaR fmincon with Compounding
+        %global glob_tcopdrawReturns % raw (monthly) returns from
+        %simulations used for rebalancing
+        %glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+        
+        'CVaR with compounding'
+        
+        %fminconCompoundCVaREF = subc_fminconCVaREF(samplemonths,NumPorts,...
+        %            startweights_compreturns, tcopNormMeanVarEF.portReturns, RiskFreeRate, compound_dummy);
+        fminconCompoundCVaREF = subc_fminconCVaRwithCompoundingEF(samplemonths, NumPorts,...
+                startweights_compreturns, constraint_compreturns, RiskFreeRate);
+        EFplotter(fminconCompoundCVaREF, 'c')
+    
+        
+    %% rebalancing/compounding graph
+        title('CVaR Efficient Frontier - normal weights and genetic')         
+        xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+        ylabel('Return (%)')
+        optinforatioplotter(histNormWtsCVaREF);
+        optinforatioplotter(unshistNormWtsCVaREF);
+        optinforatioplotter(tcopNormWtsCVaREF);
+        optinforatioplotter(fminconCVaREF);
+        %legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF',...
+        %    'With rebalancing', 'compounding - no rebalance', 'fmincon EF', ...
+        %    'Optimal Information Ratio', 'Location', 'SouthEast') 
+        legend('Given Weights Compounding', 'Given Weights Rebalancing', ...
+             'unsmoothed historical MV Given Weights Compounding', 'unsmoothed historical MV Given Weights Rebalancing', ...
+             'fmincon Rebalancing', 'fmincon Compounding', 'Optimal Information Ratio', 'Location', 'SouthEast')
+         
+    
+    %% save results
+    if expected_dummy == 0 
+        save(saveresults, 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj', ...
+            'histNormMeanVarEF', 'unshistNormMeanVarEF', 'tcopNormMeanVarEF', ...
+            'histNormWtsCVaREF', 'unshistNormWtsCVaREF', 'tcopNormWtsCVaREF', 'fminconCVaREF')
+    elseif expected_dummy == 1
+        save(saveresults, 'expectedReturnsObj', 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj', ...
+            'histNormMeanVarEF', 'unshistNormMeanVarEF', 'tcopNormMeanVarEF', ...
+            'histNormWtsCVaREF', 'unshistNormWtsCVaREF', 'tcopNormWtsCVaREF', 'fminconCVaREF')        
+    end
+        
+    save(saveresults, 'Rebalance_CVaREF', '-append')
+    save(saveresults, 'fminconCompoundCVaREF', '-append')
+    save(saveresults, 'rebalancingGivenWeights', '-append')
+    save(saveresults, 'compoundingGivenWeights', '-append')
+    save(saveresults, 'uns_compoundingGivenWeights', '-append')
+    save(saveresults, 'uns_rebalancingGivenWeights', '-append')
+    
+    %% write output to an excel file (different returns objects)
+    if windummy == 1
+        writedata(saveresults, writefilename, starttimeperioddummy, endtimeperioddummy, expected_dummy);
+    end
+    return
+ 
+    %% nested functions
+    
+    % Nested functions: can access variables in outer function, outer
+    % function can access variables within nested functions
+    
+    function meanvariance()
+
+    end
+    
+    function cvargivenweights()
+       
+    end
+
+    function cvarfmincon()
+
+    end
+
+
+end
+
+function optsharpeplotter(obj)
+        plot(obj.portSDs(obj.optSharpePt, 1)*(sqrt(12) * 100), obj.portReturns(obj.optSharpePt, 1)*(12 * 100), '-o', 'MarkerSize', 10)
+end          
+
+function optinforatioplotter(obj)
+        plot(obj.portCVaRs(obj.optSharpePt, 1)*(12) * (3 * 1e9), obj.portReturns(obj.optSharpePt, 1)*(12 * 100), '-o', 'MarkerSize', 10)
+end    
+
+function importplotter(saveresults, starttimeperioddummy, endtimeperioddummy)
+    
+    global expected
+    global meanvarianceonly
+    global creditAndVIX
+    
+    load(saveresults)
+    if starttimeperioddummy == 1
+        startdate = '1973';
+    elseif starttimeperioddummy == 2
+        startdate = '1994';
+    end
+
+    if creditAndVIX == 1
+        startdate = '1986';
+    end
+    if endtimeperioddummy == 1
+        enddate = 'May 2008';
+    elseif endtimeperioddummy == 2
+        enddate = '2009 (Present)';
+    end
+    
+    figure
+    hold on
+    
+    % mean variance plotter
+
+    EFplotter(histNormMeanVarEF, 'g')
+    EFplotter(unshistNormMeanVarEF, 'w') 
+    
+    % EFplotter(tcopNormMeanVarEF, 'r')
+    % optsharpeplotter(tcopNormMeanVarEF);
+    
+    optsharpeplotter(unshistNormMeanVarEF);
+    optsharpeplotter(histNormMeanVarEF);
+
+    legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF', ...
+        'Optimal Sharpe Ratio', 'Location', 'SouthEast')
+
+    MVEFtitle = ['Mean-Variance Efficient Frontier: ' startdate ' to ' enddate];
+    title(MVEFtitle)         
+    xlabel('Risk (SD %)')
+    ylabel('Return (%)')
+    % legend('Expected Assumptions', 'Optimal Sharpe Ratio', 'Location', 'SouthEast')
+    
+    hold off
+    
+    if meanvarianceonly == 0
+        figure
+        hold on
+        % CVaR EF plots
+
+        EFplotter(histNormWtsCVaREF, 'g')
+        EFplotter(unshistNormWtsCVaREF, 'w')
+        EFplotter(tcopNormWtsCVaREF, 'r')
+        % EFplotter(expectedWtsCVaREF, 'b')
+        EFplotter(fminconCVaREF, 'k')
+
+        CVaRtitle = ['CVaR Efficient Frontier: ' startdate ' to ' enddate];
+        title(CVaRtitle)         
+        xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+        ylabel('Return (%)')
+
+        optinforatioplotter(histNormWtsCVaREF);
+        optinforatioplotter(unshistNormWtsCVaREF);
+        optinforatioplotter(tcopNormWtsCVaREF);
+        % optinforatioplotter(expectedWtsCVaREF); 
+        optinforatioplotter(fminconCVaREF);
+
+        legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF',...
+        'fmincon', 'Optimal Information Ratio', 'Location', 'SouthEast')    
+    end
+end
+
+
+function y = importdata(importfilename, sheetname, starttimeperioddummy, endtimeperioddummy, cashreservedummy)
+    global expected
+    global creditNoVIX
+    global creditAndVIX
+    
+    expectedreturnsheet = 'exp data';
+    expectedcorrsheet = 'exp data';
+
+ 
+    i73row = ['6'];
+    i94row = ['257'];
+    i08row = ['429'];
+    i09row = ['445'];
+    
+    i83row = ['131'];
+    i86row = ['171'];
+    i90row = ['210'];
+    i04row = ['388'];
+    
+    equitycol = ['H'];
+    REcol = ['M'];
+    cashcol = ['N']; 
+    vixcol = ['O'];
+    
+    if creditNoVIX == 1   
+        if starttimeperioddummy == 1
+            startrow = i73row; % only if using IG credit, or IG until July '83
+            %startrow = i83row; % only if using credit BLEND!!!
+        elseif starttimeperioddummy == 2   
+            startrow = i94row;
+        end
+
+        if endtimeperioddummy == 1
+            endrow = i08row;
+        elseif endtimeperioddummy == 2
+            endrow = i09row;
+        end
+
+        if cashreservedummy == 1
+            lastcol = cashcol;
+        elseif cashreservedummy == 0
+            lastcol = REcol;   
+        end
+        
+    elseif creditAndVIX == 1
+        if endtimeperioddummy == 1
+            endrow = i08row;
+        elseif endtimeperioddummy == 2
+            endrow = i09row;
+        end
+        % startrow = i90row;
+        startrow = i86row;  % only if using credit BLEND!!!
+        
+        lastcol = vixcol;
+    end
+
+    importrange = [equitycol startrow ':' lastcol endrow];
+    [fundReturns] = xlsread(importfilename, sheetname, importrange);  
+    [blah, fundNames] = xlsread(importfilename, sheetname, [equitycol '4:' lastcol '4']);
+    
+        % ANNUAL EXPECTEDS
+    [expectCorr, Benchmarks] = xlsread(importfilename, expectedcorrsheet, 'J3:P10');
+    expectSigma = xlsread(importfilename, expectedreturnsheet, 'D4:D10');
+    
+    % TRANSPOSE: must be row vector!
+    expectReturn = xlsread(importfilename, expectedreturnsheet, 'C4:C10');
+    
+    y = {fundReturns, fundNames, expectCorr, expectSigma, expectReturn};
+end
+
+% to write output from export file into excel file
+function y = writedata(saveresults, writefilename, starttimeperioddummy, endtimeperioddummy, expected_dummy)
+
+        load(saveresults)
+        global expected
+        global creditNoVIX
+        global creditAndVIX
+        
+        global meanvarianceonly
+    
+        if creditNoVIX == 1
+            % write all the port weights, returns, sds, sharpes
+            sheetnum = [int2str(starttimeperioddummy) ';' int2str(endtimeperioddummy)];
+            MVsheet = ['MV output ' sheetnum];
+            CVaRsheet = ['CVaR out ' sheetnum];
+            corrsheet = ['Corr out ' sheetnum];
+
+            % xlswrite(writefilename, M, outsheet, range)
+            topstartrow = ['6'];
+            topendrow = ['30'];
+            botstartrow = ['35'];
+            botendrow = ['59'];
+
+            laststartrow = ['65'];
+            lastendrow = ['89'];
+
+            leftstartcol = ['A'];
+            leftendcol = ['J'];
+            rightstartcol = ['N'];
+            rightendcol = ['W'];
+        elseif creditAndVIX == 1
+            sheetnum = [int2str(starttimeperioddummy) ';' int2str(endtimeperioddummy)];
+            MVsheet = ['MV output ' sheetnum];
+            CVaRsheet = ['CVaR out ' sheetnum];
+            corrsheet = ['Corr out ' sheetnum];
+            
+            topstartrow = ['6'];
+            topendrow = ['30'];
+            botstartrow = ['35'];
+            botendrow = ['59'];
+
+            laststartrow = ['65'];
+            lastendrow = ['89'];
+
+            leftstartcol = ['A'];
+            leftendcol = ['K'];
+            rightstartcol = ['N'];
+            rightendcol = ['X'];        
+        end
+        
+        
+        % mean variance
+        xlswrite(writefilename, ...
+            [histNormMeanVarEF.portWts histNormMeanVarEF.sharpeRatio histNormMeanVarEF.portReturns*12 (12^0.5)*histNormMeanVarEF.portSDs], ...
+            MVsheet, [leftstartcol topstartrow ':' leftendcol topendrow]) % hist mean-var
+
+        xlswrite(writefilename, ...
+            [unshistNormMeanVarEF.portWts unshistNormMeanVarEF.sharpeRatio unshistNormMeanVarEF.portReturns*12 (12^0.5)*unshistNormMeanVarEF.portSDs], ...
+            MVsheet, [rightstartcol topstartrow ':' rightendcol topendrow]) % uns mean-var
+        xlswrite(writefilename, ...
+            [tcopNormMeanVarEF.portWts tcopNormMeanVarEF.sharpeRatio tcopNormMeanVarEF.portReturns*12 (12^0.5)*tcopNormMeanVarEF.portSDs], ...
+            MVsheet, [leftstartcol botstartrow ':' leftendcol botendrow]) % tcop simulated mean-var    
+        
+        if expected == 1
+            xlswrite(writefilename, ...
+                [expNormMeanVarEF.portWts expNormMeanVarEF.sharpeRatio expNormMeanVarEF.portReturns*12 (12^0.5)*expNormMeanVarEF.portSDs], ...
+                MVsheet, [rightstartcol botstartrow ':' rightendcol botendrow]) % expected mean-var        
+        end
+        
+        if meanvarianceonly == 0
+            % mean CVaR
+            xlswrite(writefilename, ...
+                [histNormWtsCVaREF.portWts histNormWtsCVaREF.sharpeRatio histNormWtsCVaREF.portReturns*12 (12)*histNormWtsCVaREF.portCVaRs], ...
+                CVaRsheet, [leftstartcol topstartrow ':' leftendcol topendrow]) % hist mean-CVaR
+            xlswrite(writefilename, ...
+                [unshistNormWtsCVaREF.portWts unshistNormWtsCVaREF.sharpeRatio unshistNormWtsCVaREF.portReturns*12 (12)*unshistNormWtsCVaREF.portCVaRs], ...
+                CVaRsheet, [rightstartcol topstartrow ':' rightendcol topendrow]) % uns mean-CVaR
+            xlswrite(writefilename, ...
+                [tcopNormWtsCVaREF.portWts tcopNormWtsCVaREF.sharpeRatio tcopNormWtsCVaREF.portReturns*12 (12)*tcopNormWtsCVaREF.portCVaRs], ...
+                CVaRsheet, [leftstartcol botstartrow ':' leftendcol botendrow]) % tcop simulated mean-CVaR
+            xlswrite(writefilename, ...
+                [fminconCVaREF.portWts fminconCVaREF.sharpeRatio fminconCVaREF.portReturns*12 (12)*fminconCVaREF.portCVaRs], ...
+                CVaRsheet, [rightstartcol botstartrow ':' rightendcol botendrow]) % fmincon mean-CVaR
+
+            if expected == 1
+                xlswrite(writefilename, ...
+                    [expectedWtsCVaREF.portWts expectedWtsCVaREF.sharpeRatio expectedWtsCVaREF.portReturns*12 (12)*expectedWtsCVaREF.portCVaRs], ...
+                    CVaRsheet, [leftstartcol laststartrow ':' leftendcol lastendrow]) % expected mean-CVaR        
+            end
+        end
+        
+        % write corr tables, hist and rhohat, and arithmetic average returns/std
+        % means, stds
+        retstartcol = ['C'];
+        if creditNoVIX == 1
+            retendcol = ['I'];
+        elseif creditAndVIX == 1
+            retendcol = ['J'];
+        end
+        
+        xlswrite(writefilename, ...
+            [historicalReturns6fact.arithAnnAvg ; historicalReturns6fact.StandDev * sqrt(12)], ...
+            corrsheet, [retstartcol '5:' retendcol '6'])
+        xlswrite(writefilename, ...
+            [unshistrawReturnsObj.arithAnnAvg ; unshistrawReturnsObj.StandDev * sqrt(12)], ...
+            corrsheet, [retstartcol '8:' retendcol '9'])
+        xlswrite(writefilename, ...
+            [tcoprawReturnsObj.SimAvgArithMoAvgRet * 12 ; tcoprawReturnsObj.SimAvgArithMoAvgSD * sqrt(12)], ...
+            corrsheet, [retstartcol '11:' retendcol '12'])
+        
+        if expected_dummy == 1
+            xlswrite(writefilename, ...
+                [expectedReturnsObj.expavgret * 12 ; expectedReturnsObj.expavgSD * sqrt(12)], ...
+                corrsheet, [retstartcol '14:' retendcol '15'])
+        end
+        
+        % corrs
+        % rhohat
+        if creditNoVIX == 1
+            xlswrite(writefilename, ...
+                [tcoprawReturnsObj.RHOHAT], ...
+                corrsheet, ['B22:H28'])
+            % nuhat
+            xlswrite(writefilename, ...
+                [tcoprawReturnsObj.nuhat], ...
+                corrsheet, ['B30'])
+            % hist corrs
+            xlswrite(writefilename, ...
+                [historicalReturns6fact.corrMatrix], ...
+                corrsheet, ['K22:Q28'])  
+        elseif creditAndVIX == 1
+            xlswrite(writefilename, ...
+                [tcoprawReturnsObj.RHOHAT], ...
+                corrsheet, ['B22:I29'])
+            % nuhat
+            xlswrite(writefilename, ...
+                [tcoprawReturnsObj.nuhat], ...
+                corrsheet, ['B31'])
+            % hist corrs
+            xlswrite(writefilename, ...
+                [historicalReturns6fact.corrMatrix], ...
+                corrsheet, ['L22:S29'])  
+        end
+end
+
+%{
+function y = expectedonly()
+
+    NumNormPorts = 25;
+    RiskFreeRate = 0.03;
+    importfilename = '2009_11_12_expectedassumptions_10.xls';
+    expectedreturnsheet = 'exp data';
+    expectedcorrsheet = 'exp data';
+    
+    writefilename = ['graphs and data/outputsummary_' 'expected' '.xls'];
+    
+    % ANNUAL EXPECTEDS
+    [expectCorr, Benchmarks] = xlsread(importfilename, expectedcorrsheet, 'J3:Q11');
+    expectSigma = xlsread(importfilename, expectedreturnsheet, 'D4:D11');
+    
+    % TRANSPOSE: must be row vector!
+    expectReturn = xlsread(importfilename, expectedreturnsheet, 'C4:C11');
+    expectedReturnsObj = class_expectedreturns(expectReturn, expectSigma, expectCorr);
+    
+    [blah, fundNames] = xlsread(importfilename, expectedcorrsheet, ['J3:P3']);
+    
+    global globalEFconstraints;
+    constraintdummy = 0;
+    globalEFconstraints = class_constraintcreator_01(fundNames, constraintdummy);
+
+    %% mean-variance
+    expNormMeanVarEF = subc_normalmeanvarEF(expectedReturnsObj.expavgret, ...
+        NumNormPorts, expectedReturnsObj.expCov, RiskFreeRate);
+    optsharpeplotter(expNormMeanVarEF);
+    
+    %{
+    %% tcopula
+    
+    EFonly_loadfits = 0; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+    if EFonly_loadfits == 0
+        save(saveimportfile, ...
+            'fundReturns', 'fundNames', 'expectCorr', 'expectSigma', 'expectReturn');
+        %% Ljung-Box Q test for serial correlation in monthly returns
+        %% piecewise GPD fit to tails and center of historical returns
+        %% computes kendall's tau correlation
+        'simulations class'
+        expected_dummy = 0;
+        expected_mu_sigma = [];
+        histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths,...
+            numofGPDdraws, tcopTotalRuns, lowtailp, hightailp, expected_dummy, expected_mu_sigma);
+        % plot2tcopfinalvalues(histSims)
+        %% put simulations into own rawreturns object
+        'simulations returns subclass'
+        % unsmoothed historical raw returns
+        unshistrawReturnsObj = subc_simreturns(histSims.unsmoothedReturns, histSims.RHOHAT, histSims.nuhat);
+        % tcop simulation raw returns
+        tcoprawReturnsObj = subc_simreturns(histSims.tcopdrawRawReturns, histSims.RHOHAT, histSims.nuhat);
+        % mean(tcoprawReturnsObj.arithMoAvg, 3)
+        % mean(tcoprawReturnsObj.geomMoAvg, 3);
+        'saved simulations data'
+        save(savesimulations,'histSims', 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj');
+    elseif EFonly_loadfits == 1
+        % load(saveimportfile)
+        load(savesimulations)
+    end
+    %}
+    
+    %% save
+    
+    sheetnum = [' - exp'];
+    MVsheet = ['MV output ' sheetnum];
+    CVaRsheet = ['CVaR out ' sheetnum];
+    corrsheet = ['Corr out ' sheetnum];
+
+    topstartrow = ['6'];
+    topendrow = ['30'];
+    botstartrow = ['35'];
+    botendrow = ['59'];
+
+    laststartrow = ['65'];
+    lastendrow = ['89'];
+
+    leftstartcol = ['A'];
+    leftendcol = ['K'];
+    rightstartcol = ['N'];
+    rightendcol = ['X'];   
+
+    % mean variance results
+
+    xlswrite(writefilename, ...
+        [expNormMeanVarEF.portWts expNormMeanVarEF.sharpeRatio expNormMeanVarEF.portReturns*12 (12^0.5)*expNormMeanVarEF.portSDs], ...
+        MVsheet, [rightstartcol botstartrow ':' rightendcol botendrow]) % expected mean-var       
+
+    % averages, standard deviations
+    xlswrite(writefilename, ...
+        [expectedReturnsObj.expavgret * 12 ; expectedReturnsObj.expavgSD * sqrt(12)], ...
+        corrsheet, [retstartcol '14:' retendcol '15'])
+end
+%}
+@
+
+
+1.18
+log
+@'now compounding/rebalancing is own figure; ran code all the way through once'
+@
+text
+@a39 92
+function y = expectedonly()
+
+    NumNormPorts = 25;
+    RiskFreeRate = 0.03;
+    importfilename = '2009_11_12_expectedassumptions_10.xls';
+    expectedreturnsheet = 'exp data';
+    expectedcorrsheet = 'exp data';
+    
+    writefilename = ['graphs and data/outputsummary_' 'expected' '.xls'];
+    
+    % ANNUAL EXPECTEDS
+    [expectCorr, Benchmarks] = xlsread(importfilename, expectedcorrsheet, 'J3:Q11');
+    expectSigma = xlsread(importfilename, expectedreturnsheet, 'D4:D11');
+    
+    % TRANSPOSE: must be row vector!
+    expectReturn = xlsread(importfilename, expectedreturnsheet, 'C4:C11');
+    expectedReturnsObj = class_expectedreturns(expectReturn, expectSigma, expectCorr);
+    
+    [blah, fundNames] = xlsread(importfilename, expectedcorrsheet, ['J3:P3']);
+    
+    global globalEFconstraints;
+    constraintdummy = 0;
+    globalEFconstraints = class_constraintcreator_01(fundNames, constraintdummy);
+
+    %% mean-variance
+    expNormMeanVarEF = subc_normalmeanvarEF(expectedReturnsObj.expavgret, ...
+        NumNormPorts, expectedReturnsObj.expCov, RiskFreeRate);
+    optsharpeplotter(expNormMeanVarEF);
+    
+    %{
+    %% tcopula
+    
+    EFonly_loadfits = 0; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+    if EFonly_loadfits == 0
+        save(saveimportfile, ...
+            'fundReturns', 'fundNames', 'expectCorr', 'expectSigma', 'expectReturn');
+        %% Ljung-Box Q test for serial correlation in monthly returns
+        %% piecewise GPD fit to tails and center of historical returns
+        %% computes kendall's tau correlation
+        'simulations class'
+        expected_dummy = 0;
+        expected_mu_sigma = [];
+        histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths,...
+            numofGPDdraws, tcopTotalRuns, lowtailp, hightailp, expected_dummy, expected_mu_sigma);
+        % plot2tcopfinalvalues(histSims)
+        %% put simulations into own rawreturns object
+        'simulations returns subclass'
+        % unsmoothed historical raw returns
+        unshistrawReturnsObj = subc_simreturns(histSims.unsmoothedReturns, histSims.RHOHAT, histSims.nuhat);
+        % tcop simulation raw returns
+        tcoprawReturnsObj = subc_simreturns(histSims.tcopdrawRawReturns, histSims.RHOHAT, histSims.nuhat);
+        % mean(tcoprawReturnsObj.arithMoAvg, 3)
+        % mean(tcoprawReturnsObj.geomMoAvg, 3);
+        'saved simulations data'
+        save(savesimulations,'histSims', 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj');
+    elseif EFonly_loadfits == 1
+        % load(saveimportfile)
+        load(savesimulations)
+    end
+    %}
+    
+    %% save
+    
+    sheetnum = [' - exp'];
+    MVsheet = ['MV output ' sheetnum];
+    CVaRsheet = ['CVaR out ' sheetnum];
+    corrsheet = ['Corr out ' sheetnum];
+
+    topstartrow = ['6'];
+    topendrow = ['30'];
+    botstartrow = ['35'];
+    botendrow = ['59'];
+
+    laststartrow = ['65'];
+    lastendrow = ['89'];
+
+    leftstartcol = ['A'];
+    leftendcol = ['K'];
+    rightstartcol = ['N'];
+    rightendcol = ['X'];   
+
+    % mean variance results
+
+    xlswrite(writefilename, ...
+        [expNormMeanVarEF.portWts expNormMeanVarEF.sharpeRatio expNormMeanVarEF.portReturns*12 (12^0.5)*expNormMeanVarEF.portSDs], ...
+        MVsheet, [rightstartcol botstartrow ':' rightendcol botendrow]) % expected mean-var       
+
+    % averages, standard deviations
+    xlswrite(writefilename, ...
+        [expectedReturnsObj.expavgret * 12 ; expectedReturnsObj.expavgSD * sqrt(12)], ...
+        corrsheet, [retstartcol '14:' retendcol '15'])
+end
+d168 1
+a168 1
+    EFonly_loadfits = 1; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+d210 2
+d225 1
+a225 1
+        title('Mean-Variance Efficient Frontier - Expected Assumptions')         
+d235 4
+a238 2
+        legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF', ...
+            'Optimal Sharpe Ratio', 'Location', 'SouthEast')
+d294 1
+a294 1
+             'compounding given weights','fmincon EF','Optimal Information Ratio', 'Location', 'SouthEast')
+d301 2
+a302 2
+    %% given weights; do compounding and rebalancing mean-CVaR portfolio 
+
+d305 1
+d307 14
+a332 2
+        %weights = fminconCVaREF.portWts;
+        weights = tcopNormWtsCVaREF.portWts;
+d334 7
+d344 1
+a344 1
+        EFplotter(rebalancingGivenWeights, 'b')
+d346 2
+d349 7
+a355 3
+        compoundingGivenWeights = subc_compoundingGivenWeights(weights,samplemonths,NumPorts,...
+                    startweights_compreturns, constraint_compreturns, RiskFreeRate, compound_dummy);
+        EFplotter(compoundingGivenWeights, 'c')
+d357 1
+a359 1
+        
+a361 9
+        compound_dummy = 1; % 1 = compound, 0 = don't compound
+        
+         
+        global glob_tcopdrawReturns % raw (monthly) returns from simulations used for rebalancing
+        global glob_fminconoptions  % fmin con options declared as a global variable
+        glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+     
+        glob_fminconoptions = optimset('Algorithm','active-set', 'TolFun', 1e-19, 'TolCon', 1e-19, ...
+                    'TolX', 1e-19, 'MaxFunEvals', 1250, 'MaxIter', 2500, 'UseParallel', 'always');
+a372 5
+    
+        global compoundmonth
+        compoundmonth = 12;
+  
+        compound_dummy = 1; % do compounding?
+d379 1
+a379 1
+                startweights_compreturns, constraint_compreturns, RiskFreeRate)
+d383 1
+a383 1
+    
+d394 3
+a396 2
+        legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Simulated tcopula EF',...
+             'compounding given weights','fmincon EF','Optimal Information Ratio', 'Location', 'SouthEast')
+d414 2
+d740 95
+@
+
+
+1.17
+log
+@'given weights rebalancing works'
+@
+text
+@d360 10
+d371 48
+d421 1
+d430 1
+a430 1
+     %{
+d443 2
+a444 2
+        glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+    %}
+d447 1
+a447 1
+    %{
+a456 13
+    %}
+        
+    %% given weights; do compounding mean-CVaR portfolio
+        %{
+        NO fmincon
+        for a test: use compound month = 36; should be the same as CVaR for given weights
+        
+        input: set of weights, all simulations
+        output: portfolio CVaR and portfolio return with compounding
+        
+        use the same code as fmincon with compounding (no rebalancing)
+        don't use fmincon, simply calculate the CVaR and return
+        %}
+a457 3
+      	%load('exportresults_1_2.mat')
+        %weights = fminconCVaREF.portWts;
+        weights = = tcopNormWtsCVaREF.portWts;
+a458 9
+        rebalancingGivenWeights = subc_givenweights_rebalancing_CVaREF(NumPorts,...
+                givenweights, RiskFreeRate, compound_dummy)
+        EFplotter(rebalancingGivenWeights, 'b')
+        
+        compoundingGivenWeights = subc_compoundingGivenWeights(weights,samplemonths,NumPorts,...
+                    startweights_compreturns, constraint_compreturns, RiskFreeRate, compound_dummy);
+        EFplotter(compoundingGivenWeights, 'c')
+        
+    %% CVaR via fmincon
+a459 8
+    cvarfmincon();
+        'fmincon'
+        compound_dummy = 0; % do compounding?
+        fminconCVaREF = subc_fminconCVaREF(samplemonths, NumPorts,...
+                    tcopNormWtsCVaREF.portWts, tcopNormMeanVarEF.portReturns, RiskFreeRate, compound_dummy);
+        EFplotter(fminconCVaREF, 'k')
+        'end of fmincon'
+
+d473 2
+a474 6
+        %save(saveresults, 'Rebalance_CVaREF', '-append')
+        % only if we are doing rebalancing code
+        
+        hold off
+        % save(savesimulations,'histSims');
+        
+d485 4
+a488 2
+    %save(saveresults, 'Rebalance_CVaREF', '-append')
+    %save(saveresults, 'fminconCompoundCVaREF', '-append')
+@
+
+
+1.16
+log
+@*** empty log message ***
+@
+text
+@d260 1
+a260 1
+    EFonly_loadfits = 0; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+a301 1
+    return
+d343 1
+a343 3
+    
+    
+    
+d362 1
+a362 1
+
+d365 1
+d367 1
+a367 1
+        compound_dummy = 1; % 1 = compound, 0 = don't compound
+d371 1
+d380 1
+a380 1
+
+d385 1
+a385 1
+    
+d388 1
+d398 1
+a398 1
+    
+d411 12
+a422 3
+        compoundingGivenWeights = subc_compoundingGivenWeights(weights);
+        EFplotter(compoundingGivenWeights, 'r')
+        
+d441 3
+d445 2
+a446 3
+            'With rebalancing', 'compounding - no rebalance', 'fmincon EF', ...
+            'Optimal Information Ratio', 'Location', 'SouthEast')         
+ 
+d463 2
+a464 2
+    save(saveresults, 'Rebalance_CVaREF', '-append')
+    save(saveresults, 'fminconCompoundCVaREF', '-append')
+@
+
+
+1.15
+log
+@*** empty log message ***
+@
+text
+@d260 1
+a260 1
+    EFonly_loadfits = 1; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+d302 1
+d366 2
+a367 2
+        startweights_compreturns = tcopNormMeanVarEF %histNormMeanVarEF.portWts; % so rebalancing and compounding start with same weights
+        constraint_compreturns = histNormMeanVarEF.portReturns; % so rebalancing and compounding try same return levels
+d374 1
+a374 1
+                    'TolX', 1e-19, 'MaxFunEvals', 500, 'MaxIter', 2500, 'UseParallel', 'always');
+a401 3
+        
+        do 
+        
+a409 1
+        
+d411 2
+@
+
+
+1.14
+log
+@*** empty log message ***
+@
+text
+@d365 3
+d373 1
+a373 1
+                    'TolX', 1e-19, 'MaxFunEvals', 1250, 'MaxIter', 2500, 'UseParallel', 'always');
+d377 1
+a377 1
+                histNormMeanVarEF.portWts, histNormMeanVarEF.portReturns, RiskFreeRate, compound_dummy);
+d393 1
+a393 1
+        %            tcopNormWtsCVaREF.portWts, tcopNormMeanVarEF.portReturns, RiskFreeRate, compound_dummy);
+d395 1
+a395 1
+                tcopNormWtsCVaREF.portWts, tcopNormMeanVarEF.portReturns, RiskFreeRate)
+@
+
+
+1.13
+log
+@'create histogram for simulations given weights; rolling period (annual) almost complete'
+@
+text
+@d21 1
+a21 1
+            'woooot
+d23 1
+d260 1
+a260 1
+    EFonly_loadfits = 0; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+a362 1
+    %{
+d364 14
+a377 10
+    global glob_tcopdrawReturns % raw (monthly) returns from simulations used for rebalancing
+    glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+    'CVaR with arithmetic rebalancing'
+    Rebalance_CVaREF = subc_fminconCVaREFWithRebalancing(samplemonths, NumPorts,...
+            histNormMeanVarEF.portWts, histNormMeanVarEF.portReturns, RiskFreeRate);
+    EFplotter(Rebalance_CVaREF, 'b')
+    save('rebalanceResults','Rebalance_CVaREF');
+    %}
+        
+    %{
+d389 5
+a393 6
+        fmincomCompoundCVaREF = subc_fminconCVaREF(samplemonths,NumPorts,...
+                    tcopNormWtsCVaREF.portWts, tcopNormMeanVarEF.portReturns, RiskFreeRate, compound_dummy);
+        %fmincomCompoundCVaREF = subc_fminconCVaRwithCompoundingEF(samplemonths, NumPorts,...
+        %        tcopNormWtsCVaREF.portWts, tcopNormMeanVarEF.portReturns, RiskFreeRate)
+        EFplotter(fmincomCompoundCVaREF, 'c')
+    %}
+d395 18
+d414 1
+d416 1
+a416 1
+
+d421 2
+d431 1
+a431 1
+            'Arithmetic rebalancing', 'fmincon EF', ...
+d450 3
+a452 1
+        
+@
+
+
+1.12
+log
+@'finished CVaR for joing, 75%, 85%'
+@
+text
+@d12 24
+a35 7
+    if alltimedummy == 1
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 1, windummy, expected_dummy, CVaR_lowp);
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 2, windummy, expected_dummy, CVaR_lowp);
+        % main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 1, windummy);
+        % main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 2, windummy);
+    elseif alltimedummy == 0
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy, expected_dummy, CVaR_lowp);
+a36 1
+    
+d255 3
+a257 1
+         
+d259 1
+a259 1
+    EFonly_loadfits = 1; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+d678 1
+a678 1
+                [histNormWtsCVaREF.portWts histNormWtsCVaREF.sharpeRatio histNormWtsCVaREF.portReturns*12 (12^0.5)*histNormWtsCVaREF.portCVaRs], ...
+d681 1
+a681 1
+                [unshistNormWtsCVaREF.portWts unshistNormWtsCVaREF.sharpeRatio unshistNormWtsCVaREF.portReturns*12 (12^0.5)*unshistNormWtsCVaREF.portCVaRs], ...
+d684 1
+a684 1
+                [tcopNormWtsCVaREF.portWts tcopNormWtsCVaREF.sharpeRatio tcopNormWtsCVaREF.portReturns*12 (12^0.5)*tcopNormWtsCVaREF.portCVaRs], ...
+d687 1
+a687 1
+                [fminconCVaREF.portWts fminconCVaREF.sharpeRatio fminconCVaREF.portReturns*12 (12^0.5)*fminconCVaREF.portCVaRs], ...
+d692 1
+a692 1
+                    [expectedWtsCVaREF.portWts expectedWtsCVaREF.sharpeRatio expectedWtsCVaREF.portReturns*12 (12^0.5)*expectedWtsCVaREF.portCVaRs], ...
+@
+
+
+1.11
+log
+@add rebalancing code
+@
+text
+@d144 1
+a144 1
+        saveresults = ['exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat']
+d147 1
+a147 1
+        saveresults = ['exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+d153 1
+a153 1
+    writefilename = ['graphs and data/outputsummary_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.xls'];
+d161 1
+a161 1
+   
+d241 1
+a241 1
+    EFonly_loadfits = 0; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+d344 1
+a344 1
+    
+d350 1
+a350 1
+            histNormMeanVarEF.portWts, histNormMeanVarEF.portReturns, RiskFreeRate)
+d352 2
+a353 1
+
+d355 1
+d357 2
+a358 1
+        %global glob_tcopdrawReturns % raw (monthly) returns from simulations used for rebalancing
+d367 4
+a370 5
+        %fmincomCompoundCVaREF = subc_fminconCVaREF(samplemonths,
+        %NumPorts,...
+        %            tcopNormWtsCVaREF.portWts, tcopNormMeanVarEF.portReturns, RiskFreeRate, compound_dummy);
+        fmincomCompoundCVaREF = subc_fminconCVaRwithCompoundingEF(samplemonths, NumPorts,...
+                tcopNormWtsCVaREF.portWts, tcopNormMeanVarEF.portReturns, RiskFreeRate)
+d372 1
+d389 1
+a389 1
+            'rebalancing', 'fmincon EF', ...
+@
+
+
+1.10
+log
+@'made new subclass for CVaR with compounding'
+@
+text
+@d1 1
+a1 1
+% main organizing function
+d3 2
+a4 1
+function aaa_CVaR_EF_sim_02(samplemonths, numofGPDdraws, lowtailp, hightailp, windummy, alltimedummy, starttimeperioddummy, endtimeperioddummy, expected_dummy)
+d13 2
+a14 2
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 1, windummy, expected_dummy);
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 2, windummy, expected_dummy);
+d18 1
+a18 1
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy, expected_dummy);
+d116 1
+a116 1
+function main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy, expected_dummy)
+d193 2
+d241 1
+a241 1
+    EFonly_loadfits = 1; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+d271 7
+a277 1
+        save(savesimulations,'histSims', 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj');
+d321 7
+d333 1
+a333 1
+            NumPorts, histSims.arithRawFinalFundValue, histNormMeanVarEF.portWts, RiskFreeRate);    
+d336 1
+a336 1
+            NumPorts, histSims.arithRawFinalFundValue, unshistNormMeanVarEF.portWts, RiskFreeRate);      
+d339 1
+a339 1
+            NumPorts, histSims.arithRawFinalFundValue, tcopNormMeanVarEF.portWts, RiskFreeRate);     
+d344 1
+d346 6
+a351 6
+    %global glob_tcopdrawReturns % raw (monthly) returns from simulations used for rebalancing
+    %glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+    %'CVaR with rebalancing'
+    %Rebalance_CVaREF = subc_fminconCVaREFWithRebalancing(samplemonths, NumPorts,...
+    %        histNormMeanVarEF.portWts, histNormMeanVarEF.portReturns, RiskFreeRate)
+    %EFplotter(Rebalance_CVaREF, 'b')
+d355 1
+a355 1
+        global glob_tcopdrawReturns % raw (monthly) returns from simulations used for rebalancing
+d370 1
+a370 1
+        
+@
+
+
+1.9
+log
+@'untested compounding CVaR added to fmincon, need to use compound_dummy; need to check proceed step, changed to ||'
+@
+text
+@d154 1
+a154 1
+    writedummy = 1; % to only create an excel file of results from export .mat results file
+d160 2
+d163 2
+a164 1
+        %{ % used for adding expected stuff to save
+d238 1
+a238 1
+    EFonly_loadfits = 0; % loads from .mat files the input and simulations --> runs only the efficient frontiers and saves export
+d329 25
+a353 8
+%{
+    global glob_tcopdrawReturns % raw (monthly) returns from simulations used for rebalancing
+    glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+    'CVaR with rebalancing'
+    Rebalance_CVaREF = subc_fminconCVaREFWithRebalancing(samplemonths, NumPorts,...
+            histNormMeanVarEF.portWts, histNormMeanVarEF.portReturns, RiskFreeRate)
+    EFplotter(Rebalance_CVaREF, 'b')
+%}
+d356 1
+a356 1
+        compou
+@
+
+
+1.8
+log
+@'changed name of CVaREFwithRebalancing initiator function (should still change names of the other nested functions); added CVaRwithRebalancing to aaa_; simulations.mat also includes the returns objects, allows for continuing from the saved simulations now'
+@
+text
+@d3 1
+a3 1
+function aaa_CVaR_EF_sim_02(samplemonths, numofGPDdraws, lowtailp, hightailp, windummy, alltimedummy, starttimeperioddummy, endtimeperioddummy)
+d12 2
+a13 2
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 1, windummy);
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 2, windummy);
+d17 1
+a17 1
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy);
+d45 39
+a102 4
+    expNormMeanVarEF = subc_normalmeanvarEF(expectedReturnsObj.expavgret, ...
+        NumNormPorts, expectedReturnsObj.expCov, RiskFreeRate);
+    optsharpeplotter(expNormMeanVarEF);
+
+d115 1
+a115 1
+function main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy)
+a116 1
+    
+a120 1
+    
+a127 1
+    
+a141 1
+        savefilename = ['exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+d146 1
+a146 1
+        savefilename = ['exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+d154 1
+a154 2
+
+    writedummy = 0; % to only create an excel file of results from export .mat results file
+a155 1
+    
+a157 1
+    
+d161 10
+d173 1
+a173 1
+            writedata(saveresults, writefilename, starttimeperioddummy, endtimeperioddummy)
+d179 1
+a179 1
+            importplotter(savefilename, starttimeperioddummy, endtimeperioddummy)
+a181 1
+        
+d185 1
+a185 1
+        fundNames = importdummy{2};    
+d187 2
+a188 2
+        expectSigma = importdummy{4};
+        expectReturn = importdummy{5};
+d190 1
+a190 2
+        save(saveimportfile, ...
+            'fundReturns', 'fundNames', 'expectCorr', 'expectSigma', 'expectReturn');
+a191 1
+        
+d193 4
+d202 1
+a204 1
+
+d208 3
+a210 2
+    expectReturn = expectReturn'./12;
+    expectSigma = expectSigma'./sqrt(12);
+a211 1
+
+a218 1
+    
+a225 2
+
+    RiskFreeRate = historicalReturns6fact.arithAnnAvg(7); % use historical annual cash arithmetic return as the risk free rate
+d227 8
+a235 1
+    
+d237 2
+a238 1
+
+d243 12
+a254 2
+        histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths,...
+            numofGPDdraws, tcopTotalRuns, lowtailp, hightailp);
+d298 1
+a298 1
+        save(savefilename, 'historicalReturns6fact', 'histSims', ...
+d304 1
+a304 1
+        save(savefilename, 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj', ...
+d326 1
+d330 1
+a330 1
+    Rebalance_CVaREF = subc_fminconCVaREF(samplemonths, NumPorts,...
+d333 1
+a333 1
+      
+d336 2
+a337 1
+        
+d339 1
+a339 1
+                    tcopNormWtsCVaREF.portWts, tcopNormMeanVarEF.portReturns, RiskFreeRate);
+a340 1
+
+a343 1
+
+a347 1
+        
+d349 5
+a353 1
+            'fmincon EF', 'Optimal Information Ratio', 'Location', 'SouthEast')         
+a354 4
+        save(savefilename, 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj', ...
+            'histNormMeanVarEF', 'unshistNormMeanVarEF', 'tcopNormMeanVarEF', ...
+            'histNormWtsCVaREF', 'unshistNormWtsCVaREF', 'tcopNormWtsCVaREF', 'fminconCVaREF', ...
+            'Rebalance_CVaREF')
+d358 9
+a368 1
+
+a369 1
+
+d371 1
+a371 1
+        writedata(savefilename, writefilename, starttimeperioddummy, endtimeperioddummy);
+a372 1
+    
+d374 1
+a374 1
+    
+d403 1
+a403 1
+function importplotter(savefilename, starttimeperioddummy, endtimeperioddummy)
+d409 1
+a409 1
+    load(savefilename)
+d411 1
+a411 1
+        startdate = '1983';
+d504 2
+a505 2
+            % startrow = i73row; % only if using IG credit
+            startrow = i83row; % only if using credit BLEND!!!
+d549 1
+a549 1
+function y = writedata(savefilename, writefilename, starttimeperioddummy, endtimeperioddummy)
+d551 1
+a551 1
+        load(savefilename)
+d658 1
+a658 1
+        if expected == 1
+@
+
+
+1.7
+log
+@Add a lot of rebalance comments to CVaR code.
+@
+text
+@d99 2
+a100 2
+    creditNoVIX = 0;
+    creditAndVIX = 1;
+d125 1
+a125 1
+    plotterdummy = 1; % to only plot the results from exportresults_.mat; in windows
+d130 1
+a130 1
+    createinputfileonly = 1; % to only create input .mat file; for SSH into linux
+d191 1
+d193 24
+a216 17
+    %% Ljung-Box Q test for serial correlation in monthly returns
+    %% piecewise GPD fit to tails and center of historical returns
+    %% computes kendall's tau correlation
+    'simulations class'
+    histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths,...
+        numofGPDdraws, tcopTotalRuns, lowtailp, hightailp);
+    % plot2tcopfinalvalues(histSims)
+    
+    %% put simulations into own rawreturns object
+    'simulations returns subclass'
+    % unsmoothed historical raw returns
+    unshistrawReturnsObj = subc_simreturns(histSims.unsmoothedReturns, histSims.RHOHAT, histSims.nuhat);
+    % tcop simulation raw returns
+    tcoprawReturnsObj = subc_simreturns(histSims.tcopdrawRawReturns, histSims.RHOHAT, histSims.nuhat);
+    % mean(tcoprawReturnsObj.arithMoAvg, 3)
+    % mean(tcoprawReturnsObj.geomMoAvg, 3);
+    
+d218 1
+a218 2
+    meanvariance();
+    
+a221 1
+
+a225 1
+
+a229 1
+
+a232 1
+
+a236 1
+
+a239 1
+
+a241 1
+
+a242 1
+
+a248 3
+
+    
+    
+a253 1
+    
+a255 1
+        
+a258 1
+
+a261 1
+
+a264 1
+
+a267 1
+        
+d270 9
+a278 1
+        
+d300 2
+a301 1
+            'histNormWtsCVaREF', 'unshistNormWtsCVaREF', 'tcopNormWtsCVaREF', 'fminconCVaREF')
+d303 1
+a303 1
+        save(savesimulations,'histSims');
+d305 3
+@
+
+
+1.6
+log
+@"added a script z_expected_CVaR_... to calculate the CVaR for some weights Jing ran MV on"
+@
+text
+@a264 1
+        
+@
+
+
+1.5
+log
+@"fixed the import data function, properly accounts for 1986 start of credit blend; still need to make it so can do IG credit"
+@
+text
+@d114 3
+a116 3
+        saveimportfile = ['/afs/acpub.duke.edu/users/i/d/idw3/AFSDocs/MATLAB/importdata_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+        savefilename = ['/afs/acpub.duke.edu/users/i/d/idw3/AFSDocs/MATLAB/exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+        savesimulations = [simulations_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+d125 1
+a125 1
+    plotterdummy = 0; % to only plot the results from exportresults_.mat; in windows
+d130 1
+a130 1
+    createinputfileonly = 0; % to only create input .mat file; for SSH into linux
+d178 1
+a178 1
+    RiskFreeRate = 0.03; % assumption for finding Sharpe pt
+d189 3
+d265 1
+d351 1
+a351 1
+        startdate = '1973';
+d398 1
+a398 1
+        EFplotter(expectedWtsCVaREF, 'b')
+d409 1
+a409 1
+        optinforatioplotter(expectedWtsCVaREF); 
+d413 1
+a413 1
+        'Expected Assumptions EF', 'fmincon', 'Optimal Information Ratio', 'Location', 'SouthEast')    
+d432 1
+d444 2
+a445 1
+            startrow = i73row;
+d469 1
+a469 1
+        startrow = i86row;
+d560 1
+a560 1
+                [histNormWtsCVaREF.portWts histNormWtsCVaREF.sharpeRatio histNormWtsCVaREF.portReturns histNormWtsCVaREF.portCVaRs], ...
+d563 1
+a563 1
+                [unshistNormWtsCVaREF.portWts unshistNormWtsCVaREF.sharpeRatio unshistNormWtsCVaREF.portReturns unshistNormWtsCVaREF.portCVaRs], ...
+d566 1
+a566 1
+                [tcopNormWtsCVaREF.portWts tcopNormWtsCVaREF.sharpeRatio tcopNormWtsCVaREF.portReturns tcopNormWtsCVaREF.portCVaRs], ...
+d569 1
+a569 1
+                [fminconCVaREF.portWts fminconCVaREF.sharpeRatio fminconCVaREF.portReturns fminconCVaREF.portCVaRs], ...
+d574 1
+a574 1
+                    [expectedWtsCVaREF.portWts expectedWtsCVaREF.sharpeRatio expectedWtsCVaREF.portReturns expectedWtsCVaREF.portCVaRs], ...
+@
+
+
+1.4
+log
+@"fixed some comments in aaa_; new sheet in assumptions.xls for IG credit"
+@
+text
+@d15 1
+a15 1
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 2, windummy);
+a91 1
+    
+d116 1
+a116 1
+        savesimulations = ['/afs/acpub.duke.edu/users/i/d/idw3/AFSDocs/MATLAB/simulations_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+d124 1
+a124 1
+    writedummy = 1; % to only create an input file (.mat); for SSH into linux
+d127 1
+a127 1
+    cashreservedummy = 1;
+d130 1
+a130 1
+    createinputfileonly = 0;
+d162 1
+a162 1
+    elseif windummy == 0
+d482 1
+@
+
+
+1.3
+log
+@"Refactored code works"
+@
+text
+@d14 1
+a14 1
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 1, windummy);
+d125 1
+a125 1
+    writedummy = 0; % to only create an input file (.mat); for SSH into linux
+a208 9
+
+    if meanvarianceonly == 1
+        save(savefilename, 'historicalReturns6fact', 'unshistrawReturnsObj', 'tcoprawReturnsObj', ...
+            'histNormMeanVarEF', 'unshistNormMeanVarEF', 'tcopNormMeanVarEF')
+        return
+    end
+    
+    %% CVaR EF for given Mean-Variance portfolio weights
+    cvargivenweights();
+a209 17
+    %% CVaR via fmincon
+    cvarfmincon();
+    
+    %% write output to an excel file (different returns objects)
+
+    if windummy == 1
+        writedata(savefilename, writefilename, starttimeperioddummy, endtimeperioddummy);
+    end
+    
+    return
+    
+    %% nested functions
+    
+    % Nested functions: can access variables in outer function, outer
+    % function can access variables within nested functions
+    
+    function meanvariance()
+d249 6
+d257 3
+a259 1
+    function cvargivenweights()
+a274 2
+
+        tcopNormWtsCVaREF
+d277 4
+a280 5
+        tcopfinalfundvalue = histSims.arithRawFinalFundValue;        
+    end
+
+    function cvarfmincon()
+        tcopNormWtsCVaREF
+d303 24
+d557 1
+a557 1
+                [unshistNormWtsCVaREF.portWts unshistNormWtsCVaREF.sharpeRatio unshistNormWtsCVaREF.portReturnsuns histNormWtsCVaREF.portCVaRs], ...
+@
+
+
+1.2
+log
+@"fixed errors in class_simulations; added obj to methods in subc_ ... EF"
+@
+text
+@d104 1
+a104 1
+    meanvarianceonly = 1; % only loop through MV, skip CVaR
+d125 2
+a126 2
+    writedummy = 0; % to only create an input file; for SSH into linux
+    plotterdummy = 0;
+d216 1
+a216 1
+    %% CVaR EF for given portfolio weights
+d230 2
+d294 2
+d301 2
+@
+
+
+1.1
+log
+@cleaned some of aaa_, broke into functions based on mv, cvar, etc.  expected only does not work yet.  setting up for GUI...
+@
+text
+@d125 2
+a126 2
+    writedummy = 1;
+    plotterdummy = 1;    
+d163 2
+a164 2
+        elseif windummy == 0
+            load(saveimportfile)
+a165 4
+    
+
+%end
+%function awefaewf() 
+@
+

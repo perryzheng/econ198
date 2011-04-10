@@ -1,0 +1,656 @@
+head	1.9;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.9
+date	2010.04.11.19.52.29;	author idw3;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2010.04.10.18.05.21;	author xz27;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.04.10.16.23.10;	author xz27;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.02.07.22.22.34;	author idw3;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.02.07.04.52.56;	author idw3;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.02.02.18.06.23;	author idw3;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.02.01.04.18.13;	author xz27;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.01.31.22.16.47;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.01.20.07.13.08;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.9
+log
+@*** empty log message ***
+@
+text
+@
+classdef subc_fminconCVaREF < class_efficientfrontiers
+    %***NumPorts***: number of portfolios along the efficient frontier (how many
+    %dots, typically 24), each dot is a specific set of weights of
+    %different funds (w1, w2, w3, ..., wn) and w1+...+wn = 1; it is a
+    %specific allocation of the funds
+    %***portSDs***: Standard deviation of each dot, NumPorts x 1 column
+    %vector
+    %***portReturns***: returns of each dot, NumPorts x 1 column vector
+    %***portWts***: the specific weights of funds of each of the NumPorts
+    %portfolios, a NumPorts x n matrix (where n as usual, stands for number
+    %of funds), sum of each row sum up to 1 
+    %***sharpeRatio***: sharpe ratio of each portfolio, NumPorts x 1 column
+    %vector; slope of the line from the portfolio to the risk free rate on
+    %the y-axis (or the returns axis). slope of two points, we want to find the
+    %maximum tangent
+    %***optSharpePt***: scalar that tells which portfolio has the maximum
+    %sharpRatio 
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts        
+        
+        sharpeRatio
+        optSharpePt
+    end
+    
+    methods
+        function fminconcvar = subc_fminconCVaREF(samplemonths, NumPorts,...
+                startweights, returnconstraints, RiskFreeRate, compound_dummy)
+            fmincontestout = fmincon_test(fminconcvar, samplemonths, NumPorts, ...
+                startweights, returnconstraints, compound_dummy);
+            
+            fminconcvar.portCVaRs = fmincontestout{3};
+            fminconcvar.portReturns = fmincontestout{2};
+            fminconcvar.portWts = fmincontestout{1};
+                        
+            monthlyarithriskfreerate = RiskFreeRate/12;
+            fminconcvar.sharpeRatio = (fminconcvar.portReturns - monthlyarithriskfreerate) ./ fminconcvar.portCVaRs;
+
+            maxsharpe = max(fminconcvar.sharpeRatio);
+
+            fminconcvar.optSharpePt = find(fminconcvar.sharpeRatio == maxsharpe);
+        end
+
+        function y = fmincon_test(obj, samplemonths, numEFportfolios, PortWts, portreturns, compound_dummy)
+            global tcopfinalfundvalue
+
+            for i = 1:numEFportfolios
+                ['Calculating Portfolio #']
+                [i]
+                
+                fminconoutput = fmincon_single(obj, portreturns(i, 1), PortWts(i, :), compound_dummy);
+                fminconportWt(i, :) = fminconoutput{1};
+                tempfminconfinalvalue = portweightfinalvalue(tcopfinalfundvalue, fminconportWt(i, :)');
+                % ARITHMETIC CVaR MONTHLY!!  (loss per mo)
+                fminconFinalFundValueCVaR(i, 1) = fminconoutput{2}; %/(samplemonths/1)
+                % arithmetic - MONTHLY RETURN
+                fminconFinalYValue(i, 1) = (mean(tempfminconfinalvalue, 1)); %- 1)%/ (samplemonths/1) %this is our final fund value 
+            
+
+                'should be'
+                portreturns(i, 1)       
+            end
+            fminconFinalFundValueCVaR
+            fminconFinalYValue
+            y = {fminconportWt fminconFinalYValue fminconFinalFundValueCVaR};
+        end
+
+        % ***tcopfinalfundvalue***: 1 by n by numOfSimulations matrix
+        % Contains final value of each asset class on the row; doing that for 
+        % numOfSimulations simulations
+        % Has already added one added to it
+        % ***returnconstraint***: numOfPortfolios by 1 volumn vector
+        % Contains the return for each portfolio, gotten from
+        % tcopNormMeanVarEF.portReturns from the aaa file. 
+        % ***starweights***: numOfPortfolios by 1 volumn vector
+        % Contains the optimal weights for the mean variance framework
+        % Come from tcopNormWtsCVaREF.portWts in aaa file
+        function y = fmincon_single(obj, returnconstraint, startweights, compound_dummy)
+            tic
+            global tcopfinalfundvalue;
+            global globalsamplemonths;
+            
+            global globalreturnconstraint
+            globalreturnconstraint = returnconstraint;
+            glob_returnconstraint = returnconstraint;
+            
+            global lowp % declared in aaa_ file
+            
+            % active-set is NOT the default
+            global glob_fminconoptions
+            options = glob_fminconoptions; % options for fmincon declared in aaa_
+            
+            NumofFunds = size(startweights, 2);  
+
+            global globalEFconstraints;
+            ConSet = globalEFconstraints.ConSet;
+            A = ConSet(:, 1:NumofFunds);
+            b = ConSet(:, (NumofFunds + 1));
+
+            if compound_dummy == 0
+                [weights, lowest_CVaR, exitflag] = fmincon(@@gen_alg_min_cvar, startweights, A, b, ...
+                    [], [], [], [], @@gen_alg_nonlinconstr, options);
+            elseif compound_dummy == 1
+                % global glob_tcopdrawReturns; %got from histSims.tcopdrawRawReturns
+                global compoundmonth % compounds every how many months? usually 12
+                
+                [weights, lowest_CVaR, exitflag] = fmincon(@@compound_cvar, startweights, A, b, ...
+                    [], [], [], [], @@compound_nonlinconstr, options);                
+            end
+            
+            toc
+            y = {weights,lowest_CVaR};
+
+             
+                %%  regular fmincon objective function and non linear constraint
+            
+                % ***portfinalvaue***: the final value of each fund for numSim simulations
+                % A numSim by numFund matrix
+                % ***calcCVaR95_01***: returns numFunds by 1 column vector
+                function y = gen_alg_min_cvar(portweight)
+                % input: row vector of portfolio weights to try
+                    % output, the CVaR for that weight, given tcop simulations
+                    % weights must be a column vector
+                    % ga() tries row vectors of weights
+                    portweight = portweight';
+                    %{
+                    if size(portweight, 2) > size(portweight, 1)
+                        portweight = portweight';
+                    end
+                    %}    
+
+                    %lowp = 0.05;
+                    portfinalvalue = portweightfinalvalue(tcopfinalfundvalue, portweight);
+
+                    % attempt to vectorize, each row is a different weight, calcCVaR gives
+                    % results in each column
+                    y = -(calcCVar95_01(portfinalvalue, lowp)'); %- 1);
+                    % y = - (calcCVar95_01(portfinalvalue, lowp) - 1);
+                end              
+            
+                function [c, ceq] = gen_alg_nonlinconstr(portweight)
+                    portweight = portweight';
+                    % must be the monthly final portfolio value
+                    % portweightfinalvalue calculates the arithmetic
+                    % final value for each portfolio
+                    tempfinalportvalue = portweightfinalvalue(tcopfinalfundvalue, portweight);
+                    %Take the mean each column
+                    %avifinalportvalue is 1 by numFund row vector
+                    %containing the mean of all the returns for one
+                    %particular simulations for a particular fund
+                    avgfinalportvalue = mean(tempfinalportvalue, 1);
+                    % The 1 is the how many months per periods (in this
+                    % case each month is a period)
+                    %portfinalmoreturn = (avgfinalportvalue - 1) / (globalsamplemonths/1);
+                    
+                    % attempt to vectorize
+                    margins = .0001;
+                    %{
+                    c = [(portfinalmoreturn' - globalreturnconstraint - margins) ; - (portfinalmoreturn' - globalreturnconstraint + margins)];
+                    ceq = [];
+                    %}
+
+                    %ceq = (portfinalmoreturn' - globalreturnconstraint);
+                    %constraint is the final fund value instead of the return 
+                                        c = [];
+                    ceq = (avgfinalportvalue' - globalreturnconstraint);   
+                end
+                
+                
+                
+                
+        end %end of fmincon_single
+    end
+end
+@
+
+
+1.8
+log
+@*** empty log message ***
+@
+text
+@d64 1
+a64 1
+                portreturns(i, 1)            
+a165 1
+                    c = [];
+d167 2
+a168 2
+                    %constraint is the final fund value instead of the
+                    %return 
+@
+
+
+1.7
+log
+@*** empty log message ***
+@
+text
+@d58 1
+a58 1
+                fminconFinalFundValueCVaR(i, 1) = fminconoutput{2}%/(samplemonths/1)
+d66 3
+a68 1
+            y = {fminconportWt fminconFinalYValue fminconmoCVaR};
+@
+
+
+1.6
+log
+@*** empty log message ***
+@
+text
+@d58 1
+a58 1
+                fminconmoCVaR(i, 1) = fminconoutput{2}/(samplemonths/1)
+d60 1
+a60 1
+                fminconMoRet(i, 1) = (mean(tempfminconfinalvalue, 1) - 1)/ (samplemonths/1)
+d66 1
+a66 1
+            y = {fminconportWt fminconMoRet fminconmoCVaR};
+d86 4
+a89 1
+
+d91 3
+a93 3
+            options = optimset('Algorithm','active-set', 'TolFun', 1e-19, 'TolCon', 1e-19, ...
+                'TolX', 1e-19, 'MaxFunEvals', 1000, 'MaxIter', 2500, 'UseParallel', 'always');
+
+d115 1
+a115 187
+                %% compounding objective function and non lin constraint
+                % objective function and non linear constraint for CVaR
+                % with compounding
+
+                function y = compound_cvar(portWeights) 
+                    %***glob_tcopdrawReturns***: a m by n by numGDPDraws matrix
+                    % The idea here is to use calcVaRWithRelancingHelper for each sheet
+                    % Each sheet represents a m by n matrix, we calculate the final
+                    % portfolio value of the sheet
+
+                    %May need to change this to simulation returns
+                    global glob_tcopdrawReturns;
+
+                    numOfMonths = size(glob_tcopdrawReturns,1);
+                    numOfFunds = size(glob_tcopdrawReturns,2);
+                    numOfSims = size(glob_tcopdrawReturns,3);
+                    simReturnData = zeros(numOfSims, 1);
+
+                    numPeriods = floor(numOfMonths/compoundmonth);
+
+
+                    for i=1:numOfSims
+                        oneSimReturns = glob_tcopdrawReturns(:,:,i);
+                        y = compound_cvar_Helper(portWeights,oneSimReturns,compoundmonth);
+                        finalValue = y{2}; % a scalar indicating final portfolio value
+                        simReturnData(i,1) = finalValue;
+                    end
+
+                    lowp = 0.05;
+                    % attempt to vectorize, each row is a different weight, calcCVaR gives
+                    % results in each column
+                    simReturnData;
+                    simReturnData = (simReturnData.^(1/numPeriods) - 1)/compoundmonth; 
+                    y = - (calcCVar95_01(simReturnData, lowp)');
+                    %***Important***: Check if it makes any difference if we do 
+                    % the conversion of simReturnData from
+                    % final value to montly return AFTER we put it in calcCVaR95_01 first
+                    % That is, does it make a difference if we switch the above two lines
+                    % of code? (My hypothesis is no but we need to check)
+                end
+
+                % ARITHMETICALLY CALCULATED PERIOD RETURNS, compounded periodically 
+
+                %***portWeight***: a 1 by numOfFunds row vector, indicating weights of that
+                %portfolio 
+                %***oneSimReturns***: a numMonths by numOfFunds matrix
+                %***compoundmonth***: a fixed constant indicating how many months one
+                %should rebalance Output: 
+                function y = compound_cvar_Helper(portWeight, oneSimReturns, compoundmonth)
+                    % Convert would convert portWeight to column vector 
+                    sampleMonths = size(oneSimReturns,1);
+                    numOfFunds = size(oneSimReturns, 2);
+                    
+                    if size(portWeight, 2) == 1
+                        %Assume the portWeight is a vector. Then if the number of columns 
+                        %is one, which means it's a column vector, then make it a row
+                        %vector
+                        portWeight = portWeight';
+                    end
+
+                    proceed = 1;
+                    %for i=1:size(portWeight) 
+                    %    if(portWeight(i)<0 || portWeight(i)>1) 
+                    %        proceed = 0
+                    %    end
+                    %end
+   
+                    if proceed == 1  
+
+                        startMoney = 1;
+
+                        numOfTrials = floor(sampleMonths/compoundmonth);
+                        balancedportValue = zeros(numOfTrials + 1, numOfFunds);    
+                        %Start the fortfolio by putting the startMoney among the
+                        %asset classes according to portfolio weights
+                        balancedportValue(1, :) = startMoney.*portWeight;
+                        %port_value_at_each_comp = zeros(numOfTrials,1);
+
+                        returnPlusOne = oneSimReturns;
+                        %At after each period we rebalance and redistribute the period
+                        %portfolio value by the portWeight row vector and we store that
+                        %in balancedportValue
+                        for i = 1:numOfTrials
+                            periodreturn = sum(returnPlusOne((i-1)*compoundmonth +1 : i*compoundmonth, :), 1);
+
+                            balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn+1); % compounds instead of arithmetic
+                            %periodportVal = sum(balancedportValue(i+1, :), 2);
+                            %port_value_at_each_comp(i,1) = periodportVal; %port_value_at_each_comp is the portfolio value at the end of each rebalancing period
+                            %balancedportValue(i+1, :) = periodportVal * portWeight; 
+                        end
+
+                        finalvalues = balancedportValue(numOfTrials+1, :);
+                        finalportvalue = sum(finalvalues);
+                        y = {finalvalues, finalportvalue};
+                    end
+                end
+                
+                
+                
+                % compounding non-linear constraint
+                function [c,ceq] = compound_nonlinconstr(portWeights) 
+                    global glob_returnconstraint
+                    %global glob_pr; %global portfolio return 
+                    global glob_tcopdrawReturns;
+                    
+                    numOfMonths = size(glob_tcopdrawReturns,1);
+                    numOfFunds = size(glob_tcopdrawReturns,2);
+                    numOfSims = size(glob_tcopdrawReturns,3);
+
+                    numPeriods = floor(numOfMonths/compoundmonth);
+                    simReturnData = zeros(numOfSims, numOfFunds);
+
+                    for i=1:numOfSims
+                        oneSimReturns = glob_tcopdrawReturns(:,:,i);
+                        y = compound_nonlinconstr_Helper(portWeights,oneSimReturns,compoundmonth);
+                        finalValues = y{1}; % a row vector of the final values
+                        simReturnData(i,:) = finalValues;
+                    end
+
+                    %Now need to convert each return in simReturnData to a monthly return
+                    %rate
+                    %mean outputs the average of the columns the result is a 1 by numFund matrix
+                    %sum simply sums them up
+                    finalValue = sum(mean(simReturnData,1));
+                    %From the final value, we deduce the monthly return
+                    empiricalReturn = (finalValue^(1/numPeriods) - 1)/compoundmonth; 
+
+                    c = [];
+                    ceq = (empiricalReturn - glob_returnconstraint);
+                end
+
+                % ARITHMETICALLY CALCULATED PERIOD RETURNS, compounded periodically 
+
+                %***portWeight***: a 1 by numOfFunds row vector, indicating weights of that
+                %portfolio 
+                %***oneSimReturns***: a numMonths by numOfFunds matrix
+                %***compoundmonth***: a fixed constant indicating how many months one
+                %should rebalance Output: 
+                
+                function y = compound_nonlinconstr_Helper(portWeight, oneSimReturns, compoundmonth)
+                    % Convert would convert portWeight to column vector 
+                    sampleMonths = size(oneSimReturns,1);
+                    numOfFunds = size(oneSimReturns, 2);
+                    
+                    if size(portWeight, 2) == 1
+                        %Assume the portWeight is a vector. Then if the number of columns 
+                        %is one, which means it's a column vector, then make it a row
+                        %vector
+                        portWeight = portWeight';
+                    end
+
+                    proceed = 1;
+                    %for i=1:size(portWeight) 
+                    %    if(portWeight(i)<0 || portWeight(i)>1) 
+                    %        proceed = 0
+                    %    end
+                    %end
+   
+                    if proceed == 1  
+                        startMoney = 1;
+
+                        numOfTrials = floor(sampleMonths/compoundmonth);
+                        balancedportValue = zeros(numOfTrials + 1, numOfFunds);    
+                        %Start the fortfolio by putting the startMoney among the
+                        %asset classes according to portfolio weights
+                        balancedportValue(1, :) = startMoney.*portWeight;
+                        %port_value_at_each_comp = zeros(numOfTrials,1);
+
+                        returnPlusOne = oneSimReturns;
+                        %At after each period we rebalance and redistribute the period
+                        %portfolio value by the portWeight row vector and we store that
+                        %in balancedportValue
+                        for i = 1:numOfTrials
+                            periodreturn = sum(returnPlusOne((i-1)*compoundmonth +1 : i*compoundmonth, :), 1);
+
+                            balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn+1); % compounds instead of arithmetic
+                            %periodportVal = sum(balancedportValue(i+1, :), 2);
+                            %port_value_at_each_comp(i,1) = periodportVal; %port_value_at_each_comp is the portfolio value at the end of each rebalancing period
+                            %balancedportValue(i+1, :) = periodportVal * portWeight; 
+                        end
+
+                        finalvalues = balancedportValue(numOfTrials+1, :);
+                        finalportvalue = sum(finalvalues);
+                        y = {finalvalues, finalportvalue};
+                    end
+                end
+            
+d133 1
+a133 1
+                    lowp = 0.05;
+d138 1
+a138 1
+                    y = - (calcCVar95_01(portfinalvalue, lowp)' - 1);
+d155 2
+a156 1
+                    portfinalmoreturn = (avgfinalportvalue - 1) / (globalsamplemonths/1);
+d165 4
+a168 1
+                    ceq = (portfinalmoreturn' - globalreturnconstraint);   
+a169 6
+                
+                
+                
+                
+                
+                
+@
+
+
+1.5
+log
+@'untested compounding CVaR added to fmincon, need to use compound_dummy; need to check proceed step, changed to ||'
+@
+text
+@d51 3
+d58 1
+a58 1
+                fminconmoCVaR(i, 1) = fminconoutput{2}/(samplemonths/1);
+d60 5
+a64 1
+                fminconMoRet(i, 1) = (mean(tempfminconfinalvalue, 1) - 1)/ (samplemonths/1);
+d99 1
+a99 1
+                [weights, lowest_CVaR] = fmincon(@@gen_alg_min_cvar, startweights, A, b, ...
+a100 1
+
+d102 4
+a105 1
+                [weights, lowest_CVaR] = fmincon(@@compound_cvar, startweights, A, b, ...
+a106 4
+    
+                global glob_tcopdrawReturns; %got from histSims.tcopdrawRawReturns
+                global compoundmonth % compounds every how many months? usually 12
+            
+d112 189
+d348 11
+a358 1
+                end                
+@
+
+
+1.4
+log
+@'changed name of CVaREFwithRebalancing initiator function (should still change names of the other nested functions); added CVaRwithRebalancing to aaa_; simulations.mat also includes the returns objects, allows for continuing from the saved simulations now'
+@
+text
+@d31 3
+a33 2
+                startweights, returnconstraints, RiskFreeRate)
+            fmincontestout = fmincon_test(fminconcvar, samplemonths, NumPorts, startweights, returnconstraints);
+d47 1
+a47 1
+        function y = fmincon_test(obj, samplemonths, numEFportfolios, PortWts, portreturns)
+d49 1
+d51 1
+a51 1
+                fminconoutput = fmincon_single(obj, portreturns(i, 1), PortWts(i, :));
+d72 1
+a72 1
+        function y = fmincon_single(obj, returnconstraint, startweights)
+d82 1
+a82 1
+                'TolX', 1e-19, 'MaxFunEvals', 10000, 'MaxIter', 25000, 'UseParallel', 'always');
+d91 13
+a103 4
+
+            [x,fval, exitflag] = fmincon(@@gen_alg_min_cvar, startweights, A, b, ...
+            [], [], [], [], @@gen_alg_nonlinconstr, options);
+
+d105 1
+a105 1
+            y = {x fval};
+a112 1
+                
+a115 1
+
+a121 4
+
+                    %global globalFinalFundValue
+                    %globalFinalFundValue;
+
+a122 1
+
+d127 1
+a127 1
+                    y = - (calcCVar95_01(portfinalvalue, lowp)' - 1); 
+a131 2
+
+
+a132 1
+
+a144 1
+
+a145 1
+
+a154 1
+                
+a155 3
+        
+      
+        
+a156 1
+    
+@
+
+
+1.3
+log
+@rebalancing with CVaR
+@
+text
+@d26 1
+a26 1
+        optSharpePtf
+d80 1
+a80 1
+                'TolX', 1e-19, 'MaxFunEvals', 1000, 'MaxIter', 2500, 'UseParallel', 'always');
+d96 3
+a98 1
+                % ***portfinalvaue***: the final value of 
+d136 4
+@
+
+
+1.2
+log
+@Add a lot of rebalance comments to CVaR code.
+@
+text
+@d60 10
+d96 1
+a96 1
+                    
+d135 2
+@
+
+
+1.1
+log
+@"Refactored code works"
+@
+text
+@d3 16
+d26 1
+a26 1
+        optSharpePt
+d62 2
+d86 1
+a86 1
+
+d100 1
+a100 1
+                    global tcopfinalfundvalue;
+d115 25
+a139 1
+        end
+@
+

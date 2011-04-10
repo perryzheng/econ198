@@ -1,0 +1,94 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.51;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+function y = fmincon_test(samplemonths, numEFportfolios, PortWts, portreturns)
+
+    global tcopfinalfundvalue
+    
+    for i = 1:numEFportfolios
+        
+        fminconoutput = fmincon_single(portreturns(i, 1), PortWts(i, :));
+
+        fminconportWt(i, :) = fminconoutput{1};
+
+        
+        tempfminconfinalvalue = portweightfinalvalue(tcopfinalfundvalue, fminconportWt(i, :)');
+        
+        % ARITHMETIC CVaR MONTHLY!!  (loss per mo)
+        fminconmoCVaR(i, 1) = fminconoutput{2}/(samplemonths/1);
+
+        
+        % arithmetic - MONTHLY RETURN
+        fminconMoRet(i, 1) = (mean(tempfminconfinalvalue, 1) - 1)/ (samplemonths/1);
+
+    end
+
+    y = {fminconportWt fminconMoRet fminconmoCVaR};
+
+    
+end
+
+
+function y = fmincon_single(returnconstraint, startweights)
+
+    tic
+    
+    global globalreturnconstraint
+    globalreturnconstraint = returnconstraint;
+    
+
+    
+    % active-set is NOT the default
+    options = optimset('Algorithm','active-set', 'TolFun', 1e-19, 'TolCon', 1e-19, ...
+        'TolX', 1e-19, 'MaxFunEvals', 1000, 'MaxIter', 2500, 'UseParallel', 'always');
+    
+    NumofFunds = size(startweights, 2);  
+    
+    global globalEFconstraints;
+    ConSet = globalEFconstraints.ConSet;
+    A = ConSet(:, 1:NumofFunds);
+    b = ConSet(:, (NumofFunds + 1));
+    
+    
+    [x,fval, exitflag] = fmincon(@@gen_alg_min_cvar, startweights, A, b, ...
+        [], [], [], [], @@gen_alg_nonlinconstr, options);
+
+    %{
+    % equality constraints, weights must add to 1 (no leverage)
+    Aeq2 = [ones(1, NumofFunds)];
+    beq2 = [1];
+
+    % bound constraints, weights must be between 0 and 1 (no leverage)
+    LB = zeros(1, NumofFunds);
+    UB = ones(1, NumofFunds);
+    %}
+    
+    % function that does the CVaR minimization
+    %[x,fval, exitflag] = fmincon(@@gen_alg_min_cvar, startweights, [], [], ...
+    %    Aeq2, beq2, LB, UB, @@gen_alg_nonlinconstr, options);
+    
+    toc
+    y = {x fval};
+    
+end@

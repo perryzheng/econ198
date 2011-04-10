@@ -1,0 +1,146 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.1
+date	2010.01.27.02.55.38;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Comments on subc_givenweightsCVaREF.m and sub_normalmeanvarEF.m
+@
+text
+@
+classdef subc_givenweightsCVaREF < class_efficientfrontiers
+    %***NumPorts***: number of portfolios along the efficient frontier (how many
+    %dots, typically 24), each dot is a specific set of weights of
+    %different funds (w1, w2, w3, ..., wn) and w1+...+wn = 1; it is a
+    %specific allocation of the funds
+    %***portCVaRs***: CVaR of each dot, NumPorts x 1 column
+    %vector
+    %***portReturns***: returns of each dot, NumPorts x 1 column vector
+    %***portWts***: the specific weights of funds of each of the NumPorts
+    %portfolios, a NumPorts x n matrix (where n as usual, stands for number
+    %of funds), sum of each row sum up to 1 
+    %***sharpeRatio***: sharpe ratio of each portfolio, NumPorts x 1 column
+    %vector; slope of the line from the portfolio to the risk free rate on
+    %the y-axis (or the returns axis). slope of two points, we want to find the
+    %maximum tangent
+    %***optSharpePt***: scalar that tells which portfolio has the maximum
+    %sharpRatio 
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts
+        
+        sharpeRatio
+        optSharpePt
+    end
+
+    methods
+        function givenweightscvar = subc_givenweightsCVaREF(samplemonths, ...
+            NumPorts, finalfundvalue, givenweights, RiskFreeRate)            
+            givenweightscvar = givenweightscvar@@class_efficientfrontiers();
+            givenweightscvar.NumPorts = NumPorts;            
+
+            histCVaREF = CVaR_EF_normal_01(givenweightscvar, samplemonths, NumPorts, finalfundvalue, givenweights);
+            givenweightscvar.portWts = histCVaREF{1};
+            givenweightscvar.portReturns = histCVaREF{2};
+            givenweightscvar.portCVaRs = histCVaREF{3};
+
+            monthlyarithriskfreerate = RiskFreeRate/12;
+            givenweightscvar.sharpeRatio = (givenweightscvar.portReturns - monthlyarithriskfreerate) ./ givenweightscvar.portCVaRs;
+
+            maxsharpe = max(givenweightscvar.sharpeRatio);
+
+            givenweightscvar.optSharpePt = find(givenweightscvar.sharpeRatio == maxsharpe);
+
+        end
+
+        % calculates CVaR EF GIVEN portfolio weights and returns
+        function y = CVaR_EF_normal_01(obj, samplemonths, numEFportfolios, tcopfinalfundvalue, NormEFPortWts)
+            % get CVaRs for normal mean variance EF weights
+
+            totalsimulations = size(tcopfinalfundvalue, 3);
+            NumofFunds = size(tcopfinalfundvalue, 2);
+            tcopTotalRuns = size(tcopfinalfundvalue, 1);
+
+            numtimeperiods = samplemonths;
+            periodspertime = 12;
+            lowp = 0.05;
+
+            EFnormCVaR = zeros(numEFportfolios, 1);
+            EFnormMoCVaR = zeros(numEFportfolios, 1);
+            EFnormMoReturns = zeros(numEFportfolios, 1);
+            EFnormReturns = zeros(numEFportfolios, 1);
+
+            for i = 1:numEFportfolios
+                tempEFweight = NormEFPortWts(i,:)';
+                tempEFfinalvalue = portweightfinalvalue(tcopfinalfundvalue, tempEFweight);
+
+                % ARITHMETIC ANNUAL RETURN
+                EFnormReturns(i, 1) = (mean(tempEFfinalvalue, 1) - 1) / (samplemonths/12);
+
+                % ARITHMETIC Monthly RETURN
+                EFnormMoReturns(i, 1) = (mean(tempEFfinalvalue, 1) - 1) / (samplemonths/1);
+
+                % Geometric
+                % EFnormReturns(i, 1) = mean(tempEFfinalvalue)^(1/(numtimeperiods/periodspertime)) - 1;
+
+                % ANNUAL CVaR
+                EFnormCVaR(i, 1) = calcCVar95_01(obj, tempEFfinalvalue, lowp) ; %/ (samplemonths/12);
+                % EFnormMoCVaR(i, 1) = calcCVar95_01(tempEFfinalvalue, lowp) / (samplemonths/1); %/ (samplemonths/12);
+            end
+
+            EFnormCVaR;
+            startingvalue = 1;
+
+            normCVaR = -(EFnormCVaR - startingvalue);
+            normMoCVaR = normCVaR / (samplemonths/1);
+
+            y = {NormEFPortWts, EFnormMoReturns, normMoCVaR};
+        end
+    
+        % Given the a set of weights of the funds
+        
+        
+        % calculates the CVar## of a set of return data
+        % returns must be in column form
+        % different columns = different funds' returns
+        % Find the lowest lowp percent average value 
+        
+        % simReturnData is a NumGPDDraws*tcopulaRuns by n matrix  
+        % simReturnData is the NumOfS
+
+        function y = calcCVar95_01(obj, simReturnData, lowp)
+            numFunds = size(simReturnData, 2);
+            CVar = zeros(1, numFunds); % pre allocate
+            % to calculate CVaR: sort from lowest to highest return
+            % then take average of lowest 5% (x%)
+            sortedreturns = sort(simReturnData);
+            for i = 1:numFunds
+                numReturns = size(simReturnData(:, i), 1);
+                lowestpbarrier = lowp * numReturns;
+                lowestprounded = ceil(lowestpbarrier);
+                lowestptile = sum(sortedreturns(1:lowestprounded, i));
+                CVar(1, i) = sum(lowestptile) / lowestprounded;
+            end
+            y = CVar;
+        end
+
+    end
+
+end
+@

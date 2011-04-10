@@ -1,0 +1,73 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function y = gen_alg_min_cvar(portweight)
+
+    % weights must be a column vector
+    % ga() tries row vectors of weights
+    portweight = portweight';
+    
+    %{
+    if size(portweight, 2) > size(portweight, 1)
+        portweight = portweight';
+    end
+%}    
+    global tcopfinalfundvalue;
+    
+    %global globalFinalFundValue
+    %globalFinalFundValue;
+    
+    lowp = 0.05;
+
+    portfinalvalue = portweightfinalvalue(tcopfinalfundvalue, portweight);
+
+    % attempt to vectorize, each row is a different weight, calcCVaR gives
+    % results in each column
+    y = - (calcCVar95_01(portfinalvalue, lowp)' - 1); 
+    % y = - (calcCVar95_01(portfinalvalue, lowp) - 1);
+end
+
+
+
+
+%{
+    
+    rows = size(globalFinalFundValue, 1);
+    NumofFunds = size(globalFinalFundValue, 2);
+    totalsimulations = size(globalFinalFundValue, 3);
+    
+%}@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

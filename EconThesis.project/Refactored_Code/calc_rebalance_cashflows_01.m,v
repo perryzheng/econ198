@@ -1,0 +1,80 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.01.31.19.50.26;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Add calc_rebalance_cashflows, my_rebalance_constraint, and NormEFWithRebalancing in MATLAB folder
+
+Add calc_norm_variance_helper, calc_norm_variance, calc_rebalance_cashflows, and main_rebalance_NormEF, Mean_Var_EF_Rebalancing, and my_balance_evaluator, my_rebalance_constraint, and NormEFWithRebalancing, and test_helper
+@
+text
+@
+% ARITHMETICALLY CALCULATED PERIOD RETURNS, compounded periodically 
+
+%***portweight***: a 1 by numOfFunds row vector, indicating weights of that
+%portfolio
+%***onesimMoReturns***: a numMonths by NumofFunds matrix
+%***rebalancemonth***: a fixed constant indicating how many months one
+%should rebalance
+%Output: 
+function y = calc_rebalance_cashflows_01(portweight, onesimMoReturns, rebalancemonth)
+    % Convert column vector 
+    %portweightblah = portweight;
+    %portweightblah
+    
+	proceed = 1;
+
+	for i=1:size(portweight) 
+		if(portweight(i)<0 && portweight(i)>1) 
+			proceed = 0
+		end
+    end
+    
+	if proceed == 1  
+			samplemonths = size(onesimMoReturns, 1);    
+			NumofFunds = size(onesimMoReturns, 2);
+
+			startmoney = 1;
+			
+			numOfTrials = floor(samplemonths/rebalancemonth);
+			balancedportValue = zeros(numOfTrials+ 1, NumofFunds);
+			balancedportValue(1, :) = startmoney.*portweight;
+			port_value_at_each_reb = zeros(numOfTrials,1);
+			
+			returnsplusone = onesimMoReturns;
+            %At after each period we rebalance and redistribute the
+            %period portfolio value by the portweight row vector
+            %and we store that in balancedportValue
+			for i = 1:numOfTrials
+				periodreturn = sum(returnsplusone((i-1)*rebalancemonth +1 : i*rebalancemonth, :), 1);
+				
+				balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn+1);
+				periodportVal = sum(balancedportValue(i+1, :), 2);
+				port_value_at_each_reb(i,1) = periodportVal; %port_value_at_each_reb is the portfolio value vector after each rebalancing period
+				
+				balancedportValue(i+1, :) = periodportVal * portweight; 
+			end
+			
+			finalvalues = balancedportValue(numOfTrials+1, :);
+			finalportvalue = sum(finalvalues);
+			
+			y = {finalvalues, finalportvalue, port_value_at_each_reb};
+    end
+	
+end
+@

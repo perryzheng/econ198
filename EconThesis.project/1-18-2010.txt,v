@@ -1,0 +1,31 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2010.01.18.22.35.36;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Add the following matlab files to Refactored_Code folder without modifying:
+
+avgreturn_geometric_01
+avgreturn_geometric_01
+fit_tcopula_01
+@
+text
+@Add those matlab files to Refactored_Code folder without modifying:
+
+avgreturn_geometric_01
+avgreturn_geometric_01
+fit_tcopula_01@

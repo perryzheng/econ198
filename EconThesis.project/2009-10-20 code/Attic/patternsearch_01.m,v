@@ -1,0 +1,91 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function y = patternsearch_01(samplemonths, numEFportfolios, genPortWts, portreturns)
+
+    global tcopfinalfundvalue
+    
+    % x = patternsearch(@@fun,x0,A,b,Aeq,beq,LB,UB,nonlcon,options)
+    
+      for i = 1:numEFportfolios
+
+        pattsearchout = pattsearch(portreturns(i, 1), genPortWts(i, :));
+
+        pattsearchportWt(i, :) = pattsearchout{1};
+
+        
+        tempannealfinalvalue = portweightfinalvalue(tcopfinalfundvalue, pattsearchportWt(i, :)');
+        
+        % ARITHMETIC CVaR MONTHLY!!  (loss per mo)
+        annealmoCVaR(i, 1) = pattsearchout{2}/(samplemonths/1);
+
+        
+        % arithmetic - MONTHLY RETURN
+        annealMoRet(i, 1) = (mean(tempannealfinalvalue, 1) - 1)/ (samplemonths/1);
+
+           
+      end
+      
+      y = {pattsearchportWt annealMoRet annealmoCVaR};
+end
+
+
+function y = pattsearch(returnconstraint, startweights)
+
+    tic
+    global globalreturnconstraint
+    globalreturnconstraint = returnconstraint;
+    
+    NumofFunds = size(startweights, 2);
+    
+    lowbound = [0 0 0 0 0 0];
+    upperbound = [1 1 1 1 1 1];
+    Aeq2 = [ones(1, NumofFunds)];
+    beq2 = [1];
+    %, 'HybridFcn',{@@fmincon}
+    options = psoptimset('InitialMeshSize', 0.001, 'MaxMeshSize', 0.1, 'MeshExpansion', .5,  ...
+        'InitialPenalty', 2, 'PenaltyFactor', 25, 'MaxIter', 1000, 'MaxFunEval', 25000, ...
+        'TolMesh', 1e-19, 'TolFun', 1e-19, 'TolCon', 1e-19, 'TolX', 1e-19);
+
+    [x, fval, exitflag output] = patternsearch(@@gen_alg_min_cvar, startweights, [], [], Aeq2,...
+        beq2, lowbound, upperbound, @@gen_alg_nonlinconstr, options)
+    
+    y = {x fval};
+   
+    toc
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

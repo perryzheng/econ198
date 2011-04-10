@@ -1,0 +1,59 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.38;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@
+function backTest(weights, historical_returns, color) 
+    %weights: # Portfolios x # asset clases matrix
+    %historical_returns: # months x $ asset classes matrix
+    sum_of_arith_mon_rets = sum(historical_returns,1)+ 1;
+    weight_transpose = weights';
+    arith_rets= sum_of_arith_mon_rets *weight_transpose;
+	arith_rets = arith_rets';
+	arith_rets = (arith_rets-1);
+	variance = portvar(historical_returns, weights)*12;
+	%variance = portvar(historical_returns, weights);
+
+	plot(sqrt(variance),arith_rets,strcat('-',color),'LineWidth',2);
+	hold on;
+	%{ 
+    sum_geo_mon_rets = zeros(1,size(historical_returns,2));
+   	prod_geom = prod(historical_returns + 1, 1);
+    back_test_geo = prod_geom*weight_transpose;
+	%}
+
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

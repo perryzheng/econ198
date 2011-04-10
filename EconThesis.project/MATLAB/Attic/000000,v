@@ -1,0 +1,38 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.22.37.03;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.19.21.58.08;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@credit blend 1983 - May 2008
+@
+text
+@blAH@
+
+
+1.1
+log
+@test comment
+@
+text
+@@
+

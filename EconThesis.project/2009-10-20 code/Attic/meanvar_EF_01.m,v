@@ -1,0 +1,98 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@% regular mean-variance model
+% 2009-07-16
+% 2009 Policy Review
+
+function y = meanvar_EF_01(avgreturn, NumNormPorts, Covariance, plotcolor, monthly)
+
+    if monthly == 1 
+        periods = 12;
+    else
+        periods = 1; 
+    end
+
+    [CPortRisk, CPortReturn, PortWts] = frontcon(avgreturn, Covariance, NumNormPorts);
+
+    % calculate sharpe ratio = [ (return - riskless rate) / SD ] for each portfolio
+    TBill3Month = 0.0297;
+
+    sharpeRatio = (CPortReturn - TBill3Month) ./ CPortRisk;
+
+    maxsharpe = max(sharpeRatio);
+    
+    %dum = size(sharpeRatio)
+    %[MSrow, MScol] = ind2sub(sharpeRatio, [maxsharpe])
+    optSharpePt = find(sharpeRatio == maxsharpe);
+
+    %{ 
+    % calc utility function
+    BorrowRate = .07055;
+    RiskAversion = 3;
+
+    portalloc(CPortRisk, CPortReturn, PortWts, ... 
+        TBill3Month, BorrowRate, RiskAversion)
+    [RiskyRisk, RiskyReturn, RiskyWts, RiskyFraction, OverallRisk, OverallReturn] = ...
+        portalloc(CPortRisk, CPortReturn, PortWts, ... 
+        TBill3Month, BorrowRate, RiskAversion)
+
+    %}
+    
+    
+    % plot sharpe line
+    
+    plot(NormEFhistSD .* sqrt(periods), NormEFhistreturns .* periods, '-bd','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor', plotcolor,...
+                    'MarkerSize',3)
+
+    title('Efficient Frontier - mean-variance')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+    
+    hold on
+    fplot(@@(x)(TBill3Month + maxsharpe * x), [0, 0.2], '-r')
+
+    plot(CPortRisk(optSharpePt, 1), CPortReturn(optSharpePt, 1), '-o', 'MarkerSize', 10)
+
+    hold off
+
+    
+    
+
+end@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

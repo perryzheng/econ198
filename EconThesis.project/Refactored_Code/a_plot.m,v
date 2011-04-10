@@ -1,0 +1,562 @@
+head	1.9;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.9
+date	2010.04.18.23.18.58;	author idw3;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2010.04.14.18.52.48;	author xz27;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.04.14.18.39.42;	author xz27;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.04.14.08.03.19;	author idw3;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.04.14.05.31.44;	author xz27;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.04.13.22.14.20;	author xz27;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.04.13.20.03.13;	author xz27;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.04.13.16.03.09;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.03.28.16.36.08;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.9
+log
+@*** empty log message ***
+@
+text
+@function y = a_plot(samplemonths)
+
+
+    reformat_graphs(samplemonths)
+
+
+
+    %main_3d()
+
+end
+
+function y = reformat_graphs(samplemonths)
+    
+    load('rebalanceResults.mat') % has fmincon: Rebalance_CVaREF
+    load('exportresults_1_2_0.05.mat')
+    load('simulations_1_2.mat')
+
+    global globalsamplemonths;
+    globalsamplemonths = samplemonths;
+    NumNormPorts = 25; 
+    RiskFreeRate = .03; 
+    global geometric;
+    global mean_var; 
+    geometric = 0;
+    mean_var = 1;
+    % mean variance
+    figure
+    givenweights_normalmeanvarEF = subc_givenweights_normalmeanvarEF(historicalReturns6fact.arithMoAvg,...
+            NumNormPorts, historicalReturns6fact.covMatrix, RiskFreeRate, histNormMeanVarEF.portWts);
+    gw_normalMV_fmincon_arith = subc_givenweights_normalmeanvarEF(historicalReturns6fact.arithMoAvg,...
+            NumNormPorts, historicalReturns6fact.covMatrix, RiskFreeRate, fminconCVaREF.portWts);
+    gw_normalMW_fmincon_comp = subc_givenweights_normalmeanvarEF(historicalReturns6fact.arithMoAvg,...
+            NumNormPorts, historicalReturns6fact.covMatrix, RiskFreeRate, fminconCompoundCVaREF.portWts);
+    gw_normalMW_fmincon_rebal = subc_givenweights_normalmeanvarEF(historicalReturns6fact.arithMoAvg,...
+            NumNormPorts, historicalReturns6fact.covMatrix, RiskFreeRate, Rebalance_CVaREF.portWts);
+        
+        
+    hold on
+    
+    EFPlotHelper(unshistNormMeanVarEF, 'r','-rv');
+    EFPlotHelper(givenweights_normalmeanvarEF, 'b','--bo')
+    %EFPlotHelper(histNormMeanVarEF, 'k','-kh')
+    
+    EFPlotHelper(gw_normalMW_fmincon_rebal, 'k','--kv')
+    EFPlotHelper(gw_normalMV_fmincon_arith, 'c','--c*')
+    EFPlotHelper(gw_normalMW_fmincon_comp, 'm','-ms')
+    
+    %%%title('Mean-Variance Efficient Frontiers')         
+    xlabel('Risk (Variance Annualized %)')
+    ylabel('Return (Annualized %)')
+    legend('Optimal Mean-Variance Weights on Historical Data', 'Optimal Mean-Variance Weights on Unsmoothed Data',...
+         'Optimal Rebalancing Mean-CVaR Weights', 'Optimal Arithmetic Mean-CVaR Weights', 'Optimal Compounding Mean-CVaR Weights',...
+            'Optimal Information Ratio', 'Location', 'SouthEast')
+    hold off 
+    grid on
+    
+    % single period CVaR
+    figure
+    
+    mean_var = 0; 
+    hold on
+    
+    %EFPlotHelper(histNormWtsCVaREF, 'g', ':gp')
+    EFPlotHelper(unshistNormWtsCVaREF, 'm','--mv')
+    %EFPlotHelper(tcopNormWtsCVaREF, 'r','--rs')
+    EFPlotHelper(fminconCVaREF, 'k','-ko')
+
+    %%%title('Arithmetic Mean-CVaR Efficient Frontiers')         
+    xlabel('Risk (3-yr. CVaR Annualized %)')
+    ylabel('Return (Annualized %)')
+    legend('Unsmoothed Historical MV Weights', ...
+         'Optimal Mean-CVaR', 'Location', 'SouthEast')
+    %hold off     
+    grid on
+    
+     
+    % rebalancing and compounding CVaR
+
+    
+    %clear global
+    global rebalanceMonth
+    global compoundmonth;
+    global glob_tcopdrawReturns
+    rebalanceMonth = 12; 
+    compoundmonth = 12;
+    glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+    
+    geometric = 1;
+    
+    figure
+    hold on
+
+    %{
+    % uses fmincon CVaR weights
+    weights = fminconCVaREF.portWts;
+    % compounding
+    compoundingGivenWeights = subc_compoundingGivenWeights...
+        (weights,samplemonths,NumPorts, RiskFreeRate, compound_dummy);
+    % rebalancing
+    rebalancingGivenWeights = subc_givenweights_rebalancing_CVaREF...
+        (NumPorts, weights, RiskFreeRate, compound_dummy)
+
+    EFplotter(compoundingGivenWeights, 'g')
+    EFplotter(rebalancingGivenWeights, 'r');
+    %}
+    
+    % uses normal MV for unsmoothed historical
+    weights = unshistNormMeanVarEF.portWts; 
+    
+    NumPorts = size(weights, 1)
+    RiskFreeRate = 0.015;
+    compound_dummy = 1;
+    %{
+    % compounding
+    uns_compoundingGivenWeights = subc_compoundingGivenWeights...
+        (weights,samplemonths,NumPorts, RiskFreeRate, compound_dummy);
+    % rebalancing
+    uns_rebalancingGivenWeights = subc_givenweights_rebalancing_CVaREF...
+        (NumPorts, weights, RiskFreeRate, compound_dummy);
+    %}
+    
+    
+    EFPlotHelper(uns_compoundingGivenWeights, 'b','--mp')
+    EFPlotHelper(fminconCompoundCVaREF, 'r','-rv')
+    grid on
+    
+    %%%title('Compounding Mean-CVaR')         
+    xlabel('Risk (3-yr. CVaR Annualized %)')
+    ylabel('Return (Annualized %)')
+    legend(...'Given Weights Compounding', 'Given Weights Rebalancing', ...
+         'Unsmoothed Historical MV Weights Compounding', ...
+            'Optimal Compounding', 'Optimal Information Ratio', 'Location', 'SouthEast')
+     
+    hold off 
+    
+    figure
+    hold on
+    
+    EFPlotHelper(uns_rebalancingGivenWeights, 'b', '--bo')
+    EFPlotHelper(Rebalance_CVaREF, 'c','-cs')
+    grid on
+    %%%title('Rebalancing Mean-CVaR')         
+    xlabel('Risk (3-yr. CVaR Annualized %)')
+    ylabel('Return (Annualized %)')
+    legend(...'Given Weights Compounding', 'Given Weights Rebalancing', ...
+         'Unsmoothed Historical MV Weights Rebalancing', ...
+         'Optimal Rebalancing', 'Optimal Information Ratio', 'Location', 'SouthEast')
+    
+    hold off
+    
+    figure
+    hold on
+    
+    EFPlotHelper(fminconCompoundCVaREF, 'r','-rv')
+    EFPlotHelper(uns_compoundingGivenWeights, 'm', '--mp')
+    
+    EFPlotHelper(Rebalance_CVaREF, 'c','-cs')
+    EFPlotHelper(uns_rebalancingGivenWeights, 'b', '--bo')
+    
+    geometric = 0; % since this is arithmetic cvar
+    EFPlotHelper(fminconCVaREF, 'k','-ko')
+    EFPlotHelper(unshistNormWtsCVaREF, 'm','--mv') 
+    geometric = 1;
+    
+    hold off
+    grid on
+    
+    %%%title('Compounding and Rebalancing Mean-CVaR')         
+    xlabel('Risk (3-yr. CVaR Annualized %)')
+    ylabel('Return (Annualized %)')
+    %legend(...'Given Weights Compounding', 'Given Weights Rebalancing', ...
+    %     'Unsmoothed Historical MV Weights Compounding', 'Unsmoothed Historical MV Weights Rebalancing', ...
+    %     'Optimal Rebalancing', 'Optimal Compounding', 'Optimal Information Ratio', 'Location', 'SouthEast')
+
+    legend('Optimal Compounding', 'Unsmoothed Historical MV Weights Compounding', ...
+        'Optimal Rebalancing', 'Unsmoothed Historical MV Weights Rebalancing',...
+        'Optimal Mean-CVaR', 'Unsmoothed Historical MV Weights Arithmetic',...        
+        'Location', 'SouthEast')
+end
+
+
+function y = main_3d()
+
+    starttimeperioddummy = 1;
+    endtimeperioddummy = 2;
+    CVaR_lowp = 0.05;
+    importresults = ['exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '_' num2str(CVaR_lowp) '.mat']
+    load(importresults);
+    
+    
+    SDs = histNormMeanVarEF.portSDs .* (sqrt(12) * 100);
+    returns = histNormMeanVarEF.portReturns .* (12 * 100);
+    CVaRs = histNormWtsCVaREF.portCVaRs .* (12);
+
+    plotcolor = 'g';
+
+    plot3(SDs, CVaRs, returns, '-bo','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor', plotcolor,...                    
+                    'MarkerSize',4);
+    xlabel('(SD %)')
+    ylabel('CVaR')
+    zlabel('Return (%)')
+    grid on
+    axis square
+    
+    
+    %plotter3d(histNormWtsCVaREF, 'g');
+    %plotter3d(fminconCVaREF, 'k');
+
+end
+
+
+
+function y = plotter3d(obj, plotcolor)
+
+    SDs = obj.portSDs .* (sqrt(12) * 100);
+    returns = obj.portReturns .* (12 * 100);
+    CVaRs = obj.portCVaRs .* (12);
+
+    plot3(SDs, CVaRs, returns, '-bo','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor', plotcolor,...                    
+                    'MarkerSize',4);
+
+end
+
+
+function y=EFPlotHelper(obj, plotcolor, plotspec)
+    global globalsamplemonths; 
+    global geometric; 
+    global mean_var; 
+    if mean_var == 1 
+        x_value = obj.portSDs;
+        x_value = x_value(1:length(x_value)-1) .* (sqrt(12) * 100);
+        y_value = obj.portReturns; 
+        y_value = y_value(1:length(y_value)-1) .* 12 * 100; 
+        plot(x_value, y_value, plotspec,...
+        'LineWidth',2,...
+        'MarkerEdgeColor','k',...
+        'MarkerFaceColor', plotcolor,...                    
+        'MarkerSize',.001)
+    elseif mean_var==0
+        if geometric == 0 
+            CVaR_converted = -obj.portCVaRs;
+            x_value = ((CVaR_converted-1) ./ globalsamplemonths).*12; 
+            x_value = -x_value; 
+            y_value = ((obj.portReturns-1)./ globalsamplemonths).*12;
+        elseif geometric == 1
+            CVaR_converted = -obj.portCVaRs;
+            y_monthly_returns = (obj.portReturns/1).^(1/globalsamplemonths)-1; %obj.portReturns is the average final fund value 
+            x_monthly_returns = (CVaR_converted/1).^(1/globalsamplemonths)-1;
+            x_value_real_returns = (x_monthly_returns+1).^12 -1; %obj.portCVaRs .* (12) * (3 * 1e9);
+            x_value = -x_value_real_returns;
+            y_value = (y_monthly_returns+1).^12 - 1; %annual return rate 
+        end
+        x_value = x_value(1:length(x_value)-1) .* 100;
+        y_value = y_value(1:length(y_value)-1) .* 100;
+        %plot(obj.portCVaRs .* (12) * (3 * 1e9), obj.portReturns .* (12 * 100), '-bo','LineWidth',0.5,...
+        plot(x_value, y_value, plotspec,'LineWidth',2,...
+            'MarkerEdgeColor','k',...
+            'MarkerFaceColor', plotcolor,...                    
+            'MarkerSize',.001)
+        axis([-5.0,16.0,5.0,14.0]);
+    end
+end@
+
+
+1.8
+log
+@*** empty log message ***
+@
+text
+@d48 1
+a48 1
+    title('Mean-Variance Efficient Frontiers')         
+d68 1
+a68 1
+    title('Arithmetic Mean-CVaR Efficient Frontiers')         
+d127 1
+a127 1
+    title('Compounding Mean-CVaR')         
+d142 1
+a142 1
+    title('Rebalancing Mean-CVaR')         
+d168 1
+a168 1
+    title('Compounding and Rebalancing Mean-CVaR')         
+@
+
+
+1.7
+log
+@*** empty log message ***
+@
+text
+@d242 1
+a242 1
+        'MarkerSize',2)
+d263 1
+a263 1
+            'MarkerSize',2)
+@
+
+
+1.6
+log
+@*** empty log message ***
+@
+text
+@d242 1
+a242 1
+        'MarkerSize',5)
+d263 1
+a263 1
+            'MarkerSize',5)
+@
+
+
+1.5
+log
+@plots and graphs for poster and reformatting
+@
+text
+@d71 2
+a72 2
+    legend('Historical MV Weights', 'Unsmoothed Historical MV Weights', 'Simulation MV Weights',...
+         'Optimal Mean-CVaR','Optimal Information Ratio', 'Location', 'SouthEast')
+d154 4
+a157 1
+    EFPlotHelper(uns_compoundingGivenWeights, 'm','--mp')
+d160 5
+a164 2
+    EFPlotHelper(Rebalance_CVaREF, 'c','-cs')
+    EFPlotHelper(fminconCompoundCVaREF, 'r','-rv')
+a165 1
+    
+d175 4
+a178 4
+    legend('Unsmoothed Historical MV Weights', 'Optimal Mean-CVaR',...
+        'Given Weights Compounding', 'Given Weights Rebalancing',...
+        'Unsmoothed Historical MV Weights Compounding', 'Unsmoothed Historical MV Weights Rebalancing',...
+        'Optimal Information Ratio', 'Location', 'SouthEast')
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d20 2
+d23 1
+d25 1
+d27 1
+a27 1
+    %{
+d29 10
+a38 1
+            NumNormPorts, historicalReturns6fact.covMatrix, RiskFreeRate, weights);
+d40 7
+a46 3
+    this section needs to be fixed for mean-variance plot to be working 
+    EFPlotHelper(, 'c','--cp')
+    EFPlotHelper(unshistNornMeanVarEF, 'b','--bp')
+d48 8
+a55 3
+    
+    EFPlotHelper(, 'b','--bp');
+    %}
+d60 1
+d62 1
+a62 1
+    %}
+d89 1
+a89 2
+
+    %{
+d127 1
+a127 1
+    title('Compounding and Rebalancing Mean-CVaR')         
+d132 1
+a132 1
+            'Optimal Rebalancing', 'Optimal Information Ratio', 'Location', 'SouthEast')
+d141 2
+a142 2
+
+    title('Compounding and Rebalancing Mean-CVaR')         
+d153 1
+a153 1
+    %}
+d223 1
+d227 8
+a234 17
+    if geometric == 0 
+        CVaR_converted = -obj.portCVaRs;
+        x_value = ((CVaR_converted-1) ./ globalsamplemonths).*12; 
+        x_value = -x_value; 
+        y_value = ((obj.portReturns-1)./ globalsamplemonths).*12;
+    elseif geometric == 1
+        CVaR_converted = -obj.portCVaRs;
+        y_monthly_returns = (obj.portReturns/1).^(1/globalsamplemonths)-1; %obj.portReturns is the average final fund value 
+        x_monthly_returns = (CVaR_converted/1).^(1/globalsamplemonths)-1;
+        x_value_real_returns = (x_monthly_returns+1).^12 -1; %obj.portCVaRs .* (12) * (3 * 1e9);
+        x_value = -x_value_real_returns;
+        y_value = (y_monthly_returns+1).^12 - 1; %annual return rate 
+    end
+    x_value = x_value(1:length(x_value)-1);
+    y_value = y_value(1:length(y_value)-1);
+    %plot(obj.portCVaRs .* (12) * (3 * 1e9), obj.portReturns .* (12 * 100), '-bo','LineWidth',0.5,...
+    plot(x_value, y_value, plotspec,'LineWidth',2,...
+d238 23
+a260 1
+    axis([-0.05,0.16,0.05,0.14]);
+@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@d23 1
+a23 1
+    
+d39 1
+a39 1
+
+d41 1
+a41 1
+    EFPlotHelper(unshistNormWtsCVaREF, 'm','--mp')
+d53 1
+d144 8
+a151 5
+    legend(...'Given Weights Compounding', 'Given Weights Rebalancing', ...
+         'Unsmoothed Historical MV Weights Compounding', 'Unsmoothed Historical MV Weights Rebalancing', ...
+         'Optimal Rebalancing', 'Optimal Compounding', 'Optimal Information Ratio', 'Location', 'SouthEast')
+
+    
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d23 4
+a26 1
+    %{
+@
+
+
+1.1
+log
+@added references; draft 03-28-10 sent to rasiel
+@
+text
+@d18 4
+d23 5
+d29 2
+d36 9
+a44 9
+    EFplotter(histNormWtsCVaREF, 'g')
+    EFplotter(unshistNormWtsCVaREF, 'w')
+    EFplotter(tcopNormWtsCVaREF, 'r')
+    
+    EFplotter(fminconCVaREF, 'k')
+
+    title('Mean-CVaR Efficient Frontiers')         
+    xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+    ylabel('Return (%)')
+d47 2
+a48 2
+    hold off     
+    
+d53 1
+a53 1
+    clear global
+d61 3
+a63 1
+    
+d87 1
+d94 21
+d116 6
+a121 2
+    EFplotter(uns_compoundingGivenWeights, 'w')
+    EFplotter(uns_rebalancingGivenWeights, 'k')
+d123 10
+a132 2
+    EFplotter(Rebalance_CVaREF, 'b')
+    EFplotter(fminconCompoundCVaREF, 'c')
+d138 2
+a139 2
+    xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+    ylabel('Return (%)')
+d192 26
+@
+

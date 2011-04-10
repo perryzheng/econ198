@@ -1,0 +1,56 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function [c,ceq] = my_rebalance_constraint(portweight) 
+	global glob_pr;
+	y = my_balance_evaluator(portweight);
+	margins = .001;
+
+	%{
+	c = [-margins-glob_pr+y{2}; glob_pr-y{2}-margins];
+	ceq=[];
+	c = glob_pr - y{2};
+	ceq = [];
+	c =[-margins-y{2}+glob_pr;y{2}-glob_pr-margins];
+	ceq =[];
+
+%}	
+	c = [];
+	ceq = glob_pr - y{2};
+
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

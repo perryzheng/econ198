@@ -1,0 +1,130 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function a_20yr_sims(samplemonths, numofGPDdraws, lowtailp, hightailp, windummy, alltimedummy, starttimeperioddummy, endtimeperioddummy)
+    if alltimedummy == 1
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 1, windummy);
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 1, 2, windummy);
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 1, windummy);
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, 2, 2, windummy);
+    elseif alltimedummy == 0
+        main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy);
+    end
+end
+
+function main(samplemonths, numofGPDdraws, lowtailp, hightailp, starttimeperioddummy, endtimeperioddummy, windummy)
+    tic
+    
+    % import data
+    clear global 
+    global globalsamplemonths
+    globalsamplemonths = samplemonths;
+    
+    % xlsread to import all the data from an excel
+    importfilename = '2009_11_03_expectedassumptions_09.xls';
+    
+    
+    if windummy == 1
+        saveimportfile = ['importdata_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+        savefilename = ['exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+        savesimulations = ['simulations_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+    elseif windummy == 0
+        saveimportfile = ['/afs/acpub.duke.edu/users/i/d/idw3/AFSDocs/MATLAB/importdata_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+        savefilename = ['/afs/acpub.duke.edu/users/i/d/idw3/AFSDocs/MATLAB/exportresults_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+        
+        savesimulations = ['/afs/acpub.duke.edu/users/i/d/idw3/AFSDocs/MATLAB/20yr_simulations_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.mat'];
+    end
+    
+    sheetname = '6 fact since 73';
+
+    writefilename = 'graphs and notes\Output Summary 2009-11-04.xls';
+    
+    % xlswrite(filename, M, sheet, range)
+
+    
+    %starttimeperioddummy = 2;
+    %endtimeperioddummy = 2;
+    cashreservedummy = 1;
+    cashconstraints = 0;
+    
+    if windummy == 1
+        importdummy = importdata(importfilename, sheetname, starttimeperioddummy, endtimeperioddummy, cashreservedummy);
+
+        fundReturns = importdummy{1};
+        fundNames = importdummy{2};    
+        expectCorr = importdummy{3};
+        expectSigma = importdummy{4};
+        expectReturn = importdummy{5};
+        
+        save(saveimportfile, ...
+            'fundReturns', 'fundNames', 'expectCorr', 'expectSigma', 'expectReturn');
+        
+    elseif windummy == 0
+        load(saveimportfile)
+    end
+    
+%end
+%function awefaewf() 
+
+    histMonths = size(fundReturns, 1);
+    NumofFunds = size(fundReturns, 2);
+    
+    expectReturn = expectReturn'./12;
+    expectSigma = expectSigma'./sqrt(12);
+    expectCalcCovariance = corr2cov(expectSigma, expectCorr);
+
+    %% Assumptions 
+    tcopTotalRuns = 1;
+    totalsimulations = tcopTotalRuns*numofGPDdraws;  
+    NumNormPorts = 12;
+    NumPorts = NumNormPorts;
+    RiskFreeRate = 0.03; % assumption for finding Sharpe pt
+    
+    expectedReturnsObj = class_expectedreturns(expectReturn, expectSigma, expectCorr);
+    
+    format short % vs long, how many places after decimal (4)
+    
+    % Constraints on all EF 
+    global globalEFconstraints;
+    constraintdummy = cashconstraints;
+    globalEFconstraints = class_constraintcreator_01(fundNames, constraintdummy);
+
+    'historical returns subclass'
+    historicalReturns6fact = subc_histreturns(fundReturns);
+    
+    historicalReturns6fact.corrMatrix;
+
+    %% Ljung-Box Q test for serial correlation in monthly returns
+    %% piecewise GPD fit to tails and center of historical returns
+    %% computes kendall's tau correlation
+    
+    'simulations class'
+    histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths,...
+        numofGPDdraws, tcopTotalRuns, lowtailp, hightailp);
+
+    
+    save(savesimulations,'histSims');
+    
+    
+    toc
+end@

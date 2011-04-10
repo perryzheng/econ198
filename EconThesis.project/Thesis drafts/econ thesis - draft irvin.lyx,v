@@ -1,0 +1,1555 @@
+head	1.10;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.10
+date	2010.03.19.19.28.30;	author idw3;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2010.03.19.17.26.43;	author idw3;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2010.03.19.04.05.56;	author idw3;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.03.03.19.46.33;	author idw3;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.03.03.18.31.02;	author idw3;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.03.03.16.34.21;	author idw3;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.03.03.07.36.48;	author idw3;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.02.24.20.15.30;	author idw3;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.02.24.16.41.34;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.24.06.13.43;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.10
+log
+@*** empty log message ***
+@
+text
+@#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes true
+\output_changes false
+\author "Irvin" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+[Econ Thesis Title]
+\end_layout
+
+\begin_layout Author
+Irvin Di Wang and Perry Zheng
+\end_layout
+
+\begin_layout Author
+Professor Emma Rasiel and Professor Aino Levonmaa, Faculty Advisors
+\end_layout
+
+\begin_layout Standard
+Honors Thesis submitted in partial fulfillment of the requirements for Graduatio
+n with Distinction in Economics in Trinity College of Duke University.
+\end_layout
+
+\begin_layout Date
+Duke University
+\end_layout
+
+\begin_layout Date
+Durham, North Carolina
+\end_layout
+
+\begin_layout Date
+April 15, 2010
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Table of Contents
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Acknowledgements
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+[Abstract text]
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+[Introduction text]
+\end_layout
+
+\begin_layout Section
+Literature Review
+\change_inserted 0 1268970936
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted 0 1268971129
+Beyond Normal and Variance
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1269025107
+Investment strategy has evolved since the groundbreaking work of Markowitz
+ (1952).
+ The assumptions of normality and variance as a risk measure, although mathemati
+cally simple and elegant to work with, have come under challenge during
+ the recent financial turmoil.
+ Research in the past decade have focused on accommodating the occurrence
+ of fat-tail or extreme events and more relevant measures of risk besides
+ variance.
+ The application of this research utilizes simulations to understand the
+ tradeoff between risk and return with computer optimization techniques.
+ Our research aims to further develop the mean-CVaR framework along with
+ the t-Copula probability distribution to incorporate portfolio rebalancing
+ and to compare these strategies against traditional mean-variance frameworks.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+
+\change_inserted 0 1268969522
+t-Copula
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1269025134
+In traditional mean-variance portfolio optimization frameworks, Monte Carlo
+ simulations are run from a Gaussian (normal) joint distribution for the
+ basket of asset classes.
+ The shortfall of this method is the thinness of the tail, implying a very
+ low likelihood for situations where all asset classes are falling significantly
+ in market crash scenarios.
+ The advantage of using a t-copula is it can accommodate higher probabilities
+ of joint events (crashes or bubbles).
+ A copula combines marginal cumulative distribution functions (CDF) and
+ historical data of each asset class to create a best fit multivariate joint
+ distribution.
+ A Gaussian copula assumes a multivariate normal distribution whereas a
+ t-copula utilizes a multivariate Student’s t-distribution, allowing for
+ fatter tails.
+ The t-copula provides a more accurate representation of real world financial
+ markets and the probability of extreme events (Demarta and McNeil, 2004).
+\end_layout
+
+\begin_layout Subsubsection
+Conditional Value at Risk (CVaR) as Risk Measure
+\end_layout
+
+\begin_layout Standard
+Variance provides a mathematically simple measure of risk for asset allocation,
+ but it adds little value as a 
+\change_deleted 0 1268968171
+relevant
+\change_unchanged
+ measure of downside risk.
+ Variance 
+\change_inserted 0 1268968192
+symmetrically 
+\change_unchanged
+accounts for both upside risk and downside risk since it is simply a measure
+ of the sample’s average squared deviation from the arithmetic mean.
+ When investment managers look at risk, they are typically concerned with
+ downside risk or losses and view upside risk (which may be referred to
+ as “excess return”) as a result of skill, expertise, good fortune, and
+ value added.
+ Value-at-risk (VaR) has been incorporated as another risk measure that
+ aims to better account for downside risk than variance.
+ VaR is the minimum loss expected at a certain confidence level (typically
+ 5%) and can be calculated by taking the value of the return
+\change_deleted 0 1268968476
+ 
+\change_unchanged
+ 
+\change_inserted 0 1268968374
+at the 
+\change_unchanged
+specified (5%) 
+\change_inserted 0 1268968461
+boundary
+\change_unchanged
+ of a probability density function (PDF) of return data (either historical
+ or simulated).
+ Although VaR does a better job of accounting for downside risk than variance,
+ it does not capture the extent of the possible losses beyond the specified
+ (5%) cutoff.
+ It is possible to have two PDF’s with the same VaR (loss associated with
+ the cutoff of 5%) but one with a fatter tail and greater losses to the
+ left of the specified (5%) cutoff.
+ 
+\change_inserted 0 1268968502
+
+\end_layout
+
+\begin_layout Standard
+Conditional value-at-risk (CVaR) attempts to rectify this problem: it is
+ the expected loss given a loss beyond the value-at-risk
+\change_deleted 0 1268968621
+,
+\change_unchanged
+ and can be calculated as a weighted average of the worst case losses.
+ Furthermore, CVaR
+\change_deleted 0 1268969079
+ 
+\change_unchanged
+ 
+\change_inserted 0 1268969037
+is a more reliable risk measure than VaR under non-normal and non-continuous
+ probability distributions
+\change_deleted 0 1268969075
+ 
+\change_unchanged
+ because it is a “coherent risk measure” and is “sub-additive and convex”
+ (p.
+ 3, Krohmal, Palmquist, and Uryasev, 2002).
+ 
+\change_inserted 0 1268969029
+In other words, t
+\change_unchanged
+he CVaR of a portfolio is always less than or equal to the sum of the CVaR
+ of the weights of the individual asset classes and can be extended from
+ continuous probability distributions to discrete scenarios such as in simulatio
+ns, allowing for
+\change_deleted 0 1269025159
+ 
+\change_unchanged
+ optimization using simulations or discrete distributions and eliminating
+ anomalous results such as multiple local minima.
+ 
+\end_layout
+
+\begin_layout Standard
+Rockafellar and Uryasev (1999) demonstrate the use of CVaR in an asset allocatio
+n framework and the ability to optimize CVaR using linear programming methods.
+ The ability to use linear programming stems from the way CVaR is calculated.
+ Theoretically, CVaR is simply the average value beyond the specified cutoff
+ (5%) calculated using the calculus of integrals.
+ Rockafellar and Uryasev demonstrated that the use of simulations and a
+ summation to estimate the theoretical CVaR can be exploited to find the
+ minimum CVaR.
+ The minimization of CVaR in most situations also provides a minimum VaR
+ because CVaR is always greater than VaR.
+ Only in situations of extreme skewness does the minimum VaR differ greatly
+ from the minimum CVaR.
+ Rockafellar and Uryasev demonstrate the theoretical and mathematical possibilit
+y of optimizing CVaR for portfolio asset allocation.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+
+\change_inserted 0 1268970994
+Application of t-Copula and CVaR: 
+\change_unchanged
+JPMorgan's paper 
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted 0 1268971211
+Portfolio Optimization Considerations Beyond Single Period Buy and Hold
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1269025228
+So far, we have discussed methods for single period buy and hold portfolio
+ optimization using CVaR as a risk measure and t-Copula as a joint probability
+ distribution.
+ Recent research has also considered expanding the optimization to incorporate
+ multiple period rebalancing using mean variance as well as mean-CVaR.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Rebalancing lit review
+\end_layout
+
+\begin_layout Section
+Theoretical Framework & Methods
+\end_layout
+
+\begin_layout Standard
+[Methods]
+\end_layout
+
+\begin_layout Standard
+[Describe CVaR, t-Copulas, rebalancing here]
+\end_layout
+
+\begin_layout Standard
+[Use formulas]
+\end_layout
+
+\begin_layout Standard
+[Show the application process of the theory, how are simulations used? Simulatio
+ns as estimate of analytical/theoretical formulas]
+\end_layout
+
+\begin_layout Subsection
+t-Copula
+\end_layout
+
+\begin_layout Standard
+The historical data of each individual asset class are first fit to independent,
+ marginal Generalized Pareto Distribution; this GPD fit is piecewise so
+ that a different function is fit to the lower tail and upper tail to account
+ for marginal distribution fat tails.
+ Next, independent marginal CDFs are transformed into their inverses, creating
+ a uniform distribution over [0, 1].
+ The historical returns are then applied to their respective inverse CDF's
+ to determine a marginal probability of 
+\change_deleted 0 1269025324
+occurence
+\change_inserted 0 1269025324
+occurrence
+\change_unchanged
+.
+ Using 
+\change_inserted 0 1269018122
+Maximum Likelihood
+\change_unchanged
+, a multivariate t-distribution fit is then constructed over these inverse
+ CDF historical probabilities to construct a t-copula that is identified
+ by a new correlation matrix and a single degree of freedom.
+ 
+\change_inserted 0 1269019371
+
+\end_layout
+
+\begin_layout Standard
+The resulting t-Copula fit is centered at zero with characteristic fat tails,
+ similar to a standard normal distribution, and is used for generating simulatio
+ns.
+ 
+\change_inserted 0 1269019411
+The multivariate t probability density function from Demarta and McNeil
+ (2002) is as follows:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1269020833
+\begin_inset Formula \begin{equation}
+f(x)=\frac{\Gamma(\frac{v+d}{2})}{\Gamma(\frac{v}{2})\sqrt{(\pi v)^{d}|\Sigma|}}(1+\frac{(x+\mu)'\Sigma^{-1}(x-\mu)}{v})^{-\frac{v+d}{2}}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1269025394
+\begin_inset Formula \begin{equation}
+\Gamma(x)=\int_{0}^{\inf}t^{x-1}e^{-t}dt\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $d$
+\end_inset
+
+ is the number of dimensions, 
+\begin_inset Formula $v$
+\end_inset
+
+ is the degrees of freedom, 
+\begin_inset Formula $\mu$
+\end_inset
+
+ is the mean (zero, in this case), 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ is the correlation matrix, and 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ is the gamma function as defined above.
+ 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+In order to simulate a certain number of months into the future, we generate
+ multiple single month returns for all asset classes.
+ A single month's return is simulated for all asset classes by generating
+ multivariate random numbers from the t-Copula fit
+\change_inserted 0 1269025374
+ 
+\change_unchanged
+and applying it to the following formula:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{equation}
+\text{Simulated One Month Return}=\mu+\sigma\cdot\vec{x}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu$
+\end_layout
+
+\end_inset
+
+ is a vector of the historical monthly returns for each asset class, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+sigma$
+\end_layout
+
+\end_inset
+
+ is a vector of the historical standard deviations for each asset class,
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+vec{x}$
+\end_layout
+
+\end_inset
+
+ is a vector of the generated multivariate t random numbers.
+ We use the average historical, empirical monthly returns and historical,
+ empirical standard deviations of each asset class in our research for consisten
+cy and objectiveness.
+ When simulations are drawn out of a t-copula, the likelihood of a market
+ crash scenario is an order of magnitude higher than that of a Gaussian
+ copula.
+ 
+\end_layout
+
+\begin_layout Subsection
+Conditional Value at Risk (CVaR) 
+\end_layout
+
+\begin_layout Standard
+In order to calculate the CVaR of a certain portfolio over a set of simulations,
+ we
+\change_deleted 0 1269020270
+ 
+\change_unchanged
+ sort the average returns of all the simulations from lowest to highest
+ and takes the average of the lowest 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+beta * Number of Simulation$
+\end_layout
+
+\end_inset
+
+ values.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{equation}
+\beta\text{-CVaR}=\frac{{1}}{(\beta\cdot n)}\sum_{i=1}^{\beta\cdot n}r_{i}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$n$
+\end_layout
+
+\end_inset
+
+ is the number of simulations, 
+\begin_inset Formula $r_{i}$
+\end_inset
+
+ is the i-th lowest simulated return of an asset class, and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+beta$
+\end_layout
+
+\end_inset
+
+ is the desired CVaR level.
+ 
+\end_layout
+
+\begin_layout Subsection
+Analytical Mean-Variance Optimization
+\end_layout
+
+\begin_layout Standard
+Markowitz (1952) pioneered the use of the normal mean-variance optimization
+ framework for maximizing portfolio returns and 
+\change_deleted 0 1269025421
+minizing
+\change_inserted 0 1269025421
+minimizing 
+\change_unchanged
+ portfolio risk (standard deviation).
+ This framework analytically calculates the optimal set of portfolio returns
+ and variances using the historical average return and historical standard
+ deviation of each asset class along with the historical covariance between
+ each pair of asset classes.
+ The optimization problem can be expressed as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{equation}
+\min_{w_{1},w_{2},...w_{n}}\text{{\sigma^{2}}}(w_{1},w_{2},...,w_{n})\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{equation}
+\sigma^{2}(w_{1},w_{2},...,w_{n})=\sum_{i=1}^{n}w_{i}\cdot\sigma_{i}+2\sum_{i=1}^{n}\sum_{j>i}^{n}w_{i}\cdot w_{j}\cdot\rho_{ij}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{equation}
+w_{1},w_{2},...,w_{n}>0\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{equation}
+w_{1}+w_{2}+...+w_{n}=1\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{equation}
+\sum_{i=1}^{n}w_{i}\cdot r_{i}=R\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $R$
+\end_inset
+
+ is the fixed portfolio monthly return rate and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r_i$
+\end_layout
+
+\end_inset
+
+ is the average historical monthly return of each asset class.
+ The optimization uses multiple levels of 
+\begin_inset Formula $R$
+\end_inset
+
+ between the lowest and highest single asset class return (where the portfolio
+ is 100% weighted in that single asset class) to determine the set of portfolios
+ along the efficient frontier.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+
+\change_deleted 0 1269024272
+Implementation
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+
+\change_deleted 0 1268967796
+We use the built in MATLAB 
+\family sans
+portopt()
+\family default
+ function to calculate the normal-mean variance efficient frontier by inputing
+ the average historical monthly return of each asset class, the historical
+ covariance matrix, and the desired number of representative portfolios
+ along the efficient frontier.
+ The 
+\family sans
+portopt()
+\family default
+ function returns a set of weights for each portfolio along with its respective
+ portfolio return and standard deviation.
+ 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsection
+Simulated Mean-CVaR Optimization Using MATLAB's 
+\family sans
+fmincon
+\family default
+ 
+\end_layout
+
+\begin_layout Standard
+[objective function = minimize CVaR]
+\end_layout
+
+\begin_layout Standard
+[constraints]
+\end_layout
+
+\begin_layout Standard
+[Ask Dr.
+ R and L about how much detail we should go into MATLAB's fmincon]
+\end_layout
+
+\begin_layout Subsection
+Simulated Mean-CVaR Optimization with Compounding
+\end_layout
+
+\begin_layout Subsection
+Simulated Mean-CVaR Optimization with Rebalancing and Compounding
+\end_layout
+
+\begin_layout Subsubsection
+Implementation
+\end_layout
+
+\begin_layout Section
+Results
+\change_inserted 0 1269023491
+ - ignore for now; will update and add backtesting results
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+[Results, data, graphs]
+\end_layout
+
+\begin_layout Standard
+No more than 3 FRONTIERS per graph!!!! (looks bad in black and white)
+\change_inserted 0 1269023426
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted 0 1269023429
+Efficient Frontiers
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsubsection
+Analytical Mean Variance
+\change_deleted 0 1269023450
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename C:/Documents and Settings/Irvin/My Documents/workspace/EconThesis/Refactored_Code/graphs and data/2010-03-02 rebalancing compounding/10 yrs/200 sims 10 yrs - mean variance.jpg
+	width 5in
+	height 3in
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Single Period (buy and hold) Mean-CVaR
+\end_layout
+
+\begin_layout Standard
+We first used the resulting weights of the analytical, normal-mean variance
+ efficient frontiers to find their corresponding portfolio CVaR's given
+ the simulation data.
+ We used this as a comparison to the actual 'optimal' set of portfolios
+ in a mean-CVaR framework, which we find using MATLAB's 
+\family sans
+fmincon()
+\family default
+ function.
+ The results indicate that there exists a set of portfolios that has a lower
+ CVaR (or higher return) than any of the analytical mean variance portfolios.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename C:/Documents and Settings/Irvin/My Documents/workspace/EconThesis/Refactored_Code/graphs and data/2010-03-02 rebalancing compounding/10 yrs/200 sims - 10 yrs - one period cvar.jpg
+	width 5in
+	height 3in
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Rebalancing and Compounding Mean-CVaR
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename C:/Documents and Settings/Irvin/My Documents/workspace/EconThesis/Refactored_Code/graphs and data/2010-03-02 rebalancing compounding/10 yrs/w uns given/200 sims 10 years - w uns given.jpg
+	width 5in
+	height 3in
+
+\end_inset
+
+
+\change_inserted 0 1269023470
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted 0 1269023472
+Backtesting
+\change_unchanged
+
+\end_layout
+
+\begin_layout Section
+Discussion
+\end_layout
+
+\begin_layout Standard
+[Interpretation of results, implications]
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Standard
+[Concluding thoughts]
+\end_layout
+
+\end_body
+\end_document
+@
+
+
+1.9
+log
+@*** empty log message ***
+@
+text
+@d135 1
+a135 1
+\change_inserted 0 1269016870
+d141 1
+a141 1
+ Research in the past decade have focused on accomodating the occurence
+d160 1
+a160 1
+\change_inserted 0 1268969515
+d167 1
+a167 1
+ The advantage of using a t-copula is it can accomodate higher probabilities
+d255 4
+a258 4
+ continuous probability distributions to discrete screnarios such as in
+ simulations, allowing for 
+\change_deleted 0 1268968683
+proper
+d261 1
+a261 1
+ anomolous results such as multiple local minima.
+d299 1
+a299 1
+\change_inserted 0 1268975209
+d303 1
+a303 1
+ Recent research have also considered expanding the optimization to incorporate
+d313 1
+a313 7
+
+\change_deleted 0 1268969303
+Concepts & 
+\change_inserted 0 1268969314
+Theoretical Framework & 
+\change_unchanged
+Methods
+a336 8
+\begin_layout Subsubsection
+
+\change_deleted 0 1268969534
+Implementation
+\change_unchanged
+
+\end_layout
+
+d345 7
+a351 1
+ to determine a marginal probability of occurence.
+a352 6
+\change_deleted 0 1269018117
+MATLAB's 
+\family sans
+copulafit()
+\family default
+ function
+d357 2
+a358 8
+ CDF historical probabilities to 
+\change_deleted 0 1269018394
+produce
+\change_inserted 0 1269018395
+ construct
+\change_unchanged
+ a t-copula that is identified by a new correlation matrix and a single
+ degree of freedom.
+d376 1
+a376 1
+\change_inserted 0 1269019575
+d382 11
+d405 1
+a405 1
+ is the mean (zero in this case), 
+d413 1
+a413 1
+is the gamma distribution.
+d423 3
+a425 7
+ multivariate random numbers from the t-Copula fit 
+\change_deleted 0 1269017231
+using MATLAB's 
+\family sans
+mvtrnd
+\family default
+() function 
+d440 1
+a440 5
+
+\change_inserted 0 1269019530
+w
+\change_unchanged
+here 
+d453 1
+a453 13
+ is a vector of the 
+\change_deleted 0 1269017247
+average
+\change_unchanged
+ historical
+\change_deleted 0 1269017244
+,
+\change_unchanged
+ 
+\change_deleted 0 1269017241
+empirical
+\change_unchanged
+ monthly returns for each asset class, 
+d466 2
+a467 9
+ is a vector of the historical
+\change_deleted 0 1269017253
+,
+\change_unchanged
+ 
+\change_deleted 0 1269017251
+empirical
+\change_unchanged
+ standard deviations for each asset class, and 
+d483 2
+a484 9
+cy and objectiveness
+\change_inserted 0 1269017605
+.
+\change_deleted 0 1269017597
+; it is possible to use expected returns and standard deviations for application
+s or further research.
+ 
+\change_unchanged
+When simulations are drawn out of a t-copula, the likelihood of a market
+a493 8
+\begin_layout Subsubsection
+
+\change_deleted 0 1268969538
+Implementation
+\change_unchanged
+
+\end_layout
+
+d496 3
+a498 7
+ we 
+\change_deleted 0 1268967092
+wrote a MATLAB script that
+\change_unchanged
+ sort
+\change_deleted 0 1268967094
+s
+d500 2
+a501 2
+ the average returns of all the simulations from lowest to highest and takes
+ the average of the lowest 
+d514 1
+a514 21
+ values
+\change_inserted 0 1268967118
+.
+\change_deleted 0 1268967114
+, where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+beta$
+\end_layout
+
+\end_inset
+
+ is the desired CVaR level, such as 5%.
+ 
+\change_unchanged
+
+d565 7
+a571 2
+ framework for maximizing portfolio returns and minizing portfolio risk
+ (standard deviation).
+d652 2
+d655 2
+d716 4
+d728 2
+d733 8
+d742 2
+d746 1
+a746 1
+\begin_layout Subsection
+d757 1
+a757 1
+\begin_layout Subsection
+d787 1
+a787 1
+\begin_layout Subsection
+d799 10
+@
+
+
+1.8
+log
+@*** empty log message ***
+@
+text
+@d135 15
+a149 2
+\change_inserted 0 1268971145
+[Blah blah, mean-variance isn't good; here's recent research]
+d299 2
+a300 2
+\change_inserted 0 1268971120
+So far, we have discussed novel methods for single period buy and hold portfolio
+d304 1
+a304 1
+ mutliple period rebalancing using mean variance as well as mean-CVaR.
+d360 3
+a362 1
+ Using MATLAB's 
+d366 13
+a378 6
+ function, a multivariate t-distribution fit is then constructed over these
+ inverse CDF historical probabilities to produce a t-copula that is identified
+ by a new correlation matrix and a single degree of freedom.
+ The resulting t-Copula fit is centered at zero with characteristic fat
+ tails, similar to a standard normal distribution, and is used for generating
+ simulations.
+d380 46
+d432 3
+a434 1
+ multivariate random numbers from the t-Copula fit using MATLAB's 
+d438 3
+a440 1
+() function and applying it to the following formula:
+d453 5
+a457 1
+Where 
+d470 13
+a482 2
+ is a vector of the average historical, empirical monthly returns for each
+ asset class, 
+d495 9
+a503 2
+ is a vector of the historical, empirical standard deviations for each asset
+ class, and 
+d519 9
+a527 3
+cy and objectiveness; it is possible to use expected returns and standard
+ deviations for applications or further research.
+ When simulations are drawn out of a t-copula, the likelihood of a market
+@
+
+
+1.7
+log
+@*** empty log message ***
+@
+text
+@d36 1
+a36 1
+\tracking_changes false
+d38 1
+a38 1
+\author "" 
+d123 2
+d128 3
+a130 1
+JPMorgan's paper - ignore
+d134 3
+a136 36
+JPMorgan’s (2009) “Non-Normality of Market Returns” paper provides a real
+ world application and verification of the use of fat tail distributions
+ and CVaR as a risk measure in an asset allocation framework.
+ They conclude that a fat tail distribution better describes the real world
+ market environment than a normal distribution.
+ The paper also briefly touches on CVaR as a risk measure that better accounts
+ for downside risk than variance.
+ JPMorgan first tests for 1st degree auto-correlation between consecutive
+ months using the Ljung-Box test, and then ‘unsmooths’ the data to take
+ out significant autocorrelation.
+ Then, the technique used is to fit the historical data to a normal distribution
+ and a fat tail (Generalized Pareto) distribution, followed by the use of
+ copulas to account for the joint distribution of asset classes.
+ In other words, the copulas account for the probability of the behavior
+ of all asset classes together.
+ The historical data is then fit to a normal copula (Gaussian copula) and
+ a Student’s t-copula (fat tail joint distribution), which accounts for
+ a higher probability of all asset classes going down together than a normal
+ copula.
+ The paper then draws simulations out of these two copulas to simulate a
+ set of returns for a time period and compares it to the historical data.
+ It is shown that the Student’s t-copula more closely fits the historical
+ data, especially the extreme events, than does the normal copula.
+ The paper then briefly looks at asset allocation using CVaR as a risk measure.
+ It shows that the use of a Student’s t-copula assumption provides a lower
+ CVaR (lower downside risk) than does the use of a normal copula.
+ JPMorgan’s paper demonstrates an implementation of the t-copula and CVaR
+ in an asset allocation framework fits historical data better than does
+ the traditional mean-variance framework.
+ Our research will focus on the implementation and continuation of this
+ asset allocation model with constraints, cash reserves, rebalancing, and
+ the VIX as an asset class.
+ We will also look at the historical accuracy and advantage of using our
+ asset allocation model in comparison to the traditional mean-variance asset
+ allocation framework.
+ 
+d139 4
+a142 2
+\begin_layout Section
+Concepts & Methods
+d146 22
+a167 1
+[Methods]
+d171 42
+a212 1
+[Describe CVaR, t-Copulas, rebalancing here]
+d216 34
+a249 1
+[Use formulas]
+d253 23
+a275 2
+[Show the application process of the theory, how are simulations used? Simulatio
+ns as estimate of analytical/theoretical formulas]
+d279 3
+a281 1
+Methods Overview - ignore
+d285 7
+a291 13
+We have reproduced and implemented the concepts of the JPMorgan paper as
+ a starting point for our investigation of the value of rebalancing as a
+ consideration for allocating assets in the mean-CVaR framework.
+ The historical return data of our asset classes benchmarks are first tested
+ for first order monthly autocorrelation and then 'unsmoothed' to remove
+ autocorrelation.
+ Next, the historical return data are individually fit to marginal Generalized
+ Pareto Distributions before combining the historical correlation matrix
+ and fit to a joint t-Copula distribution.
+ We then run simulations for monthly returns for 3 years by drawing out
+ of the joint t-Copula distribution.
+ We optimize our efficient frontier for return and CVaR based on this simulation
+ dataset only.
+d295 14
+d310 5
+a314 18
+We begin the one-period (buy and hold) CVaR analysis by establishing a baseline
+ for comparison.
+ The weights of the mean-variance efficient frontiers for historical arithmetic
+ averages and unsmoothed historical arithmetic averages are applied to our
+ simulation data to determine the CVaR and return of each weight.
+ The pseudo-mean-CVaR efficient frontier derived from these mean-variance
+ weights are used as the starting weights for finding the optimal portfolio,
+ assuming there is another weight that can provide a lower CVaR and/or a
+ higher return.
+ We use MATLAB's built-in optimization function 'fmincon' for finding an
+ optimal efficient frontier.
+ The objective function to be minimized is the CVaR while the non-linear
+ constraint to be satisfied is a set return, the average return of the portfolio
+ across the simulations must be approximately equal to the constraint.
+ We generate an efficient frontier by using each of the historical mean-variance
+ portfolio returns as our non-linear constraints for finding the minimum
+ CVaR.
+ 
+d318 1
+a318 12
+Next, we investigate the ability for multi-period optimization and account
+ for rebalancing in constructing the efficient frontier.
+ We first implement a simple model that rebalances back to the target weight
+ every 12 months and incurs no transaction costs.
+ We integrate the rebalancing function to our objective function in calculating
+ portfolio CVaRs and into our non-linear constraint for calculating average
+ portfolio returns across all simulations for our 'fmincon' optimization.
+ We are currently investigating the use of a decision function for determining
+ whether to rebalance at each specified time period based on transaction
+ cost, deviation from the target weights, change in portfolio variance,
+ or change in portfolio CVaR.
+ 
+d322 2
+a323 4
+We will compare our CVaR based efficient frontiers to their respective mean-vari
+ance counterparts to determine the strengths and weaknesses of both methods.
+ We will use historical data as well as newly generated simulation data
+ for testing hypotheses.
+d330 1
+a330 18
+\begin_layout Standard
+In traditional mean-variance portfolio optimization frameworks, Monte Carlo
+ simulations are run from a Gaussian (normal) joint distribution for the
+ basket of asset classes.
+ The shortfall of this method is the thinness of the tail, implying a very
+ low likelihood for situations where all asset classes are falling significantly
+ in market crash scenarios.
+ The advantage of using a t-copula is it can accomodate higher probabilities
+ of joint events (crashes or bubbles).
+ A copula combines marginal cumulative distribution functions (CDF) and
+ historical data of each asset class to create a best fit multivariate joint
+ distribution.
+ A Gaussian copula assumes a multivariate normal distribution whereas a
+ t-copula utilizes a multivariate Student’s t-distribution, allowing for
+ fatter tails.
+ The t-copula provides a more accurate representation of real world financial
+ markets and the probability of extreme events (Demarta and McNeil, 2004).
+\end_layout
+d332 1
+a332 1
+\begin_layout Subsubsection
+d334 2
+d342 1
+a342 1
+ for marignal distribution fat tails.
+d434 1
+a434 1
+Conditional Value at Risk (CVaR) as Risk Measure
+d437 1
+a437 36
+\begin_layout Standard
+Variance provides a mathematically simple measure of risk for asset allocation,
+ but it adds little value as a relevant measure of downside risk.
+ Variance accounts for both upside risk and downside risk since it is simply
+ a measure of the sample’s average squared deviation from the arithmetic
+ mean.
+ When investment managers look at risk, they are typically concerned with
+ downside risk or losses and view upside risk (which may be referred to
+ as “excess return”) as a result of skill, expertise, good fortune, and
+ value added.
+ Value-at-risk (VaR) has been incorporated as another risk measure that
+ aims to better account for downside risk than variance.
+ VaR is the minimum loss expected at a certain confidence level (typically
+ 5%) and can be calculated by taking the value of the return that specifies
+ the border of the specified (5%) mark on a probability density function
+ (PDF) of return data (either historical or simulated).
+ Although VaR does a better job of accounting for downside risk than variance,
+ it does not capture the extent of the possible losses beyond the specified
+ (5%) cutoff.
+ It is possible to have two PDF’s with the same VaR (loss associated with
+ the cutoff of 5%) but one with a fatter tail and greater losses to the
+ left of the specified (5%) cutoff.
+ Conditional value-at-risk (CVaR) attempts to rectify this problem: it is
+ the expected loss given a loss beyond the value-at-risk, and can be calculated
+ as a weighted average of the worst case losses.
+ Furthermore, CVaR is a better risk measure than VaR because it is a “coherent
+ risk measure” and is “sub-additive and convex” (p.
+ 3, Krohmal, Palmquist, and Uryasev, 2002).
+ The CVaR of a portfolio is always less than or equal to the sum of the
+ CVaR of the weights of the individual asset classes and can be extended
+ from continuous probability distributions to discrete screnarios such as
+ in simulations, allowing for proper optimization using simulations or discrete
+ distributions and eliminating anomolous results such as multiple local
+ minima.
+ 
+\end_layout
+d439 3
+a441 17
+\begin_layout Standard
+Rockafellar and Uryasev (1999) demonstrate the use of CVaR in an asset allocatio
+n framework and the ability to optimize CVaR using linear programming methods.
+ The ability to use linear programming stems from the way CVaR is calculated.
+ Theoretically, CVaR is simply the average value beyond the specified cutoff
+ (5%) calculated using the calculus of integrals.
+ Rockafellar and Uryasev demonstrated that the use of simulations and a
+ summation to estimate the theoretical CVaR can be exploited to find the
+ minimum CVaR.
+ The minimization of CVaR in most situations also provides a minimum VaR
+ because CVaR is always greater than VaR.
+ Only in situations of extreme skewness does the minimum VaR differ greatly
+ from the minimum CVaR.
+ Rockafellar and Uryasev demonstrate the theoretical and mathematical possibilit
+y of optimizing CVaR for portfolio asset allocation.
+ 
+\end_layout
+a442 2
+\begin_layout Subsubsection
+Implementation
+d447 10
+a456 2
+ we wrote a MATLAB script that sorts the average returns of all the simulations
+ from lowest to highest and takes the average of the lowest 
+d469 5
+a473 1
+ values, where 
+d488 2
+d514 1
+a514 10
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+vec{r}$
+\end_layout
+
+d517 1
+a517 2
+ is a vector of average returns of each simulation sorted from lowest to
+ highest return, and 
+d611 1
+a611 1
+ The optimization will use multiple levels of 
+d626 2
+d643 2
+@
+
+
+1.6
+log
+@*** empty log message ***
+@
+text
+@d673 4
+d681 1
+a681 1
+\begin_layout Standard
+d684 2
+d714 2
+d729 2
+a730 1
+	scale 90
+@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@a124 4
+\begin_layout Standard
+[Lit review text]
+\end_layout
+
+d674 13
+d690 24
+d716 10
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d677 8
+@
+
+
+1.3
+log
+@'irvin's edits, and updated combined'
+@
+text
+@d129 4
+d194 1
+a194 1
+Methods Overview
+d268 1
+a268 1
+ The advantage of using a t-copula is it can account for higher probabilities
+d285 2
+a286 2
+The historical data of each individual asset classes are first fit to independen
+t, marginal Generalized Pareto Distribution; this GPD fit is piecewise so
+d310 1
+a310 1
+ multivariate t random numbers from the t-Copula fit using MATLAB's 
+d319 1
+a319 1
+\text{Simulated One Month Return}=\mu+\sigma*\vec{x}\end{equation}
+d374 1
+a374 1
+ crash scenario is an order of magnitude higher than that in a Gaussian
+d390 3
+a392 2
+ downside risk or losses and view upside risk as a result of skill, expertise,
+ good fortune, and value added.
+d409 8
+a416 5
+ risk measure” and is “sub-additive and convex”, where the CVaR of a portfolio
+ is always less than or equal to the sum of the CVaR of the weights of the
+ individual asset classes and can be extended from continuous probability
+ distributions to discrete screnarios such as in simulations (Krohmal, Palmquist
+, and Uryasev, 2002).
+d423 1
+a423 1
+ The ability to use linear programming stems from how CVaR is calculated.
+d427 2
+a428 2
+ summation to estimate the theoretical CVaR can be effectively used to find
+ the minimum CVaR.
+d471 1
+a471 1
+ is the desired CVaR level such as 5%.
+d477 1
+a477 1
+\beta\text{-CVaR}=\frac{{1}}{(\beta*n)}\sum_{i=1}^{\beta*n}r_{i}\end{equation}
+d528 139
+a666 1
+Other methods
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d70 1
+a70 1
+April 15, 2009
+d122 1
+a122 1
+Background/Literature Review
+d129 39
+d169 1
+a169 1
+Theoretical Framework
+d173 1
+a173 1
+[Describe CVaR, t-Copulas, rebalancing here]
+d177 1
+a177 5
+[Use formulas]
+\end_layout
+
+\begin_layout Section
+Methods
+d181 1
+a181 1
+[Methods]
+d189 2
+a190 2
+\begin_layout Standard
+
+d251 213
+a463 3
+ We may also investigate the use of investor expectation in generating the
+ simulation returns by using the expected mean and expected standard deviation
+ of each asset class.
+d465 56
+@
+
+
+1.1
+log
+@'now compounding/rebalancing is own figure; ran code all the way through once'
+@
+text
+@d130 12
+d150 6
+a155 2
+[Send in a 1 page summary of this to Dr.
+ Rasiel before Wed Feb 10, 2010 meeting]
+@
+

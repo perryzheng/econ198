@@ -1,0 +1,316 @@
+head	1.6;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.6
+date	2010.04.16.22.00.32;	author idw3;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.04.14.08.03.19;	author idw3;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.04.05.18.18.27;	author idw3;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.03.31.16.54.18;	author idw3;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.03.24.05.27.54;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.21.21.54.10;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.6
+log
+@*** empty log message ***
+@
+text
+@function y = z_findpercentchange(samplemonths, starttimeperioddummy, endtimeperioddummy, objreturn)
+
+
+    % take port weights and set of simulatiosn
+    % find portfolio return for eachmonth or rolling year
+
+    % first sort in ascending order
+    % value, indexnum = min(abs( portvalue - desired level)
+
+    % count all that are greater than the desired level
+    % # total - indexnum
+
+
+    portweights = [0.462536873	0.155752212	0.152212389	0.147492625	0.115634218	0.146312684	-0.179941003
+0.539626352	0.181710914	0.177581121	0.17207473	0.134906588	0.170698132	-0.376597837
+0.385447394	0.12979351	0.126843658	0.122910521	0.096361849	0.121927237	0.016715831
+];
+
+    %{
+        portweights = [0.379090909	0.134545455	0.225454545	0.03	0.14	0.090909091	0
+    0.4	0.125	0.125	0.125	0.1	0.125	0
+    0.52125	0.185	0.31	0.04125	0.1925	0.125	0
+    0.45	0.15	0.15	0.15	0.125	0.15	0
+    0.7	0	0.3	0	0	0	0
+    ];
+%}     
+    numtests = size(objreturn, 1);
+    if numtests == 1
+        results = main(samplemonths, starttimeperioddummy, endtimeperioddummy, portweights, objreturn)
+        arithann_probabilities = results{1};
+        compann_probabilities = results{2};
+        
+        
+    elseif numtests > 1
+        
+        %arithann_probabilities = zeros(numtests, 1);
+        %compann_probabilities = zeros(numtests, 1);
+        
+        for i = 1:numtests
+            results = main(samplemonths, starttimeperioddummy, endtimeperioddummy, portweights, objreturn(i, 1))
+            arithann = results{1};
+            compann = results{2};
+            
+            arithann_probabilities(i, :) = arithann;
+            compann_probabilities(i, :) = compann;
+        end
+    end
+
+    arithann_probabilities
+    compann_probabilities
+    
+    starttimeperioddummy = int2str(starttimeperioddummy);
+    endtimeperioddummy = int2str(endtimeperioddummy);
+    outputfile = ['y_percentchance_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    save(outputfile, 'arithann_probabilities', 'compann_probabilities');
+end
+
+
+
+function y = main(samplemonths, starttimeperioddummy, endtimeperioddummy, portweights, objreturn)
+    starttimeperioddummy = int2str(starttimeperioddummy);
+    endtimeperioddummy = int2str(endtimeperioddummy);
+    importdata = ['importdata_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    load(importdata)
+    savefilename = ['simulations_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    load(savefilename)    
+    outputfile = ['y_percentchance_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    
+    glob_tcopdrawReturns = histSims.tcopdrawRawReturns; % simulated returns
+
+    numOfMonths = size(glob_tcopdrawReturns, 1);
+    numOfFunds = size(glob_tcopdrawReturns, 2);
+    numOfSims = size(glob_tcopdrawReturns, 3);
+    numports = size(portweights, 1); % each row is a portfolio
+    total_sim_months = numOfSims * numOfMonths;
+    
+    if samplemonths ~= numOfMonths % test to make sure everything is consistent
+        'ERROR: entered month does not match simulations months!!!'
+        samplemonths
+        numOfMonths
+        return
+    end
+    
+    monthlyreturns = zeros(total_sim_months, 1 ,numports); % each sheet is a different portfolio
+    
+    %monthsperperiod = 12;
+    %rollingperiods = numOfMonths - monthsperperiod + 1; % how many rollings periods there are, assume one for each month    
+    %rollingannualreturns = zeros(rollingperiods * numOfSims, 1, numports);
+    
+    % this section calculates the monthly returns and then aggregates them
+    % by portfolio
+    
+    allportprobs = zeros(numports, 1);
+    avgmoreturns = zeros(numOfSims, 1, numports);
+    
+    allportprobs_comp = zeros(numports, 1);
+    comp_ann_return = zeros(numOfSims, 1, numports); % compounded monthly, annualized (AACR)
+    
+    for p = 1:numports % do 1 portfolio at a time        
+        oneweight = portweights(p, :);
+        for i=1:numOfSims
+            oneSimReturns = glob_tcopdrawReturns(:,:,i);
+            % monthly portfolio returns
+            temp_portreturns = portmonthreturns(oneweight, oneSimReturns);
+            
+            avgmoreturns(i, 1, p) = sum(temp_portreturns) / samplemonths;
+            avgannualreturns(i, 1, p) = avgmoreturns(i, 1, p) * 12;
+            
+            total_comp_port_return = prod(temp_portreturns + 1) - 1;
+            comp_ann_return(i, 1, p) = (total_comp_port_return + 1)^(1 / (samplemonths/12)) - 1;
+            
+            % monthlyreturns((i-1) * samplemonths + 1 : i * samplemonths,
+            % 1, p) = temp_portreturns; % append monthly returns to big matrix
+            % rolling annual portfolio returns
+            % temprollingreturns = portrollingannualreturns(oneweight, oneSimReturns, temp_portreturns);
+            % rollingannualreturns((i-1) * rollingperiods + 1: i *
+            % rollingperiods, 1, p) = temprollingreturns;
+            
+        end
+        %oneportprob = calc_probability(avgmoreturns(:, :, p), objreturn);
+        
+        oneportprob = calc_probability(avgannualreturns(:, :, p), objreturn);
+        oneportprob_comp = calc_probability(comp_ann_return(:, :, p), objreturn);
+        
+        allportprobs(p, :) = 1 - oneportprob; % probability of LESS THAN the objective return
+        allportprobs_comp(p, :) = 1 - oneportprob_comp; % probability of LESS THAN the objective return
+    end
+    
+    allportprobs = allportprobs'
+    allportprobs_comp = allportprobs_comp'
+    
+    y = {allportprobs, allportprobs_comp};
+    %save(outputfile, 'allportprobs', 'allportprobs_comp');
+end
+
+% probability of having returns GREATER than the objective return
+function y = calc_probability(returnsvector, objreturn)
+    numreturns = size(returnsvector, 1);
+    sortedreturns = sort(returnsvector, 'ascend');
+    [value, indexnum] = min(abs(sortedreturns - objreturn)); % could be less than or greater than 5.5%
+    
+    if sortedreturns(indexnum) <= objreturn
+        numgreater = numreturns - indexnum;
+    elseif sortedreturns(indexnum) > objreturn
+        numgreater = numreturns - indexnum + 1;
+    end
+    
+    finalprob = numgreater/numreturns;
+    y = finalprob;
+end
+
+% need to run each simulation, then take final return --> monthly/annual
+
+
+% for 1 simulation, one set of weights, outputs monthly returns
+function y = portmonthreturns(oneweight, oneSimReturns)
+    transposeweight = oneweight';
+    monthreturns = oneSimReturns * transposeweight; % simple matrix multiplication to calculate monthly returns
+    size(oneSimReturns);
+    size(monthreturns);
+    %for i = 1:nummonths    
+    %ends
+    y = monthreturns;
+end
+
+@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@d14 3
+a16 5
+    portweights = [0.432727273	0.106181818	0.134545455	0.088181818	0.147454545	0.090909091	0
+0.392	0.132	0.129	0.125	0.098	0.124	0
+0.595	0.146	0.185	0.12125	0.20275	0.125	-0.375
+0.462536873	0.155752212	0.152212389	0.147492625	0.115634218	0.146312684	-0.179941003
+0.7	0	0.1	0.2	0	0	0
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d15 5
+a19 4
+    0.4	0.125	0.125	0.125	0.1	0.125	0
+    0.595	0.146	0.185	0.12125	0.20275	0.125	0
+    0.45	0.15	0.15	0.15	0.125	0.15	0
+    0.7	0	0.1	0.2	0	0	0];
+@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@d18 1
+a18 1
+    0.7	0	0.3	0	0	0	0];
+a123 1
+        
+a126 1
+        
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d14 5
+d20 8
+a27 8
+
+    portweights = [0.379090909	0.134545455	0.225454545	0.03	0.14	0.090909091	0
+0.4	0.125	0.125	0.125	0.1	0.125	0
+0.52125	0.185	0.31	0.04125	0.1925	0.125	0
+0.45	0.15	0.15	0.15	0.125	0.15	0
+0.7	0	0.3	0	0	0	0
+];
+       
+@
+
+
+1.1
+log
+@'stress test stuff for jing'
+@
+text
+@d16 5
+a20 7
+    portweights = [0.3000	0.1200	0.1000	0.1000	0.0600	0.0900	0.2200
+0.4000	0.1500	0.1250	0.1250	0.0800	0.1200	0.0000
+0.4200	0.1600	0.1400	0.1400	0.0800	0.1300	-0.0700
+0.4600	0.1700	0.1500	0.1600	0.0900	0.1400	-0.1700
+0.4900	0.1900	0.1700	0.1700	0.1000	0.1500	-0.2600
+0.5300	0.2000	0.1800	0.1800	0.1000	0.1700	-0.3600
+0.5700	0.2200	0.1900	0.1900	0.1100	0.1800	-0.4600
+d23 24
+a46 1
+    main(samplemonths, starttimeperioddummy, endtimeperioddummy, portweights, objreturn)
+d48 4
+d92 3
+d103 1
+d105 5
+a109 1
+            % monthlyreturns((i-1) * samplemonths + 1 : i * samplemonths, 1, p) = temp_portreturns; % append monthly returns to big matrix
+d116 9
+a124 2
+        oneportprob = calc_probability(avgmoreturns(:, :, p), objreturn);
+        allportprobs(p, :) = oneportprob;
+d127 5
+a131 2
+    allportprobs
+    save(outputfile, 'allportprobs');
+d134 1
+d147 1
+a147 1
+    y = finalprob
+@
+

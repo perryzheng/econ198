@@ -1,0 +1,228 @@
+head	1.4;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.4
+date	2010.02.03.01.59.30;	author idw3;	state dead;
+branches;
+next	1.3;
+
+1.3
+date	2010.02.02.18.06.23;	author idw3;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.02.01.22.49.45;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.01.04.18.12;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@
+classdef subc_fminconCVaREFWithRebalacing < class_efficientfrontiers
+    %***NumPorts***: number of portfolios along the efficient frontier (how many
+    %dots, typically 24), each dot is a specific set of weights of
+    %different funds (w1, w2, w3, ..., wn) and w1+...+wn = 1; it is a
+    %specific allocation of the funds
+    %***portSDs***: Standard deviation of each dot, NumPorts x 1 column
+    %vector
+    %***portReturns***: returns of each dot, NumPorts x 1 column vector
+    %***portWts***: the specific weights of funds of each of the NumPorts
+    %portfolios, a NumPorts x n matrix (where n as usual, stands for number
+    %of funds), sum of each row sum up to 1 
+    %***sharpeRatio***: sharpe ratio of each portfolio, NumPorts x 1 column
+    %vector; slope of the line from the portfolio to the risk free rate on
+    %the y-axis (or the returns axis). slope of two points, we want to find the
+    %maximum tangent
+    %***optSharpePt***: scalar that tells which portfolio has the maximum
+    %sharpRatio 
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts        
+        
+        sharpeRatio
+        optSharpePtf
+    end
+    
+    methods
+        function fminconcvar = subc_fminconCVaREFWithRebalancing(samplemonths, NumPorts,...
+                startweights, returnconstraints, RiskFreeRate)
+            fmincontestout = fmincon_test(fminconcvar, samplemonths, NumPorts, startweights, returnconstraints);
+            
+            fminconcvar.portCVaRs = fmincontestout{3};
+            fminconcvar.portReturns = fmincontestout{2};
+            fminconcvar.portWts = fmincontestout{1};
+                        
+            monthlyarithriskfreerate = RiskFreeRate/12;
+            fminconcvar.sharpeRatio = (fminconcvar.portReturns - monthlyarithriskfreerate) ./ fminconcvar.portCVaRs;
+
+            maxsharpe = max(fminconcvar.sharpeRatio);
+
+            fminconcvar.optSharpePt = find(fminconcvar.sharpeRatio == maxsharpe);
+        end
+
+        function y = fmincon_test(obj, samplemonths, numEFportfolios, PortWts, portreturns)
+            global tcopfinalfundvalue;
+            global glob_tcopdrawReturns; %got from histSims.tcopdrawRawReturns
+            for i = 1:numEFportfolios
+                fminconoutput = fmincon_single(obj, portreturns(i, 1), PortWts(i, :));
+                fminconportWt(i, :) = fminconoutput{1};
+                tempfminconfinalvalue = portweightfinalvalue(tcopfinalfundvalue, fminconportWt(i, :)');
+                % ARITHMETIC CVaR MONTHLY!!  (loss per mo)
+                fminconmoCVaR(i, 1) = fminconoutput{2}/(samplemonths/1);
+                % arithmetic - MONTHLY RETURN
+                fminconMoRet(i, 1) = (mean(tempfminconfinalvalue, 1) - 1)/ (samplemonths/1);
+            end
+            y = {fminconportWt fminconMoRet fminconmoCVaR};
+        end
+
+        % ***tcopfinalfundvalue***: 1 by n by numOfSimulations matrix
+        % Contains final value of each asset class for numOfSimulations
+        % Has already added one added to it
+        % ***returnconstraint***: numOfPortfolios by 1 volumn vector
+        % Contains the return for each portfolio, gotten from
+        % tcopNormMeanVarEF.portReturns from the aaa file. 
+        % ***starweights***: numOfPortfolios by 1 volumn vector
+        % Contains the optimal weights for the mean variance framework
+        % Come from tcopNormWtsCVaREF.portWts in aaa file
+        function y = fmincon_single(obj, returnconstraint, startweights)
+            tic
+            CVaREFWithRebalancing(returnconstraint, startweights);
+            
+            toc
+                
+        end %end of fmincon_single
+        
+      
+        
+    end
+    
+end
+@
+
+
+1.3
+log
+@'changed name of CVaREFwithRebalancing initiator function (should still change names of the other nested functions); added CVaRwithRebalancing to aaa_; simulations.mat also includes the returns objects, allows for continuing from the saved simulations now'
+@
+text
+@@
+
+
+1.2
+log
+@More rebalancing for CVaR
+@
+text
+@d30 1
+a30 1
+        function fminconcvar = subc_fminconCVaREF(samplemonths, NumPorts,...
+d48 1
+a48 1
+            global glob_tcopdrawReturns; %got from histSim.tcopdrawReturns
+@
+
+
+1.1
+log
+@rebalancing with CVaR
+@
+text
+@d47 2
+a48 1
+            global tcopfinalfundvalue
+a73 25
+            global tcopfinalfundvalue;
+            global globalsamplemonths;
+            
+            global globalreturnconstraint
+            globalreturnconstraint = returnconstraint;
+
+            % active-set is NOT the default
+            options = optimset('Algorithm','active-set', 'TolFun', 1e-19, 'TolCon', 1e-19, ...
+                'TolX', 1e-19, 'MaxFunEvals', 1000, 'MaxIter', 2500, 'UseParallel', 'always');
+
+            NumofFunds = size(startweights, 2);  
+
+            global globalEFconstraints;
+            ConSet = globalEFconstraints.ConSet;
+            A = ConSet(:, 1:NumofFunds);
+            b = ConSet(:, (NumofFunds + 1));
+
+            %The idea here is for each return level r_0 apply vecotr w to
+            %each of 5000 simulations and calculate the return. At the end
+            %we have a vector of 5000 final returns, calculates CVaR from
+            %these 5000 returns. Worst of the 5% of 5000 250 returns
+            %Calculate that CVaR call it CVaR bar
+            [x,fval, exitflag] = fmincon(@@gen_alg_min_cvar, startweights, A, b, ...
+            [], [], [], [], @@gen_alg_nonlinconstr, options);
+
+a74 46
+            y = {x fval};
+
+                    
+                function y = gen_alg_min_cvar(portweight)
+                % input: row vector of portfolio weights to try
+                    % output, the CVaR for that weight, given tcop simulations
+                
+                    % weights must be a column vector
+                    % ga() tries row vectors of weights
+                    portweight = portweight';
+
+                    lowp = 0.05;
+
+                    portfinalvalue = portweightfinalvalue(tcopfinalfundvalue, portweight);
+
+                    % attempt to vectorize, each row is a different weight, calcCVaR gives
+                    % results in each column
+                    y = - (calcCVar95_01(portfinalvalue, lowp)' - 1); 
+                    % y = - (calcCVar95_01(portfinalvalue, lowp) - 1);
+                end              
+            
+                function [c, ceq] = gen_alg_nonlinconstr(portweight)
+
+
+                    portweight = portweight';
+
+                    % must be the monthly final portfolio value
+                    % portweightfinalvalue calculates the arithmetic
+                    % final value for each portfolio
+                    tempfinalportvalue = portweightfinalvalue(tcopfinalfundvalue, portweight);
+                    avgfinalportvalue = mean(tempfinalportvalue, 1);
+                    % The 1 is the how many months per periods (in this
+                    % case each month is a period)
+                    portfinalmoreturn = (avgfinalportvalue - 1) / (globalsamplemonths/1);
+
+                    % attempt to vectorize
+
+                    margins = .0001;
+                    %{
+                    c = [(portfinalmoreturn' - globalreturnconstraint - margins) ; - (portfinalmoreturn' - globalreturnconstraint + margins)];
+                    ceq = [];
+                    %}
+
+                    c = [];
+                    ceq = (portfinalmoreturn' - globalreturnconstraint);   
+                end                
+@
+

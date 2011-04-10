@@ -1,0 +1,76 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.14.13.45;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@classdef class_rawreturns
+    properties
+        rawReturns
+        numTimePeriods
+        NumofFunds
+        numCopies        
+    end
+    
+    properties (Dependent = true)
+        arithMoAvg
+        arithAnnAvg
+        geomMoAvg
+        geomAnnAvg
+
+    end
+    
+    methods
+        % input returns must be monthly and in column vectors where each
+        % column is a fund, each sheet (dim-3) is a simulation
+        % in future version, make it more versatile
+        
+        function rr = class_rawreturns(inReturns)
+            rr.rawReturns = inReturns;            
+            rr.numTimePeriods = size(inReturns, 1);
+            rr.NumofFunds = size(inReturns, 2);  
+            rr.numCopies = size(inReturns, 3);
+                        
+        end
+
+        function arithmo = get.arithMoAvg(obj)
+            monthsperperiod = 1;            
+            arithmo = avgreturn_arithmetic_01(obj.rawReturns, monthsperperiod);             
+        end
+        function arithann = get.arithAnnAvg(obj)
+            monthsperperiod = 12;
+            arithann = avgreturn_arithmetic_01(obj.rawReturns, monthsperperiod);
+        end
+        
+        function geomo = get.geomMoAvg(obj)
+            monthsperperiod = 1;
+            geomo = avgreturn_geometric_01(obj.rawReturns, monthsperperiod);            
+        end
+            
+        function geoann = get.geomAnnAvg(obj)
+            monthsperperiod = 12;
+            geoann = avgreturn_geometric_01(obj.rawReturns, monthsperperiod);            
+        end
+            
+
+                
+    end
+end
+@

@@ -1,0 +1,164 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.02.07.22.22.41;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.07.00.00.39;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@
+classdef subc_fminconCVaREFWithCompounding < class_efficientfrontiers
+    %***NumPorts***: number of portfolios along the efficient frontier (how many
+    %dots, typically 24), each dot is a specific set of weights of
+    %different funds (w1, w2, w3, ..., wn) and w1+...+wn = 1; it is a
+    %specific allocation of the funds
+    %***portSDs***: Standard deviation of each dot, NumPorts x 1 column
+    %vector
+    %***portReturns***: returns of each dot, NumPorts x 1 column vector
+    %***portWts***: the specific weights of funds of each of the NumPorts
+    %portfolios, a NumPorts x n matrix (where n as usual, stands for number
+    %of funds), sum of each row sum up to 1 
+    %***sharpeRatio***: sharpe ratio of each portfolio, NumPorts x 1 column
+    %vector; slope of the line from the portfolio to the risk free rate on
+    %the y-axis (or the returns axis). slope of two points, we want to find the
+    %maximum tangent
+    %***optSharpePt***: scalar that tells which portfolio has the maximum
+    %sharpRatio 
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts        
+        
+        sharpeRatio
+        optSharpePt
+    end
+    
+    methods
+        function fminconcvar = fminconCVaREFWithCompounding(samplemonths, NumPorts,...
+                startweights, returnconstraints, RiskFreeRate, compoundmonth)
+            fmincontestout = fmincon_test(fminconcvar, samplemonths, NumPorts, startweights, returnconstraints);
+            
+            % compoundmonth = 12; % compound every year (12 months)
+            
+            fminconcvar.portCVaRs = fmincontestout{3};
+            fminconcvar.portReturns = fmincontestout{2};
+            fminconcvar.portWts = fmincontestout{1};
+                        
+            monthlyarithriskfreerate = RiskFreeRate/12;
+            fminconcvar.sharpeRatio = (fminconcvar.portReturns - monthlyarithriskfreerate) ./ fminconcvar.portCVaRs;
+
+            maxsharpe = max(fminconcvar.sharpeRatio);
+
+            fminconcvar.optSharpePt = find(fminconcvar.sharpeRatio == maxsharpe);
+        end
+
+        function y = fmincon_test(obj, samplemonths, numEFportfolios, PortWts, portreturns)
+            global tcopfinalfundvalue;
+            global glob_tcopdrawReturns; %got from histSims.tcopdrawRawReturns
+            for i = 1:numEFportfolios
+                ['Calculating Portfolio #']
+                [i]
+                fminconoutput = fmincon_single(obj, portreturns(i, 1), PortWts(i, :));
+                fminconportWt(i, :) = fminconoutput{1};
+                tempfminconfinalvalue = portweightfinalvalue(tcopfinalfundvalue, fminconportWt(i, :)');
+                % ARITHMETIC CVaR MONTHLY!!  (loss per mo)
+                fminconmoCVaR(i, 1) = fminconoutput{2}
+                % arithmetic - MONTHLY RETURN
+                fminconMoRet(i, 1) = (mean(tempfminconfinalvalue, 1) - 1)/ (samplemonths/1)
+                
+                'should be'
+                portreturns(i, 1)
+                %Question: Is this really the right return???? Should we
+                %really get it from tcopfinalfundvalue? 
+            end
+            y = {fminconportWt fminconMoRet fminconmoCVaR};
+        end
+
+        % ***tcopfinalfundvalue***: 1 by n by numOfSimulations matrix
+        % Contains final value of each asset class for numOfSimulations
+        % Has already added one added to it
+        % ***returnconstraint***: numOfPortfolios by 1 volumn vector
+        % Contains the return for each portfolio, gotten from
+        % tcopNormMeanVarEF.portReturns from the aaa file. 
+        % ***starweights***: numOfPortfolios by 1 volumn vector
+        % Contains the optimal weights for the mean variance framework
+        % Come from tcopNormWtsCVaREF.portWts in aaa file
+        function y = fmincon_single(obj, returnconstraint, startweights)
+            tic
+            %take each portreturn level, we return the weights that would minimize
+            %CVaR, with the constraint that rebalancing at the end of each end
+            %period that the final return annually should be at least that return
+            %level.
+            %This is done for a SINGLE weight
+            % global glob_EFconstraints;
+            global glob_returnconstraint;
+            global globalEFconstraints;
+
+            glob_returnconstraint = returnconstraint;
+
+            NumofFunds = size(startweights, 2);  
+            
+            %startweights = (1/NumofFunds)*ones(1, NumofFunds); % what happens if start weights are not the same as historical weights?
+            
+            % ConSet = glob_EFconstraints.ConSet;
+            ConSet = globalEFconstraints.ConSet;
+            A = ConSet(:, 1:NumofFunds);
+            b = ConSet(:, (NumofFunds + 1));
+
+            %{
+            lb = zeros(1,numoffunds);
+            ub = ones(1,numoffunds);
+            aeq = ones(1,numoffunds);
+            beq = 1; 
+            %}
+
+            options = optimset('algorithm','active-set', 'tolfun', 1e-19, 'tolcon', 1e-19, ...
+                'tolx', 1e-19, 'maxfunevals', 500, 'maxiter', 2500, 'useparallel', 'always');
+
+            %The idea here is for each return level r_0 apply vecotr w to
+            %each of 5000 simulations and calculate the return. At the end
+            %we have a vector of 5000 final returns, calculates CVaR from
+            %these 5000 returns. Worst of the 5% of 5000 250 returns
+            %Calculate that CVaR call it CVaR bar
+            global glob_pr;
+
+            [weights,lowest_CVaR, exitflag] = fmincon(@@calcCVaRWithRebalancing, startweights, A, b, ...
+            [], [], [], [], @@CVaRConstraintWithRebalancing, options);
+            toc
+            y = {weights, lowest_CVaR};
+            %result is in the form of {weights, lowest_CVaR};
+
+        end %end of fmincon_single  
+    end
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

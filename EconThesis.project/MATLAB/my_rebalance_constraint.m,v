@@ -1,0 +1,60 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.01.31.19.50.27;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Add calc_rebalance_cashflows, my_rebalance_constraint, and NormEFWithRebalancing in MATLAB folder
+
+Add calc_norm_variance_helper, calc_norm_variance, calc_rebalance_cashflows, and main_rebalance_NormEF, Mean_Var_EF_Rebalancing, and my_balance_evaluator, my_rebalance_constraint, and NormEFWithRebalancing, and test_helper
+@
+text
+@function [c,ceq] = my_rebalance_constraint(portweight) 
+    
+	global glob_pr;
+	y = my_balance_evaluator(portweight);
+	margins = .001;
+
+	%{
+	c = [-margins-glob_pr+y{2}; glob_pr-y{2}-margins];
+	ceq=[];
+	c = glob_pr - y{2};
+	ceq = [];
+	c =[-margins-y{2}+glob_pr;y{2}-glob_pr-margins];
+	ceq =[];
+
+%}	
+	c = [];
+	ceq = glob_pr - y{2};
+
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@d2 1
+@
+

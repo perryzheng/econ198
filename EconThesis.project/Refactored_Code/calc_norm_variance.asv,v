@@ -1,0 +1,43 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.1
+date	2010.01.31.19.50.26;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Add calc_rebalance_cashflows, my_rebalance_constraint, and NormEFWithRebalancing in MATLAB folder
+
+Add calc_norm_variance_helper, calc_norm_variance, calc_rebalance_cashflows, and main_rebalance_NormEF, Mean_Var_EF_Rebalancing, and my_balance_evaluator, my_rebalance_constraint, and NormEFWithRebalancing, and test_helper
+@
+text
+@function y = calc_norm_variance(portWeights) 
+	%{
+    temp = my_balance_evaluator(portWeights);
+	%portfolio_return_at_each_period = temp{3}
+	%variance = var(portfolio_return_at_each_period)
+	y = var(temp{3});
+    %}
+    global glob_hist_returns;
+    hist_returns = glob_hist_returns;
+	rebalancemonth = 12;
+	result = calc_norm_variance_helper(portWeights,hist_returns, rebalancemonth);
+    
+    %Take the finalvalues and calculate the variance of that
+    final_values_from_helper = result{1}
+    finalportvalue
+    y = var(result{1}); 
+end
+@

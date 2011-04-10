@@ -1,0 +1,48 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.1
+date	2010.01.22.23.04.56;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@"added a script z_expected_CVaR_... to calculate the CVaR for some weights Jing ran MV on"
+@
+text
+@
+
+% savefilename = 'simulations_1_1.mat'
+savefilename = 'simulations_1_2.mat'
+
+load(savefilename)
+
+weight
+weights = [0.385	0.147	0.129	0.139	0.082	0.12	0
+0.454	0.173	0.152	0.164	0.096	0.141	-0.18
+0.454	0.129	0.18	0.024	0.133	0.108	-0.041]
+
+
+tcopNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+    NumPorts, histSims.arithRawFinalFundValue, tcopNormMeanVarEF.portWts, RiskFreeRate);     
+EFplotter(tcopNormWtsCVaREF, 'r')
+
+
+title('CVaR Efficient Frontier - normal MV weights')         
+xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+ylabel('Return (%)')
+        
+        
+        
+        @

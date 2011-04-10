@@ -1,0 +1,81 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+classdef subc_geneticmeanCVaREF < class_efficientfrontiers
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts
+        
+        portWts2
+        portReturns2
+        portCVaRs2
+        
+        sharpeRatio
+        optSharpePt
+    end
+    
+    methods
+        
+        function genCVaREF = subc_geneticmeanCVaREF(inAvgReturns, samplemonths, NumPorts, ...
+                finalfundvalue, startweights, refPortReturns, RiskFreeRate)
+            genCVaREF = genCVaREF@@class_efficientfrontiers();
+            
+            genCVaREF.NumPorts = NumPorts;
+            
+            EFgenetic = CVaR_EF_genetic_01(samplemonths, NumPorts, ...
+                inAvgReturns, finalfundvalue, startweights, refPortReturns);
+                   
+            genCVaREF.portWts = EFgenetic{1};
+            genCVaREF.portReturns = EFgenetic{2};
+            genCVaREF.portCVaRs = EFgenetic{3};
+            
+                               
+            % genCVaREF.portWts2 = EFgenetic{4};
+            % genCVaREF.portReturns2 = EFgenetic{5};
+            % genCVaREF.portCVaRs2 = EFgenetic{6};
+            
+                        
+            
+            monthlyarithriskfreerate = RiskFreeRate/12;
+            genCVaREF.sharpeRatio = (genCVaREF.portReturns - monthlyarithriskfreerate) ./ genCVaREF.portCVaRs;
+
+
+            maxsharpe = max(genCVaREF.sharpeRatio);
+
+            genCVaREF.optSharpePt = find(genCVaREF.sharpeRatio == maxsharpe);
+        end
+                 
+    end
+        
+end
+
+
+%{
+     xlswrite(importfilename, EFgenetic{1}, 'genetic EF', 'A1:J30');
+            xlswrite(importfilename, EFgenetic{2}, 'genetic EF', 'A32:J60');
+            xlswrite(importfilename, EFgenetic{3}, 'genetic EF', 'A62:J90');
+            
+%}@

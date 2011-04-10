@@ -1,0 +1,74 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+
+
+
+function y = simulated_annealing_01(samplemonths, numEFportfolios, genPortWts)
+
+    global tcopfinalfundvalue
+    for i = 1:numEFportfolios
+
+        annealout = simulatedannealing(genPortWts(i, :));
+
+        annealportWt(i, :) = annealout{1};
+
+        
+        tempannealfinalvalue = portweightfinalvalue(tcopfinalfundvalue, annealportWt(i, :)');
+        
+        % ARITHMETIC CVaR MONTHLY!!  (loss per mo)
+        annealmoCVaR(i, 1) = annealout{2}/(samplemonths/1);
+
+        
+        % arithmetic - MONTHLY RETURN
+        annealMoRet(i, 1) = (mean(tempannealfinalvalue, 1) - 1)/ (samplemonths/1);
+
+    end
+
+    y = {annealportWt annealMoRet annealmoCVaR};
+    
+end
+
+
+function y = simulatedannealing(startweights)
+
+    tic
+    
+    marginalamt = 0.1;
+
+    lowbound = startweights - marginalamt;
+    upperbound = startweights + 0.0001;
+    
+    % lowbound = [0 0 0 0 0 0];
+    % upperbound = [1 1 1 1 1 1];
+    
+    % , 'HybridFcn',{@@fmincon}
+    options = saoptimset('TolFun ', 1e-19);
+
+    [x, fval, exitflag] = simulannealbnd(@@gen_alg_min_cvar, startweights, lowbound, upperbound, options);
+    
+    y = {x fval};
+   
+    toc
+end@

@@ -1,0 +1,56 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.38;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@% inverse transform CDF sampling
+% input: CDF of function you want to sample from
+% output: "samplesize" # of random outputs 
+
+
+function y = icdfsample01(icdfFct, samplesize)
+
+uniformsamples = rand(1, samplesize);
+
+icdfsamples = zeros(1, samplesize);
+
+for i = 1:samplesize
+    icdfsamples(1, i) = icdfFct(uniformsamples(1, i));
+    
+end
+
+y = icdfsamples;
+
+end@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

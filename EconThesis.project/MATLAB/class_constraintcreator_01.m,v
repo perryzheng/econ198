@@ -1,0 +1,170 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+
+classdef class_constraintcreator_01
+    properties
+        equitynum
+        commoditynum
+        creditnum
+        IRnum
+        ISnum
+        REnum
+        
+        cashnum
+        
+        NumofFunds
+        
+        A
+        b
+        Aeq
+        beq
+        LB
+        UB
+        
+        ConSet
+                
+    end
+    
+    methods
+        
+        function constrcreate = class_constraintcreator_01(fundNames, ineq)
+
+            % array of strings, fundNames, is a cell, not a matrix
+            constrcreate.equitynum = find(ismember(fundNames, 'Equity') == 1);
+            constrcreate.commoditynum = find(ismember(fundNames, 'Commodity') == 1);
+            constrcreate.creditnum = find(ismember(fundNames, 'Credit') == 1);
+            constrcreate.IRnum = find(ismember(fundNames, 'Interest Rate') == 1);
+            constrcreate.ISnum = find(ismember(fundNames, 'Inflation Sensitive') == 1);
+            constrcreate.REnum = find(ismember(fundNames, 'Real Estate') == 1);
+            
+            if ineq == 1    
+                constrcreate.cashnum = find(ismember(fundNames, 'Cash') == 1);
+            elseif ineq == 0
+                constrcreate.cashnum = 0;
+            end
+
+            constrcreate.NumofFunds = size(fundNames, 2);
+            totalColNum = constrcreate.NumofFunds;
+            
+            % equality constraints, weights must add to 1 (no leverage)
+            constrcreate.Aeq = [ones(1, totalColNum)];
+            constrcreate.beq = [1];
+
+            % bound constraints, weights must be between 0 and 1 (no leverage)
+            constrcreate.LB = zeros(1, totalColNum);
+            constrcreate.UB = ones(1, totalColNum);
+            
+            NumAssets = totalColNum;
+            PVal = 1; % Scale portfolio value to 1.
+            AssetMin = constrcreate.LB;
+            AssetMax = constrcreate.UB;
+
+            if ineq==1 
+                ineqconstr2(totalColNum)
+                
+                % this creates the formal MATLAB portfolio constraints
+                % '.ConSet' with cash considerations
+                constrcreate.ConSet = portcons('PortValue', PVal, NumAssets,...
+                    'AssetLims', AssetMin, AssetMax, NumAssets, ...
+                    'custom', constrcreate.A, constrcreate.b)  
+            
+            else
+
+                % this creates the formal MATLAB portfolio constraints '.ConSet'
+                constrcreate.ConSet = portcons('PortValue', PVal, NumAssets,...
+                    'AssetLims', AssetMin, AssetMax, NumAssets)  
+                
+            end                      
+            
+            function ineqconstr2(totalColNum)
+            
+                PCweight = zeros(1, totalColNum);
+                    PCpercofEq = 1/3;
+                    PCweight(1, constrcreate.equitynum) = 1 * PCpercofEq;
+
+                ORAweight = zeros(1, totalColNum);            
+                    ORApercofCom = 1/5;
+                    ORAweight(1, constrcreate.commoditynum) = 1 * ORApercofCom;
+                    ORApercofIS = 4/5;
+                    ORAweight(1, constrcreate.ISnum) = 1 * ORApercofIS;
+
+                REweight = zeros(1, totalColNum);
+                    REweight(1, constrcreate.REnum) = 1;
+
+                    
+                % EVERYTHING IS ANNUAL
+
+                univspending = 0.055;
+                
+                percLTPprivate = 0.50;
+                percUnfundedtopay = 0.25;
+                percUnfunded = 0.4;
+                percdistribution = 0.14;
+                
+                PCflows = - percdistribution * percLTPprivate + percUnfundedtopay * percUnfunded;
+                
+                Opcost = 0.0012;
+                
+                cashneeds = Opcost + univspending + PCflows;
+                
+               
+                
+                %{
+                privateArray = zeros(1, totalColNum);
+                    privateArray = PCweight + ORAweight + REweight;
+                    percLTPunfunded = 0.20;
+                    percLTPprivate = 0.50;
+                    percUnfunded = percLTPunfunded / percLTPprivate;
+                    percUnfundedtopay = 0.25;
+                    capitalcall = percUnfundedtopay .* privateArray .* percUnfunded;
+                %}
+                
+                liquidassets = zeros(1, totalColNum);
+                    monthsperyear = 12;
+                    liquidassets(1, constrcreate.cashnum) = 1;
+                    liquidassets(1, constrcreate.ISnum) = 1/5;
+                    liquidassets(1, constrcreate.creditnum) = 1/5;
+                    liquidassets(1, constrcreate.equitynum) = 1/5;
+                    liquidassets(1, constrcreate.commoditynum) = 1/10;
+                    liquidassets(1, constrcreate.IRnum) = 2/5;
+                    
+                % (1/5) equity + (1/10) commodity + (1/5) credit + (2/5) interestrate + (1/5) inflationsensitive + 0 realestate + 1 cash >= Opcost [0.0012] + univspending [0.055] + PCspending 
+
+                % cashflowconstraint = capitalcall - liquidassets;
+
+                % inequality constraints, less than
+                constrcreate.A =  [- liquidassets];
+                constrcreate.b = [ - cashneeds];
+            end
+            
+        end
+        
+
+    
+    end
+    
+end
+
+@

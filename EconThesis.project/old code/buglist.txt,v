@@ -1,0 +1,24 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2010.04.10.06.13.52;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@1.  PATH!  errors arise when in the wrong path in MATLAB terminal, duh
+2.  when adding/removing an asset class, make sure the constraints and expected returns match@

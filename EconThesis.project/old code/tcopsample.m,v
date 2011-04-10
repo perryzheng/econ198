@@ -1,0 +1,52 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.52;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+function y = tcopsample(nu, rho, GPDdrawresults, numofGPDdraws, samplemonths, NumofFunds, tcopTotalRuns)
+    histannualreturns = 0;
+    tcopfinalfundvalue = zeros(tcopTotalRuns, NumofFunds, numofGPDdraws);
+    
+    totalsimulations = tcopTotalRuns*numofGPDdraws;
+    rawMonthlyReturns = zeros(samplemonths, NumofFunds, totalsimulations);
+    
+    for i = 1:numofGPDdraws
+        % using arithmetic mean of GPD draws
+        tcopoutput = drawtCopula_01(samplemonths, nu, tcopTotalRuns, GPDdrawresults{3}(1, :, i), ...
+            GPDdrawresults{2}(1, :, i), rho, histannualreturns);
+        
+        % using geometric mean of GPD draws
+        % tcopoutput = drawtCopula_01(samplemonths, nu, tcopTotalRuns, GPDdrawresults{1}(1, :, i), ...
+            % GPDdrawresults{2}(1, :, i), rho, histannualreturns);        
+
+        % tcopfinalfundvalue(:, :, i) = tcopoutput{5};
+        
+        rawMonthlyReturns(:, :, ((i-1)*tcopTotalRuns + 1):((i)*tcopTotalRuns)) = tcopoutput{3};
+    end
+
+    % meanfinalCVaR = mean(finalCVaRtcopRuns)
+
+    y = {[], [], [], rawMonthlyReturns};
+    
+    % y = {finalCVaRtcopRuns, [], tcopAACR, rawMonthlyReturns};
+    % y = {meanfinalCVaR, tcopfinalfundvalue, avgAnnReturnstcop};
+end@

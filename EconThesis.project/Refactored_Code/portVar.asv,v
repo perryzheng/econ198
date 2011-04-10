@@ -1,0 +1,30 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.1
+date	2010.04.13.16.03.09;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = portVar(weights)
+    load('historicalReturns6fact');
+    table = historicalReturns6fact.covMatrix;
+    for i = 1:length(weights) 
+        for j = 1:length(weights) 
+            weights(i)^2 + 2*weights(i)*weights(j)*
+end@

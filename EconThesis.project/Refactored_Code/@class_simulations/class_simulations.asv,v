@@ -1,0 +1,698 @@
+head	1.3;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.3
+date	2010.02.06.09.27.47;	author idw3;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.01.25.00.54.53;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.12.17.21.40.40;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.3
+log
+@'implemented expected for jing - t copula simulations'
+@
+text
+@
+classdef class_simulations
+    %In this documentation m is the number of months and n is number of
+    %funds (typically 6 or 7)
+    %**rawReturns**: actual return data m by n matrix
+    
+    %**unsmoothedReturns**: take out autocorrelation from rawReturns (m-1 by
+    %n matrix). Obtained from  fitUnsmooth_01 method. 
+    %--------------------------------------------------
+    %**NumofFunds**: number of funds or number of columns n
+    %**numreturns**: number of rows or m 
+    %**samplemonths**: number of months we are simulating into the future
+    %**numofGPDdraws**: number of simulations we are doing (i.e. 1000
+    %simulations or sheet)
+    %**tcopTotalRuns**: for each GPD draw, how many tcopula draws we do
+    %(typically 1)
+    %**lowtailp**: cut off for the GPD fit for the lower end (typically .1 or
+    %.2)
+    %**hightailp**: high end of GPD (typically .8 or .9) 
+    %--------------------------------------------------
+    %**GPDfits**: fit for the marginal distribution for each individual fund (a
+    %set of m elements) Note: we use GPD for marginal distribution and
+    %copula for joint distribution. GPDfits are the input for the copula
+    %fit (joint distribution) 
+    %--------------------------------------------------
+    %**GPDdrawresults**: a set of matrices, including geometricAverage,
+    %arithmeticAverage and stdDeviation. Each matrix is 1 by n by 
+    %numOfGPDdraws. 
+    %Note: for each fund, we simulate GPD draws 
+    %"samplemonths"(36) months into the future 
+    % and take the average of the
+    %simulation (there would be 1000 individual averages). For each
+    %individual average, we put it in the t-copula draw (and we draw it
+    %tcopTotalRuns (typically 1) times). The average is the mu, and the 
+    %standard deviation gives us the sigma. Obtained from
+    %drawGPDfattail_01.
+    %--------------------------------------------------
+    %**tcopEstimates**: tcopula fits, a set consisting of three elements,
+    %RHOHAT, nuhat, and nuci = nu confidence interval. Nu is degrees of
+    %freedom. tcopEstimates is used to generate tcopula distribution.
+    %Obtained from fit_tcopula_01 method; needs to be done before
+    %GPDdrawresults
+    %--------------------------------------------------
+    %**tcopdrawRawReturns**: simulated data into the future, m by n by
+    %numGPDdraws (* tcopTotalRuns if tcopTotalRuns is not 1). Each row is calculated according to the 
+    %formula return = mu + sigma*X where X is a random variable drawn from
+    %the tcopula distribution. So for each month, you have return and sigma 
+    %row vectors of size 1 by numOfFunds and a random variable drawn from
+    %tcopula distribution. We do it for m months. This total constitutes
+    %one simulation. We repeat the above procedure for numofGPDdraws 
+    %(or times tcopula if tcopulaTotalruns is not 1) runs. 
+    %All the correlation among the funds is generated in X because the
+    %tcopula it's drawing from has all the correlation information.
+    %Obtained from drawGPDfattail_01 method. 
+    %Obtained from drawGPDfattail_01. 
+    %--------------------------------------------------
+    %**arithRawFinalFundValue**: a 1 by n by numGPDdraws rectangle
+    %obtained by summing up all the returns for each fund (column) and then plus 1
+    %and then multiply by the starting value
+    %--------------------------------------------------
+    %**arithRawFinalFundReturns**: a 1 by n by numGPDdraws rectangle 
+    %obtained by summing up all the returns for each fund (column)
+    %--------------------------------------------------
+    %**RHOHAT**: is the tcopula corelation matrix corresponding to the 
+    %shape of the joint tcopula distribution; describes the joint
+    %distribution; it's an output of the copulafit; a n by n matrix
+    %**nuhat**: degrees of freedom; higher nuhat cloesr to normal (infinity);
+    %lower means fatter tail; just a number
+    %**CovarHAT**: corresponding covariance matrix to the RHOHAT matrix, n by n
+    
+    properties
+        rawReturns
+        unsmoothedReturns
+        
+        NumofFunds
+        numreturns
+        
+        samplemonths
+        numofGPDdraws
+        tcopTotalRuns
+        
+        lowtailp
+        hightailp
+        
+        GPDfits
+        GPDdrawresults
+        
+        tcopEstimates
+        
+        tcopdrawRawReturns
+        arithRawFinalFundValue
+        arithRawFinalFundReturns
+        
+        
+        unsmoothedSigmas
+        unsmoothedCorr
+        unsmoothedCov
+        
+        RHOHAT
+        nuhat
+        CovarHAT
+    end
+    
+    methods
+        function uns = class_simulations(inReturns, samplemonths, numofGPDdraws, tcopTotalRuns, lowtailp, hightailp)
+            uns.rawReturns = inReturns;
+            uns.NumofFunds = size(inReturns, 2);
+            uns.numreturns = size(inReturns, 1);
+            uns.samplemonths = samplemonths;
+            uns.numofGPDdraws = numofGPDdraws;
+            uns.tcopTotalRuns = tcopTotalRuns; 
+            uns.lowtailp = lowtailp;
+            uns.hightailp = hightailp;
+            
+            uns.unsmoothedReturns = fitUnsmooth_01(uns);
+            
+            uns.GPDfits = fitGPDfattail_01(uns);
+            
+            uns.tcopEstimates = fit_tcopula_01(uns, uns.unsmoothedReturns, uns.GPDfits); % do this fit before do GDP draw
+            'tcopula fit SUCCESS'
+            
+            uns.GPDdrawresults = drawGPDfattail_01(uns, uns.GPDfits, uns.samplemonths, uns.numofGPDdraws);      
+            
+            
+            
+            uns.unsmoothedSigmas = std(uns.unsmoothedReturns);
+            uns.unsmoothedCov = cov(uns.unsmoothedReturns);
+            uns.unsmoothedCorr = corr(uns.unsmoothedReturns);  
+            uns.RHOHAT = uns.tcopEstimates{1};
+            uns.nuhat = uns.tcopEstimates{2};
+            uns.CovarHAT = corr2cov(uns.unsmoothedSigmas, uns.RHOHAT);
+            
+            uns.tcopdrawRawReturns = tcopsample(uns, uns.nuhat, uns.RHOHAT, uns.GPDdrawresults,...
+                uns.numofGPDdraws, uns.samplemonths, uns.NumofFunds, uns.tcopTotalRuns);
+            
+            startfundvalue = 1;
+            uns.arithRawFinalFundReturns = sum(uns.tcopdrawRawReturns, 1);
+            uns.arithRawFinalFundValue = (sum(uns.tcopdrawRawReturns, 1) + 1) * startfundvalue;
+            
+
+        end      
+        
+        %% unsmooths the historical data
+        % unsmooths returns for ONE FUND 
+        function y = fitUnsmooth_01(obj)
+            fundReturns = obj.rawReturns;
+            numofReturns = obj.numreturns;
+            NumofFunds = obj.NumofFunds;
+
+            Lags = 1; % i think this sets it so it only tests for auto correlation b/w consecutive months
+            Alpha = 0.05; % significance level
+            DoF = []; % degrees of freedom, when blank default is lags
+            % since after unsmoothing, we lose 1 time point
+            unsmoothedReturns = zeros(numofReturns - 1, NumofFunds);
+            % each row is for a different fund; since results are row vectors
+            H = zeros(NumofFunds, size(Lags, 1));
+            pValue = zeros(NumofFunds, size(Lags, 1));
+            Qstat = zeros(NumofFunds, size(Lags, 1));
+            chiCriticalValue = zeros(NumofFunds, size(Lags, 1));    
+
+            for i = 1:NumofFunds    
+                % Ljung-Box Q test for serial correlation in monthly returns
+                % tests for statistical significance of autocorrelation
+                [H(i, :), pValue(i, :), Qstat(i, :), chiCriticalValue(i, :)] = lbqtest(fundReturns(:, i), Lags, Alpha, DoF);
+
+                % serial/auto correlation modification, only if LBQ test is
+                % significant (H == 1)
+                if H(i, 1) == 1
+                    % b is the slope, r are the residuals 
+                    secondtolast = numofReturns(1) - 1;
+                    fundReturnsSecond = fundReturns(2:numofReturns, i);
+                    % simple linear regressions, to do multivariate regression must use
+                    % mvregress()
+                    % need column of ones to get an intercept
+                    regressOn = ones(secondtolast, 2);
+                    regressOn(:, 2) = fundReturns(1:secondtolast, i);
+
+                    [b, bint, r] = regress(fundReturns(2:numofReturns, i), regressOn);
+                    Rcorrected = (fundReturnsSecond - b(2, 1) * fundReturns(1:secondtolast, i)) / (1 - b(2, 1));
+
+                    % unsmoothed should have ~ same mean, and > variance
+                    mean(fundReturns(:, i));
+                    mean(Rcorrected);
+                    std(fundReturns(:, i));
+                    std(Rcorrected);
+
+                    unsmoothedReturns(:, i) = Rcorrected;
+                else
+                    unsmoothedReturns(:, i) = fundReturns(2:numofReturns, i); 
+                end
+            end
+
+            % cash: DO NOT UNSMOOTH
+            if NumofFunds >= 7 % cash is always in ROW 7!
+                unsmoothedReturns(:, 7) = fundReturns(2:numofReturns, 7);
+            end
+
+            % do not unsmooth VIX/VX
+            if NumofFunds > 7
+                unsmoothedReturns(:, 8) = fundReturns(2:numofReturns, 8);
+            end
+            y = unsmoothedReturns;
+        end
+        
+        %% fits to GPD piecewise
+        % fits piecewise (parametric) GPD distribution to the low tail, center, and
+        % uppertail of historical data
+        % typically used historical data that has been 'unsmoothed'
+        % outputs a 'cell array (row)' of functions
+        % call pdf using fct(n, 1).pdf
+        % cdf fct(n, 1).cdf
+        % inverse cdf fct(n, 1).icdf
+        % Output: GPDfits
+        function y = fitGPDfattail_01(obj)
+            histReturns = obj.unsmoothedReturns;
+            lowtailp = obj.lowtailp;
+            hightailp = obj.hightailp;
+            
+            % get returns
+            returns = histReturns;
+            Num = size(returns,2);
+            GPDfits = cell(1, Num);  % Cell array of Pareto tail objects
+            residuals = zeros(size(returns));
+            for i = 1:Num
+                residuals(:,i)=returns(:,i);
+                % paretotails fits GDP to tails of the empirical data; center is
+                % empirical distribution
+                GPDfits{i} = paretotails(residuals(:,i), lowtailp, hightailp, 'kernel');
+            end
+            y = GPDfits;
+        end
+
+        %% draw from GPD
+        % Output: GPDdrawresults
+        function y = drawGPDfattail_01(obj, GPDfitFcts, samplemonths, runsofmontecarlo)
+            % run multiple Markov Chain Monte Carlo simulations
+                % for each simulation, do for a certain # of months into the future
+            % calculate returns starting with $100
+            rawGPDfit = GPDfitFcts;
+            numFcts = size(rawGPDfit, 2);
+            startingmoney = 1;
+
+            icdfmonthlyreturns = zeros(samplemonths, numFcts, runsofmontecarlo);
+            geomAvgAnnReturn = zeros(1, numFcts, runsofmontecarlo);
+            geomAvgMonthReturn = zeros(1, numFcts, runsofmontecarlo);
+
+            arithmAvgAnnReturn = zeros(1, numFcts, runsofmontecarlo);
+            arithmAvgMonthReturn = zeros(1, numFcts, runsofmontecarlo);
+            icdfcompavgMonthSD = zeros(1, numFcts, runsofmontecarlo);
+
+            monthlyreturnsAdjusted = zeros(samplemonths, numFcts, runsofmontecarlo);
+
+            % using inverse transform sampling
+            for n = 1:runsofmontecarlo            
+                for h = 1:numFcts
+                    icdfmonthlyreturns(:, h, n) = icdfsample01(@@(x) rawGPDfit{h}.icdf(x), samplemonths);
+                    % if lose all money, won't make future geom returns have
+                    % negative NAV
+                    for i = 1:samplemonths
+                        if i == samplemonths
+                            monthlyreturnsAdjusted(:, h, n) = icdfmonthlyreturns(:, h, n);
+                        end                    
+                        if icdfmonthlyreturns(i, h, n) <= -1
+                            monthlyreturnsAdjusted(i, h, n) = 0;
+                            monthlyreturnsAdjusted(1:i-1, h, n) = icdfmonthlyreturns(1:i-1, h, n);
+                            break                    
+                        end
+                    end
+                    geomAvgAnnReturn(1, h, n) = avgreturn_geometric_01(monthlyreturnsAdjusted(:, h, n), 12);
+                    geomAvgMonthReturn(1, h, n) = avgreturn_geometric_01(monthlyreturnsAdjusted(:, h, n), 1);
+                    % doesn't matter if NAV < 0 for arithmetic
+                    arithmAvgAnnReturn(1, h, n) = avgreturn_arithmetic_01(monthlyreturnsAdjusted(:, h, n), 12);
+                    arithmAvgMonthReturn(1, h, n) = avgreturn_arithmetic_01(monthlyreturnsAdjusted(:, h, n), 1);
+                    % Standard deviation is ARITHMETIC... deviation from
+                    % arithmetic mean
+                    icdfcompavgMonthSD(1, h, n) = std(icdfmonthlyreturns(:, h, n));
+                end                  
+            end
+            y = {geomAvgMonthReturn, icdfcompavgMonthSD, arithmAvgMonthReturn};
+        end        
+        
+        %% fit to tcopula
+        %Output: tcopEstimates
+        function y = fit_tcopula_01(obj, fundReturns, GPDfits)
+            NumofFunds = size(fundReturns, 2);
+            U = [];
+            for i=1:NumofFunds   
+                % GPDfits{i} = paretotails(fundReturns(:,i), lowtailp, hightailp, 'kernel');
+                U = [U GPDfits{i}.cdf(fundReturns(:,i))];
+            end
+            %U is an n-by-p matrix of values in the open interval (0,1)
+            %representing n points in the p-dimensional unit hypercube.
+            [RHOHAT,nuhat,nuci] = copulafit('t',U); %MATLAB function,
+            %see documentation
+            % estimate rho using kendalls; to check MATLAB's copulafit
+            kendalltau = corr(fundReturns, 'type', 'Kendall');
+            rhoestimate = sin(pi/2 * kendalltau);    
+            RHOHAT;
+            nuhat;
+            y = {RHOHAT, nuhat, nuci};
+        end        
+
+        %% samples from tcopula
+        %Output: tcopdrawRawReturns (or at least the last component)
+        %which is simulated data into the future
+        %m by n by numGPDdraws matrix
+        function y = tcopsample(obj, nu, rho, GPDdrawresults, numofGPDdraws, samplemonths, NumofFunds, tcopTotalRuns, expected_dummy, expected_mu_sigma)
+            histannualreturns = 0;
+            % tcopfinalfundvalue = zeros(tcopTotalRuns, NumofFunds, numofGPDdraws);
+            totalsimulations = tcopTotalRuns*numofGPDdraws;
+            rawMonthlyReturns = zeros(samplemonths, NumofFunds, totalsimulations);
+            for i = 1:numofGPDdraws
+                % uses average of GPD samples
+                if expected_dummy == 0
+                    % using arithmetic mean of GPD draws
+                    temp_avgmonthSD = GPDdrawresults{2}(1, :, i);
+                    temp_avgmonthreturn = GPDdrawresults{3}(1, :, i);
+                elseif expected_dummy == 1
+                    temp_avgmonthSD = expected_mu_sigma{2};
+                    temp_avgmonthreturn = expected_mu_sigma{1};
+                end
+                tcopoutput = drawtCopula_01(obj, samplemonths, nu, tcopTotalRuns, temp_avgmonthreturn, ...
+                    temp_avgmonthSD, rho, histannualreturns);
+                % using geometric mean of GPD draws
+                % tcopoutput = drawtCopula_01(samplemonths, nu, tcopTotalRuns, GPDdrawresults{1}(1, :, i), ...
+                    % GPDdrawresults{2}(1, :, i), rho, histannualreturns);
+                % tcopfinalfundvalue(:, :, i) = tcopoutput{5};
+                rawMonthlyReturns(:, :, ((i-1)*tcopTotalRuns + 1):((i)*tcopTotalRuns)) = tcopoutput{3};
+            end
+            % meanfinalCVaR = mean(finalCVaRtcopRuns)
+            y = rawMonthlyReturns;
+        end        
+        
+        
+        %% for testing tcopula samples, histograms them
+        function plot2tcopfinalvalues(obj)
+            obj.NumofFunds
+            permutedrawfinalfundvalues = permute(obj.arithRawFinalFundReturns, [3 2 1]);
+            markersize = 5.5;
+            
+            plot(permutedrawfinalfundvalues(:, 1), permutedrawfinalfundvalues(:, 2), '.', 'MarkerSize', markersize)
+
+            title('Final Simulations Values: Fund 1 vs Fund 2')
+            xlabel('Fund 1')
+            ylabel('Fund 2')
+            
+            figure
+            plot(permutedrawfinalfundvalues(:, 1), permutedrawfinalfundvalues(:, 3), '.', 'MarkerSize', markersize)
+
+            title('Final Simulations Values: Fund 1 vs Fund 3')
+            xlabel('Fund 1')
+            ylabel('Fund 3')
+            
+            figure
+            plot(permutedrawfinalfundvalues(:, 2), permutedrawfinalfundvalues(:, 3), '.', 'MarkerSize', markersize)
+
+            title('Final Simulations Values: Fund 2 vs Fund 3')
+            xlabel('Fund 2')
+            ylabel('Fund 3')
+            
+            figure
+            hold on
+            for i = 1:(obj.numofGPDdraws*obj.tcopTotalRuns)
+                plot(obj.tcopdrawRawReturns(:, 1, i), obj.tcopdrawRawReturns(:, 2, i), '.', 'MarkerSize', markersize)
+                %plot(obj.tcopdrawRawReturns(:, 1, 2), obj.tcopdrawRawReturns(:, 2, 2), '.')
+                %plot(obj.tcopdrawRawReturns(:, 1, 3),
+                %obj.tcopdrawRawReturns(:, 2, 3), '.')
+            end
+            
+            title('Simulated Monthly Returns: Fund 1 vs Fund 2')         
+            xlabel('Fund 1')
+            ylabel('Fund 2')
+            
+            hold off
+        end
+        
+ 
+        %% Draw from t-Copula
+        % The X random variable as described in the description for the
+        % variable tcopdrawRawReturns
+        % Used in method tcopsample()
+        % HistReturn: the returns for numOfFunds funds for one sheet
+        % (simulation)
+        % Histsigma: the sigmas for numOfFunds funds for one sheet
+        % (simulation)
+        % Histcorr: historical correlation rate
+        % histannualreturns: dummy variable of whether it's about yearly
+        % return (1) or monthly return (0) 
+        function y = drawtCopula_01(obj, samplemonths, nu, TotalRuns, HistReturn, HistSigma, HistCorr, histannualreturns)
+            % clc; close all; % clear;
+            r = HistCorr;
+
+            % histCalcCorr = corr(fundReturns);
+            % r = histCalcCorr;     
+
+            % assuming each column is a different fund
+            numofFunds = size(HistReturn, 2);
+
+            monthlyreturns = zeros(1, numofFunds);
+            monthlysigma = zeros(1, numofFunds);
+
+            % convert to monthly if everyting is annual returns/sd
+            if histannualreturns == 1    
+                for i = 1:numofFunds
+                    % these returns are all compounded monthly
+                    monthlyreturns(1, i) = (HistReturn(1, i) + 1)^(1 / 12) - 1;
+                    monthlysigma(1, i) = sqrt(12) * HistSigma(1, i);
+                end    
+                Mu = monthlyreturns;  
+                sigma = monthlysigma;
+            else
+                Mu = HistReturn; 
+                sigma = HistSigma;
+            end
+
+            % extra row for month 0 / initial start
+            startmoney = 1;
+
+            monthlyreturnsAdjusted = zeros(samplemonths, numofFunds, TotalRuns);
+
+            % runs the t-copula simulations; generates random future returns
+            for n = 1:TotalRuns
+
+                C = r;
+                Std_X=mvtrnd(C, nu, samplemonths); % standardized multi-variate t simulation
+
+                X = zeros(samplemonths, numofFunds);
+                RawReturns = zeros(samplemonths, numofFunds, TotalRuns);
+
+                for i = 1:numofFunds
+
+                    % X is the randomly generated monthly returns in the future
+                    X_temp = Mu(i)+sigma(i)*Std_X(:,i);
+
+                    X(:, i) = X_temp;
+                    for j = 1:samplemonths
+                        if j == samplemonths
+                            monthlyreturnsAdjusted(:, i, n) = X(:, i);
+                        end                
+                        if X(j, i) <= -1
+                            monthlyreturnsAdjusted(j, i, n) = 0;
+                            monthlyreturnsAdjusted(1:(j-1), i, n) = X(1:(j-1), i);
+                            break                    
+                        end
+                    end
+
+                end
+                RawReturns(:, :, n) = X;
+            end
+
+            % AnnCompPortReturn = FundAllocation * compavgannreturn'; 
+
+            % compavgannreturn;
+
+            '...';
+            % AnnCompPortReturn;   
+
+
+            y = {[], [], monthlyreturnsAdjusted, [], []};
+            % y = {compavgannreturn, meanCVaR, RawReturns, compavgMonthreturn, finalfundvalue};
+        end        
+        
+    end
+end@
+
+
+1.2
+log
+@Further comments in class_simulations.m
+@
+text
+@d6 1
+d8 2
+a9 1
+    %n matrix)
+d20 1
+d25 5
+a29 1
+    %**GPDdrawresults**: for each fund, we simulate GPD draws 
+d35 3
+a37 4
+    %standard deviation gives us the sigma. 
+    %**GPDdrawresults**: a set of matrices, including geometricAverage,
+    %arithmeticAverage and stdDeviation. Each matrix is 1 by n by 
+    %numOfGPDdraws. 
+d40 4
+a43 2
+    %freedom. tcopEstimates is used to generate tcopula distribution. 
+    
+d55 1
+d60 1
+d63 1
+a63 1
+    
+d133 1
+a133 1
+            tcopdrawoutput = tcopsample(uns, uns.nuhat, uns.RHOHAT, uns.GPDdrawresults,...
+a134 1
+            uns.tcopdrawRawReturns = tcopdrawoutput{4};
+a139 1
+            
+d163 1
+d213 1
+d234 1
+d283 1
+d304 4
+a307 1
+        function y = tcopsample(obj, nu, rho, GPDdrawresults, numofGPDdraws, samplemonths, NumofFunds, tcopTotalRuns)
+d313 11
+a323 4
+                % using arithmetic mean of GPD draws
+                
+                tcopoutput = drawtCopula_01(obj, samplemonths, nu, tcopTotalRuns, GPDdrawresults{3}(1, :, i), ...
+                    GPDdrawresults{2}(1, :, i), rho, histannualreturns);
+d331 1
+a331 1
+            y = {[], [], [], rawMonthlyReturns};
+d379 2
+d382 7
+d404 2
+a405 1
+                for i = 1:numofFunds        
+@
+
+
+1.1
+log
+@updated class_simulations, includes all functions; still need to seperate the class?
+@
+text
+@d3 58
+d66 1
+d83 2
+a84 2
+    end
+    properties(Dependent = true)
+d93 1
+d98 1
+d105 10
+a114 1
+            uns.unsmoothedReturns = fitUnsmooth_01(uns.rawReturns);
+d116 6
+a121 2
+            uns.GPDfits = fitGPDfattail_01(uns.unsmoothedReturns, uns.lowtailp, uns.hightailp);
+            uns.GPDdrawresults = drawGPDfattail_01(uns.GPDfits, uns.samplemonths, uns.numofGPDdraws);      
+d123 1
+a123 2
+            uns.tcopEstimates = fit_tcopula_01(uns.unsmoothedReturns, uns.GPDfits);
+            tcopdrawoutput = tcopsample(uns.nuhat, uns.RHOHAT, uns.GPDdrawresults,...
+a129 12
+        end      
+        
+        function plot2tcopfinalvalues(obj)
+            obj.NumofFunds
+            permutedrawfinalfundvalues = permute(obj.arithRawFinalFundReturns, [3 2 1]);
+            markersize = 5.5;
+            
+            plot(permutedrawfinalfundvalues(:, 1), permutedrawfinalfundvalues(:, 2), '.','MarkerSize', markersize)
+
+            title('Final Simulations Values: Fund 1 vs Fund 2')         
+            xlabel('Fund 1')
+            ylabel('Fund 2')
+a130 6
+            figure
+            plot(permutedrawfinalfundvalues(:, 1), permutedrawfinalfundvalues(:, 3), '.','MarkerSize',markersize)
+
+            title('Final Simulations Values: Fund 1 vs Fund 3')         
+            xlabel('Fund 1')
+            ylabel('Fund 3')
+a131 2
+            figure
+            plot(permutedrawfinalfundvalues(:, 2), permutedrawfinalfundvalues(:, 3), '.','MarkerSize',markersize)
+d133 1
+a133 39
+            title('Final Simulations Values: Fund 2 vs Fund 3')         
+            xlabel('Fund 2')
+            ylabel('Fund 3')
+            
+            figure
+            hold on
+            for i = 1:(obj.numofGPDdraws*obj.tcopTotalRuns)
+                plot(obj.tcopdrawRawReturns(:, 1, i), obj.tcopdrawRawReturns(:, 2, i), '.','MarkerSize', markersize)
+                %plot(obj.tcopdrawRawReturns(:, 1, 2), obj.tcopdrawRawReturns(:, 2, 2), '.')
+                %plot(obj.tcopdrawRawReturns(:, 1, 3),
+                %obj.tcopdrawRawReturns(:, 2, 3), '.')
+            end
+            
+            title('Simulated Monthly Returns: Fund 1 vs Fund 2')         
+            xlabel('Fund 1')
+            ylabel('Fund 2')
+            
+            hold off
+        end
+        
+        function unsSig = get.unsmoothedSigmas(obj)
+            unsSig = std(obj.unsmoothedReturns);
+        end
+        function unsCov = get.unsmoothedCov(obj)
+            unsCov = cov(obj.unsmoothedReturns);
+        end
+        function unsCorr = get.unsmoothedCorr(obj)
+            unsCorr = corr(obj.unsmoothedReturns);  
+        end 
+        % computes kendall's tau correlation
+        function newrho = get.RHOHAT(obj)
+            newrho = obj.tcopEstimates{1};
+        end
+        function newnu = get.nuhat(obj)
+            newnu = obj.tcopEstimates{2};
+        end
+        function newcovar = get.CovarHAT(obj)
+            newcovar = corr2cov(obj.unsmoothedSigmas, obj.RHOHAT);
+        end
+d135 1
+d137 4
+a140 12
+        function y = fitUnsmooth_01(rawreturns)
+
+            %{
+
+            % Ljung-Box Q test for serial correlation in monthly returns
+
+            %}
+
+            fundReturns = rawreturns;
+            numofReturns = size(fundReturns, 1);
+
+            NumofFunds = size(fundReturns, 2);
+a144 1
+
+a146 1
+
+d154 1
+a154 2
+                % need to set it so it only does unsmoothing if LBQ test is
+                % significant~!!!!
+d157 2
+a159 1
+                    % serial/auto correlation modification 
+a160 1
+                    % fRtranspose = fundReturns';
+a161 1
+
+a162 1
+
+d172 1
+a177 9
+                    %{
+                    orig = 1 + fundReturns(2:numofReturns);
+                    new = 1 + Rcorrected;
+                    prod(orig)
+                    prod(new)
+                    %}
+
+                    % hist(fundReturns, 30)
+
+a185 2
+                % unsmoothedReturns(:, numofReturns) = fundReturns(2:numofReturns, numofReturns); 
+                % unsmoothedReturns(:, NumofFunds) = fundReturns(2:numofReturns, NumofFunds);
+d189 1
+d194 28
+d223 130
+d354 76
+@
+

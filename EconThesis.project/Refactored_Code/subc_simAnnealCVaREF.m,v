@@ -1,0 +1,85 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.01.19.17.05.05;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.01.14.03.34.04;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@"fixed errors in class_simulations; added obj to methods in subc_ ... EF"
+@
+text
+@classdef subc_simAnnealCVaREF < class_efficientfrontiers
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts
+        
+        
+        sharpeRatio
+        optSharpePt
+    end
+    
+    methods
+        function simanneal =  subc_simAnnealCVaREF(samplemonths, NumPorts, tcopNormWtsCVaREF.portWts)
+            simanneal = simulated_annealing_01(simanneal, samplemonths, NumPorts, portWts);
+        end
+        
+        function y = simulated_annealing_01(obj, samplemonths, numEFportfolios, genPortWts)
+
+            global tcopfinalfundvalue
+            for i = 1:numEFportfolios
+
+                annealout = simulatedannealing(genPortWts(i, :));
+
+                annealportWt(i, :) = annealout{1};
+
+
+                tempannealfinalvalue = portweightfinalvalue(tcopfinalfundvalue, annealportWt(i, :)');
+
+                % ARITHMETIC CVaR MONTHLY!!  (loss per mo)
+                annealmoCVaR(i, 1) = annealout{2}/(samplemonths/1);
+
+
+                % arithmetic - MONTHLY RETURN
+                annealMoRet(i, 1) = (mean(tempannealfinalvalue, 1) - 1)/ (samplemonths/1);
+            end
+            
+            y = {annealportWt annealMoRet annealmoCVaR};
+        end
+        
+    end
+end@
+
+
+1.1
+log
+@Refactor (simply put all the necessary methods there) naively all the subclasses of efficient_frontier class.
+@
+text
+@d15 1
+a15 1
+            simanneal = simulated_annealing_01(samplemonths, NumPorts, portWts);
+d18 1
+a18 1
+        function y = simulated_annealing_01(samplemonths, numEFportfolios, genPortWts)
+@
+

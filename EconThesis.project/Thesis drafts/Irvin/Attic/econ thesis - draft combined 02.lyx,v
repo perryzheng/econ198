@@ -1,0 +1,6295 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.2
+date	2010.04.06.08.10.29;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2010.04.05.18.16.22;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\leftmargin 1.5in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes true
+\output_changes false
+\author "Irvin" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+\paragraph_spacing double
+[Econ Thesis Title]
+\end_layout
+
+\begin_layout Author
+\paragraph_spacing double
+Irvin Di Wang and Perry Zheng
+\end_layout
+
+\begin_layout Author
+\paragraph_spacing double
+Professor Emma Rasiel and Professor Aino Levonmaa, Faculty Advisors
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Honors Thesis submitted in partial fulfillment of the requirements for Graduatio
+n with Distinction in Economics in Trinity College of Duke University.
+\end_layout
+
+\begin_layout Date
+\paragraph_spacing double
+Duke University
+\end_layout
+
+\begin_layout Date
+\paragraph_spacing double
+Durham, North Carolina
+\end_layout
+
+\begin_layout Date
+\paragraph_spacing double
+April 15, 2010
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+\paragraph_spacing double
+Table of Contents
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+\paragraph_spacing double
+Acknowledgements
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+\paragraph_spacing double
+[Abstract text]
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\paragraph_spacing double
+Introduction
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+[Introduction text]
+\change_inserted 0 1269656258
+
+\end_layout
+
+\begin_layout Section
+\paragraph_spacing double
+Literature Review
+\change_inserted 0 1269701018
+
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+
+\change_inserted 0 1269659384
+Modern Portfolio Theory
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269660923
+Markowitz (1952) pioneered the use of mean-variance optimization to understand
+ the tradeoff between risk and return for a portfolio of risky assets.
+ Markowitz assumed asset returns are normally distributed, allowing for
+ an analytical solution to the minimization of variance and the maximization
+ of expected return.
+ The elegant analytical solution of this optimization problem is a set of
+ portfolios along the efficient frontier that represents the best possible
+ obtainable returns and variances.
+ Markowitz had set the foundation for asset allocation research and understandin
+g the tradeoff between risk and return in a portfolio of risky assets.
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+Beyond Normal and Variance
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+The assumptions of normality and variance as a risk measure in asset allocation
+ have come under pressure since the groundbreaking work of Markowitz's portfolio
+ theory
+\change_inserted 0 1269661079
+ in light of the market crises in the past two decades
+\change_unchanged
+.
+ Research in the past decade has focused on accommodating the occurrence
+ of extreme events and more relevant measures of risk besides variance.
+ The applications of this research utilizes simulation data to understand
+ the tradeoff between risk and return with computer optimization techniques.
+ Our research aims to further develop the mean-CVaR framework along with
+ the t-Copula probability distribution to incorporate portfolio rebalancing
+ and to compare these strategies against traditional mean-variance frameworks.
+ 
+\change_deleted 0 1269747477
+
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+
+\change_deleted 0 1269747475
+JPMorgan's paper
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269700760
+Sheikh and Qiao (2009)
+\change_unchanged
+ provide a real world application and verification of the use of fat tail
+ distributions and CVaR as a risk measure in an asset allocation framework.
+ They 
+\change_deleted 0 1269700803
+conclude
+\change_inserted 0 1269700808
+ demonstrate
+\change_unchanged
+ that a fat tail distribution better describes the real world market environment
+ than a normal distribution
+\change_inserted 0 1269700843
+ by showing that the Student’s t-copula more closely fits the historical
+ data, especially the extreme events, than does the normal copula.
+ 
+\change_unchanged
+.
+ The paper also briefly touches on CVaR as a risk measure that better accounts
+ for downside risk than variance.
+ 
+\change_deleted 0 1269700838
+It shows that the Student’s t-copula more closely fits the historical data,
+ especially the extreme events, than does the normal copula.
+ 
+\change_unchanged
+The paper then briefly looks at asset allocation using CVaR as a risk measure.
+ It shows that the use of a Student’s t-copula assumption provides a lower
+ downside risk (through lower CVaR) than does the use of a normal copula.
+ 
+\change_deleted 0 1269700916
+JPMorgan’s paper demonstrates an implementation of the t-copula and CVaR
+ in an asset allocation framework fits historical data better than does
+ the traditional mean-variance framework.
+ 
+\change_unchanged
+Our research will focus on the 
+\change_deleted 0 1269700923
+implementation
+\change_inserted 0 1269700924
+verification
+\change_unchanged
+ and continuation of this asset allocation model with 
+\change_deleted 0 1269700936
+constraints, cash reserves, and 
+\change_unchanged
+rebalancing.
+ We will also look at the historical accuracy and advantage of using our
+ asset allocation model in comparison to the traditional mean-variance asset
+ allocation framework.
+ 
+\change_inserted 0 1270054498
+
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+
+\change_inserted 0 1269747339
+Rebalancing
+\change_unchanged
+
+\end_layout
+
+\begin_layout Section
+\paragraph_spacing double
+Theoretical Framework
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+t-Copula
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+In traditional mean-variance portfolio optimization frameworks, Monte Carlo
+ simulations are run from a Gaussian (normal) joint distribution for 
+\change_deleted 0 1269791190
+the
+\change_inserted 0 1269791191
+a
+\change_unchanged
+ basket of asset classes.
+ The shortfall of this method is the thinness of the tail, implying a very
+ low likelihood for situations where all asset classes are falling significantly
+ in market crash scenarios.
+ The advantage of using a t-copula is 
+\change_inserted 0 1269791199
+that 
+\change_unchanged
+it can accommodate higher probabilities of joint events (crashes or bubbles).
+ A copula combines marginal cumulative distribution functions (CDF) and
+ historical data of each asset class to create a best fit 
+\change_inserted 0 1269791220
+joint 
+\change_unchanged
+multivariate 
+\change_deleted 0 1269791219
+joint
+\change_unchanged
+ distribution.
+ A Gaussian copula assumes a multivariate normal distribution whereas a
+ t-copula utilizes a multivariate Student’s t-distribution, allowing for
+ fatter tails.
+ The t-copula provides a more accurate representation of real world financial
+ markets and the probability of extreme events (Demarta and McNeil, 2004).
+ 
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+Conditional Value at Risk (CVaR) as Risk Measure
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Variance provides a mathematically simple measure of risk for asset allocation,
+ but it adds little value as a measure of downside risk.
+ Variance symmetrically accounts for both upside risk and downside risk
+ since it is simply a measure of the sample’s average squared deviation
+ from the arithmetic mean.
+ When investment managers 
+\change_deleted 0 1269791234
+look at
+\change_inserted 0 1269791237
+assess
+\change_unchanged
+ risk, they are typically concerned with downside risk or losses and 
+\change_deleted 0 1269791244
+view
+\change_inserted 0 1269791245
+consider
+\change_unchanged
+ upside risk (which may be referred to as “excess return”) as a result of
+ skill, expertise, 
+\change_inserted 0 1269791251
+and 
+\change_unchanged
+good fortune
+\change_deleted 0 1269791249
+, and value added
+\change_unchanged
+.
+ Value-at-risk (VaR) has been incorporated as another risk measure that
+ aims to better account for downside risk than variance.
+ VaR is the minimum 
+\change_inserted 0 1269791270
+expected 
+\change_unchanged
+loss
+\change_deleted 0 1269791269
+ expected
+\change_unchanged
+ at a certain confidence level (typically 5%) and can be calculated by taking
+ the value of the return at the specified (5%) boundary of a probability
+ density function (PDF) of return data (either historical or simulated).
+ Although VaR 
+\change_deleted 0 1269791284
+does a better job of accounting
+\change_inserted 0 1269791286
+better accounts
+\change_unchanged
+ for downside risk than variance
+\change_inserted 0 1269791292
+ does
+\change_unchanged
+, it 
+\change_deleted 0 1269791306
+does not
+\change_inserted 0 1269791306
+fails to
+\change_unchanged
+ capture the extent of the possible losses beyond the specified (5%) cutoff.
+ It is possible to have two PDF’s with the same VaR (loss associated with
+ the cutoff of 5%) but one with a fatter tail and greater losses to the
+ left of the specified (5%) cutoff.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Conditional value-at-risk (CVaR) attempts to rectify this problem: it is
+ the expected loss given a loss beyond the value-at-risk and can be calculated
+ as a weighted average of the worst case losses.
+ Furthermore, CVaR is a more reliable risk measure than VaR under non-normal
+ and non-continuous probability distributions because it is a “coherent
+ risk measure” and is “sub-additive and convex” (p.
+ 3, Krohmal, Palmquist, and Uryasev, 2002).
+ 
+\change_deleted 0 1269791333
+In other words,
+\change_inserted 0 1269791335
+This means that
+\change_unchanged
+ the CVaR of a portfolio is always less than or equal to the sum of the
+ CVaR of the weights of the individual asset classes and can be extended
+ from continuous probability distributions to discrete scenarios
+\change_deleted 0 1269791320
+ such as in simulations
+\change_unchanged
+, allowing for optimization using simulations or discrete distributions
+ and eliminating anomalous results such as multiple local minima.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Rockafellar and Uryasev (1999) demonstrate the use of CVaR in an asset allocatio
+n framework and the ability to optimize CVaR using linear programming methods.
+ The ability to use linear programming stems from the way CVaR is calculated.
+ Theoretically, CVaR is simply the average value beyond the specified cutoff
+ (5%) calculated using the calculus of integrals.
+ Rockafellar and Uryasev demonstrate
+\change_deleted 0 1269791351
+d
+\change_unchanged
+ that the use of simulations and a summation to estimate the theoretical
+ CVaR can be exploited to find the minimum CVaR.
+ The minimization of CVaR in most situations also provides a minimum VaR
+ because CVaR is always greater than VaR.
+ Only in situations of extreme skewness does the minimum VaR differ greatly
+ from the minimum CVaR.
+ Rockafellar and Uryasev demonstrate the theoretical and mathematical possibilit
+y of optimizing CVaR for portfolio asset allocation.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+  
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+Portfolio Optimization Considerations Beyond Single Period Buy and Hold
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+So far, we have discussed methods for single period buy and hold portfolio
+ optimization using CVaR as a risk measure and t-Copula as a joint probability
+ distribution.
+ 
+\change_inserted 0 1269792164
+Realistically, as certain assets outperform others, the asset allocation
+ changes as well.
+ 
+\change_unchanged
+Recent research 
+\change_deleted 0 1269792168
+has also 
+\change_unchanged
+consider
+\change_inserted 0 1269792172
+s
+\change_deleted 0 1269792172
+ed
+\change_unchanged
+ expanding the optimization to incorporate multiple period rebalancing using
+ 
+\change_inserted 0 1269791386
+the 
+\change_unchanged
+mean
+\change_inserted 0 1269791384
+-
+\change_deleted 0 1269791384
+ 
+\change_unchanged
+variance 
+\change_inserted 0 1269791390
+framework 
+\change_unchanged
+as well as 
+\change_inserted 0 1269791396
+the 
+\change_unchanged
+mean-CVaR
+\change_inserted 0 1269791394
+ framework
+\change_unchanged
+.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+Rebalancing 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_deleted 0 1269792117
+The previous literature review considers a single time frame portfolio optimizat
+ion, where an asset allocation is set at the beginning of the period and
+ the portfolio is unchanged until the end of the investment period.
+  
+\change_unchanged
+Master (2003) offers a simple rebalancing strategy, which involves setting
+ a target allocation.
+  The investor only rebalances when the allocation deviates beyond a set
+ of trigger points.
+  For instance, if the trigger point is 3% for all asset classes, then an
+ investor only rebalances when the weight for any asset class deviates more
+ than 3% from the target weight.
+  This is also known as a tolerance band rebalancing strategy.
+  According to Master, any rebalancing strategy should incorporate some
+ basic assumptions.
+  The benefit of rebalancing is inversely proportional to an investor's
+ risk preference: if an investor is risk tolerant, meaning he is willing
+ to endure higher risk for higher potential returns, then his tolerance
+ band will be wider, meaning he will rebalance less often.
+  It 
+\change_deleted 0 1269792197
+is also worthwhile to
+\change_inserted 0 1269792199
+should also be
+\change_unchanged
+ note
+\change_inserted 0 1269792200
+d
+\change_unchanged
+ that the benefit of rebalancing rises geometrically.
+  For example, rebalancing at deviation of 6% 
+\change_inserted 0 1269792208
+from the
+\change_deleted 0 1269792207
+of
+\change_unchanged
+ target allocation provides up to four times as much benefit as rebalancing
+ at deviation of 3% of target allocation.
+  
+\change_inserted 0 1269792235
+The key benefit of rebalancing is to reduce this tracking error.
+ 
+\change_unchanged
+Mathematically this can be represented as 
+\begin_inset Formula $\text{Rebalancing Benefit }=\frac{{\text{Tracking Error}^{2}\cdot\delta^{2}}}{2\cdot\text{Risk Tolerance}}$
+\end_inset
+
+ where 
+\begin_inset Formula $\delta$
+\end_inset
+
+ is the deviation from the target allocation and Tracking Error represents
+ how closely a portfolio follows the target allocation to which it is benchmarke
+d.
+  
+\change_deleted 0 1269792228
+The key benefit of rebalancing is to reduce this tracking error.
+
+\change_unchanged
+ 
+\change_inserted 0 1269792257
+The process of 
+\change_deleted 0 1269792255
+R
+\change_inserted 0 1269792259
+r
+\change_unchanged
+ebalancing 
+\change_deleted 0 1269792299
+also 
+\change_unchanged
+involves 
+\change_deleted 0 1269792303
+transactions 
+\change_inserted 0 1269792305
+the movement 
+\change_unchanged
+of 
+\change_deleted 0 1269792272
+asset classes
+\change_inserted 0 1269792277
+capital across asset classes and 
+\change_deleted 0 1269792285
+, which 
+\change_inserted 0 1269792285
+ 
+\change_unchanged
+incurs costs.
+  While the benefit of rebalancing rises geometrically, transaction costs
+ of rebalancing are linear: selling twice as much of an asset would cost
+ twice as much.
+  The net benefit of rebalancing is the difference between the benefit of
+ rebalancing and the cost of rebalancing.
+  
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Sun (2006) extends the idea of Master’s paper to incorporate dynamic programming
+ to minimize the cost of rebalancing.
+  Sun applies the idea to CAPM models, which assume that asset returns are
+ stationary, and that mean and variance are the primary portfolio statistics
+ of interest.
+  The optimal strategy is to rebalance only when the expected cost of trading
+ is less than the expected cost of doing nothing.
+  His conclusion is that periodic or tolerance band rebalancing provides
+ suboptimal rebalanced portfolios.
+  However, by treating the rebalancing problem as an optimization problem
+ and solving it using dynamic programming, Sun was able to reduce overall
+ costs of portfolio rebalancing.
+  
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Guastaroba (2009) applies rebalancing strategies to a portfolio optimization
+ model that uses Conditional Value at Risk (CVaR) as the risk measure.
+ The model incorporates rebalancing as a set of linear programming constraints.
+  He introduces a decision variable to determine whether to rebalance based
+ on 
+\change_deleted 0 1269792365
+whether
+\change_inserted 0 1269792368
+ how much
+\change_unchanged
+ the portfolio allocation deviate
+\change_inserted 0 1269792371
+s
+\change_deleted 0 1269792371
+d
+\change_unchanged
+ from a predetermined quantile.
+  
+\change_deleted 0 1269792389
+He also incorporates both f
+\change_inserted 0 1269792389
+F
+\change_unchanged
+ixed and variable transaction costs
+\change_inserted 0 1269792405
+ are both incorporated in the rebalancing decision
+\change_unchanged
+.
+  During every rebalancing period, an investor rebalances if net portfolio
+ return, taking into account fixed and proportional transaction costs, is
+ at least the predetermined required return.
+  The paper then uses four in-and-out-of-sample windows to test the model
+ for different levels of minimum required returns (0, 5%, and 10%) and different
+ quantile measures (1%, 5%, 10% and 25%).
+  Based on the back-testing results, he concludes that for a very risk-averse
+ investor the best choice is to rebalance two or three times in six months.
+  On the other hand, a less risk-averse investor should rebalance one time
+ or not rebalance at all.
+  
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+These papers give us a starting point for incorporating rebalancing into
+ our model.
+
+\change_deleted 0 1269747182
+  Our goal is to analyze and compare the different rebalancing strategies:
+ a simple periodic strategy that rebalances every few months, a tolerance-band
+ strategy that rebalances when allocation deviates beyond a predetermined
+ range, or a dynamic programming approach that actively calculates the expected
+ cost of future transactions.
+ 
+\change_unchanged
+ We also incorporated t-copula joint distributions and CVaR as a risk measure
+\change_deleted 0 1269747208
+, and 
+\change_inserted 0 1269747214
+when 
+\change_unchanged
+rebalancing
+\change_deleted 0 1269747226
+ as a portfolio strategy to produce a realistic asset allocation framework
+ for a large institutional investor such as an endowment
+\change_unchanged
+.
+
+\change_inserted 0 1269744124
+ 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Section
+\paragraph_spacing double
+
+\change_inserted 0 1269701810
+Data
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269702200
+We used benchmark data obtained from the Duke University Management Company
+ (DUMAC).
+ The data consisted of historical monthly returns for the benchmarks representin
+g seven asset classes: MSCI All World ($) for equity, GSCI for commodities,
+ a blend of benchmarks 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1269702084
+footnote
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+ for credit, Barclays Capital U.S.
+ Treasury Intermediate for interest rate, a blend of benchmarks 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1269702089
+footnote
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+ for inflation sensitive, NaREIT for real estate, and Citi 3-month T-bills
+ for cash.
+ The benchmark return data ranged from 1973 to 2009 and are all publicly
+ available.
+ We also used the historical asset allocations of DUMAC as a reference.
+\end_layout
+
+\begin_layout Section
+\paragraph_spacing double
+
+\change_deleted 0 1269656292
+Theoretical Framework & 
+\change_unchanged
+Methods
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+[Methods]
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+[Describe CVaR, t-Copulas, rebalancing here]
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+[Use formulas]
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+[Show the application process of the theory, how are simulations used? Simulatio
+ns as estimate of analytical/theoretical formulas]
+\change_inserted 0 1269792543
+
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+
+\change_inserted 0 1269792549
+Arithmetic and Compounding Returns
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269792666
+We use two methods for calculating returns for a given time period.
+ In the arithmetic approach, returns from a period are added to returns
+ in the next period.
+ In the compounding approach, returns from a period are compounded with
+ the returns in the next period.
+ Let 
+\begin_inset Formula $r_{t}$
+\end_inset
+
+ be the return during period 
+\begin_inset Formula $t$
+\end_inset
+
+ and 
+\begin_inset Formula $V_{t}$
+\end_inset
+
+ be the portfolio value at the end of period 
+\begin_inset Formula $t$
+\end_inset
+
+, we can express the two approaches as:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269792549
+\begin_inset Formula \begin{equation}
+\text{Compounding: }V_{t+1}=V_{t}\cdot(1+r_{t+1})\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269792762
+\begin_inset Formula \begin{equation}
+\text{Arithmetic: }V_{t+1}=V_{t}+r_{r+1}.\end{equation}
+
+\end_inset
+
+The use of arithmetic returns is mathematically and computationally convenient.
+ Our initial analyses utilize arithmetic returns before extending the mean-CVaR
+ framework to consider compounding and rebalancing.
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+t-Copula
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+The historical data of each individual asset class are first fit to independent,
+ marginal Generalized Pareto Distribution; this GPD fit is piecewise so
+ that a different function is fit to the lower tail and upper tail to account
+ for marginal distribution fat tails.
+ Next, independent marginal CDFs are transformed into their inverses, creating
+ a uniform distribution over [0, 1].
+ The historical returns are then applied to their respective inverse CDF's
+ to determine a marginal probability of occurrence.
+ Using Maximum Likelihood, a multivariate t-distribution fit is then constructed
+ over these inverse CDF historical probabilities to construct a t-copula
+ that is identified by a new correlation matrix and a single degree of freedom.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+The resulting t-Copula fit is centered at zero with characteristic fat tails,
+ similar to a standard normal distribution, and is used for generating simulatio
+ns.
+ The multivariate t probability density function from Demarta and McNeil
+ (2002) is as follows:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+f(x)=\frac{\Gamma(\frac{v+d}{2})}{\Gamma(\frac{v}{2})\sqrt{(\pi v)^{d}|\Sigma|}}(1+\frac{(x+\mu)'\Sigma^{-1}(x-\mu)}{v})^{-\frac{v+d}{2}}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+\Gamma(x)=\int_{0}^{\inf}t^{x-1}e^{-t}dt\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $d$
+\end_inset
+
+ is the number of dimensions, 
+\begin_inset Formula $v$
+\end_inset
+
+ is the degrees of freedom, 
+\begin_inset Formula $\mu$
+\end_inset
+
+ is the mean (zero, in this case), 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ is the correlation matrix, and 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ is the gamma function as defined above.
+ 
+\change_inserted 0 1269647789
+
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+
+\change_inserted 0 1269647792
+Generate Simulations
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+In order to simulate a certain number of months into the future, we generate
+ multiple single month returns for all asset classes.
+ A single month's return is simulated for all asset classes by generating
+ multivariate random numbers from the t-Copula fit and applying it to the
+ following formula:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+\text{Simulated One Month Return}=\mu+\sigma\cdot\vec{x}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+mu$
+\end_layout
+
+\end_inset
+
+ is a vector of the historical monthly returns for each asset class, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+sigma$
+\end_layout
+
+\end_inset
+
+ is a vector of the historical standard deviations for each asset class,
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+vec{x}$
+\end_layout
+
+\end_inset
+
+ is a vector of the generated multivariate t random numbers.
+ We use the average historical, empirical monthly returns and historical,
+ empirical standard deviations of each asset class in our research for consisten
+cy and objectiveness.
+ When simulations are drawn out of a t-copula, the likelihood of a market
+ crash scenario is an order of magnitude higher than that of a Gaussian
+ copula.
+ 
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+Conditional Value at Risk (CVaR) 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+In order to calculate the CVaR of a certain portfolio over a set of simulations,
+ we sort the average returns of all the simulations from lowest to highest
+ and takes the average of the lowest 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+beta * Number of Simulation$
+\end_layout
+
+\end_inset
+
+ values.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+\beta\text{-CVaR}=\frac{{1}}{(\beta\cdot n)}\sum_{i=1}^{\beta\cdot n}r_{i}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Where 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$n$
+\end_layout
+
+\end_inset
+
+ is the number of simulations, 
+\begin_inset Formula $r_{i}$
+\end_inset
+
+ is the i-th lowest simulated return of an asset class, and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+beta$
+\end_layout
+
+\end_inset
+
+ is the desired CVaR level.
+ 
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+Analytical Mean-Variance Optimization
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Markowitz (1952) pioneered the use of the normal mean-variance optimization
+ framework for maximizing portfolio returns and minimizing portfolio risk
+ (standard deviation).
+ This framework analytically calculates the optimal set of portfolio returns
+ and variances using the historical average return and historical standard
+ deviation of each asset class along with the historical covariance between
+ each pair of asset classes.
+ The optimization problem can be expressed as follows:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+\min_{w_{1},w_{2},...w_{n}}\text{{\sigma^{2}}}(w_{1},w_{2},...,w_{n})\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+\sigma^{2}(w_{1},w_{2},...,w_{n})=\sum_{i=1}^{n}w_{i}\cdot\sigma_{i}+2\sum_{i=1}^{n}\sum_{j>i}^{n}w_{i}\cdot w_{j}\cdot\rho_{ij}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+w_{1},w_{2},...,w_{n}>0\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+w_{1}+w_{2}+...+w_{n}=1\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+\sum_{i=1}^{n}w_{i}\cdot r_{i}=R\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+where 
+\begin_inset Formula $R$
+\end_inset
+
+ is the fixed portfolio monthly return rate and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$r_i$
+\end_layout
+
+\end_inset
+
+ is the average historical monthly return of each asset class.
+ The optimization uses multiple levels of 
+\begin_inset Formula $R$
+\end_inset
+
+ between the lowest and highest single asset class return (where the portfolio
+ is 100% weighted in that single asset class) to determine the set of portfolios
+ along the efficient frontier.
+ 
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+Single Period Simulated
+\change_inserted 0 1269792996
+ 
+\change_unchanged
+Mean-CVaR Optimization 
+\change_inserted 0 1269792809
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269793345
+The single period optimization of mean-CVaR minimizes CVaR at each given
+ level of return.
+ The optimization calculates the CVaR as described previously while satisfying
+ the condition that the average return across all simulations is equal the
+ given level of return we are optimizing on.
+ Since this is a single period optimization, arithmetic returns are used.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269793345
+Let 
+\begin_inset Formula $w_{i}$
+\end_inset
+
+denote the weight for asset class 
+\begin_inset Formula $i$
+\end_inset
+
+, 
+\begin_inset Formula $R$
+\end_inset
+
+ be the fixed portfolio monthly return rate and 
+\begin_inset Formula $\tilde{R}$
+\end_inset
+
+ be the calculated portfolio monthly return rate at each run of the simulation.
+ We have the following optimization problem: 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269792810
+\begin_inset Formula \begin{equation}
+\min_{w_{1},w_{2},...w_{n}}\text{{CVaR}}(w_{1},w_{2},...,w_{n})\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+w_{1},w_{2},...,w_{n}>0\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+w_{1}+w_{2}+...+w_{n}=1\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+\tilde{R}(w_{1},w_{2},...,w_{n})=R(w_{1},w_{2},...,w_{n})\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269793369
+\begin_inset Formula \begin{equation}
+V_{t}=V_{t}+\sum_{i=1}^{t}r_{i}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269793442
+Our two linear constraints indicate that the weights must sum to one and
+ be nonnegative (since no borrowing is allowed).
+ Since we want to optimize on a fixed return, our nonlinear constraint is
+ that our average final portfolio return 
+\begin_inset Formula $\tilde{R}$
+\end_inset
+
+ across all simulations must be equivalent to the given fixed portfolio
+ return 
+\begin_inset Formula $R$
+\end_inset
+
+.
+ 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+Simulated Mean-CVaR Optimization with Compounding
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+We adopt the compounding approach in this optimization.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+\min_{w_{1},w_{2},...w_{n}}\text{{CVaR}}(w_{1},w_{2},...,w_{n})\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+w_{1},w_{2},...,w_{n}>0\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+w_{1}+w_{2}+...+w_{n}=1\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+\tilde{R}(w_{1},w_{2},...,w_{n})=R(w_{1},w_{2},...,w_{n})\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+V_{t+1}=V_{t}\cdot(1+r_{t+1})\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Our two linear constraints indicate that the weights must sum to one and
+ be nonnegative (since no borrowing is allowed).
+ Since we want to fix return, our nonlinear constraint is that our final
+ portfolio return 
+\begin_inset Formula $\tilde{R}$
+\end_inset
+
+ must be the same as the given fixed portfolio return 
+\begin_inset Formula $R$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+Simulated Mean-CVaR Optimization with Rebalancing and Compounding
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+The implementation is the same as in Section 3.6.1 with one additional feature.
+ Every 12 months, we have to rebalance.
+ We sum up the returns in that year and we distribute the portfolio value
+ according to a predetermined set of weights, and then compound it with
+ future returns.
+ Keeping all the variables the same, and let 
+\begin_inset Formula $\vec{{V}_{t}^{'}}$
+\end_inset
+
+ be the portfolio vector after rebalancing.
+ 
+\begin_inset Formula $\vec{{V}_{t}^{'}}$
+\end_inset
+
+ contains the value of each asset class at the end of time 
+\begin_inset Formula $t$
+\end_inset
+
+.
+ We have the following nonlinear programming optimization problem:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+\min_{w_{1},w_{2},...w_{n}}\text{{CVaR}}(w_{1},w_{2},...,w_{n})\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+w_{1},w_{2},...,w_{n}>0\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+w_{1}+w_{2}+...+w_{n}=1\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+\tilde{R}(w_{1},w_{2},...,w_{n})=R(w_{1},w_{2},...,w_{n})\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+V_{t+1}=V_{t}\cdot(1+r_{t+1})\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+\vec{{V}_{t}^{'}}=V_{t}\cdot(w_{1},w_{2},..,w_{n})\label{eq:last_constraint}\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+where the only addition is equation 
+\change_inserted 0 1270055454
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:last_constraint"
+
+\end_inset
+
+
+\change_unchanged
+.
+ It specifies that at each time period 
+\begin_inset Formula $t$
+\end_inset
+
+, we redistribute the value of the portfolio according to a predetermined
+ vector of weights to obtain a portfolio vector containing the values of
+ each asset class.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Our objective function is to find the weights that will minimize CVaR.
+ CVaR is calculated analytically by trying out a set of asset weights for
+ all 5000 simulations.
+ Each simulation gives a final portfolio value, from which we can derive
+ the monthly return rate by the formula: 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Formula \begin{equation}
+r=\frac{{V_{f}^{1/p}-1}}{b}\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $r$
+\end_inset
+
+ is the monthly return rate, 
+\begin_inset Formula $V_{f}$
+\end_inset
+
+ is the final portfolio value, 
+\begin_inset Formula $p$
+\end_inset
+
+ is the number of periods we simulate into the future, and 
+\begin_inset Formula $b$
+\end_inset
+
+ is number of months in between which we rebalance.
+ A periond is the interval in which we rebalance once; it is equal to 
+\begin_inset Formula $b$
+\end_inset
+
+ months.
+ For instance, suppose we start with 
+\change_inserted 0 1269793519
+a $
+\change_unchanged
+1 
+\change_deleted 0 1269793521
+(
+\change_unchanged
+billion
+\change_deleted 0 1269793496
+)
+\change_unchanged
+ endowment and the final portfolio value is 
+\change_inserted 0 1269793529
+$
+\change_unchanged
+24.62 
+\change_deleted 0 1269793535
+(
+\change_unchanged
+billion
+\change_deleted 0 1269793537
+)
+\change_unchanged
+.
+ Suppose we simulate 36 months into the future, rebalancing every 12 months.
+ Then our monthly return rate is 
+\begin_inset Formula $\frac{24.62^{1/3}-1}{12}=0.16$
+\end_inset
+
+ monthly return rate by the formula.
+ For each set of weights, we carry out 5000 simulations, giving us 5000
+ monthly return rates.
+ We take the average of the lowest 5%, or 250 final returns, to give us
+ one CVaR.
+ Our objective is to find the minimum CVaR.
+ We will keep trying weights in an analytical fashion until we find the
+ minimum CVaR.
+ 
+\end_layout
+
+\begin_layout Section
+\paragraph_spacing double
+Results
+\change_inserted 0 1269756121
+ [and Discussion?]
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+[Results, data, graphs]
+\change_inserted 0 1269702221
+
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+
+\change_inserted 0 1269713364
+Data and Simulations
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269751541
+We simulated monthly returns of the seven asset classes for ten years into
+ the future.
+ 200 simulations were run, and the arithmetic, annual summary statistics
+ of the simulations and historical data are as follows:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269714166
+[Should I show the values of the variables in the fits? GPD/t-copula fits]
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1270054726
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054701
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054716
+Historical Data
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+
+\change_inserted 0 1270054708
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="8">
+<features>
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Equity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Commodity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Credit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Interest Rate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Inflation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Real Estate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Cash 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+\begin_inset Formula $\mu$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+9.83%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+10.37%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+8.49%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+7.71%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+8.54%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+10.21%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+5.80%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+15.29%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+20.64%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+5.25%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+4.24%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+6.13%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+18.24%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054702
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.87%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1270054726
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054726
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054766
+Unsmoothed Historical Data
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+
+\change_inserted 0 1270054762
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="8">
+<features>
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Equity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Commodity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Credit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Interest Rate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Inflation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Real Estate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Cash 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+\begin_inset Formula $\mu$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+9.85%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+10.25%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+8.52%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+7.74%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+8.56%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+10.45%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+5.80%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+17.38%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+24.63%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+6.58%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+5.08%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+6.13%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+20.10%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054762
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.87%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+t-Copula Simulation Data:
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="8">
+<features>
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Equity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Commodity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Credit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Interest Rate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Inflation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Real Estate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Cash 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mu$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+10.20%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+10.38%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+8.35%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+7.82%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+8.54%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+11.93%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+5.78%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+18.75%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+26.64%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+7.18%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+5.39%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+6.63%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+21.62%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.96%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269714218
+The summary statistics of the t-copula simulations in comparison to the
+ historical data shows that the simulations have average returns close to
+ the historical averages but have a wider range of returns as seen in the
+ higher standard deviation.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1270054837
+The following are the historical linear correlations and the linear correlation
+ of the t-copula fit with the degrees of freedom:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1270054899
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054837
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+
+\change_inserted 0 1270054857
+Historical Linear Correlation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+
+\change_inserted 0 1270054846
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="8">
+<features>
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Equity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Commodity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Credit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Interest Rate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Inflation 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Real Estate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Cash
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Equity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1044
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.3922
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0976
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1470
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.5624
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0262
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Comm.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1044
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0278
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0640
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1630
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0541
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0256
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Credit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.3922
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0278
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.8031
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.6291
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.4380
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0642
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+IR
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0976
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0640
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.8031
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.6643
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1498
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1604
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Inflation 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1470
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1630
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.6291
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.6643
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.2275
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0524
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+RE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.5624
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0541
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.4380
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1498
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.2275
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0326
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Cash
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0262
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0256
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0642
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1604
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0524
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0326
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054846
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1270054899
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054899
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+
+\change_inserted 0 1270054924
+t-Copula Linear Correlation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+
+\change_inserted 0 1270054915
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="8">
+<features>
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Equity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Commodity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Credit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Interest Rate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Inflation 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Real Estate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Cash 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Equity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1121
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.3851
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1664
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1421
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.4933
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0202
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Comm.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1121
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0237
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0116
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1256
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0050
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0189
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Credit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.3851
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0237
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.8503
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.6222
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.4273
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0243
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+IR
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1664
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0116
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.8503
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.6948
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.2258
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0844
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Inflation 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1421
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.1256
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.6222
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.6948
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.2201
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0178
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+RE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.4933
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0050
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.4273
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.2258
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.2201
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0424
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+Cash
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0202
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0189
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0243
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0844
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+0.0178
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+-0.0424
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270054915
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269756141
+t-Copula degrees of freedom: 23.73 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269756227
+The degrees of freedom signifies the degree of the fat tails.
+ A degree of freedom of infinite is essentially a normal distribution; previous
+ literature have found t-copulas with a degree of freedom of 32 to be a
+ very close approximation of a normal copula.
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+Efficient Frontiers
+\change_inserted 0 1269703536
+
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+Analytical
+\change_deleted 0 1269705420
+ 
+\change_inserted 0 1269705393
+ 
+\change_unchanged
+Mean
+\change_deleted 0 1269705532
+ 
+\change_inserted 0 1269705533
+-
+\change_unchanged
+Variance
+\change_inserted 0 1269705395
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1270054934
+We created analytical mean-variance efficient frontiers using the average
+ returns and observed variances of the historical data, the unsmoothed historica
+l data, and the simulation data.
+ The similarity of the three efficient frontiers is a result of the similarity
+ of the mean and variance statistics.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1270054951
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270055808
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270055044
+Normal Mean-Variance Efficient Frontiers
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+
+\change_inserted 0 1270055028
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Graphics
+	filename C:/Documents and Settings/Irvin/My Documents/workspace/EconThesis/Refactored_Code/graphs and data/2010-03-02 rebalancing compounding/10 yrs/formatted graphs/200 sims 10 yrs - mean variance.jpg
+	scale 50
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+Single Period (buy and hold) Mean-CVaR
+\change_inserted 0 1270054991
+ 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+We first used the resulting weights of the analytical, normal
+\change_inserted 0 1269791408
+ 
+\change_deleted 0 1269791408
+-
+\change_unchanged
+mean
+\change_inserted 0 1269791407
+-
+\change_deleted 0 1269791406
+ 
+\change_unchanged
+variance efficient frontiers to find their corresponding portfolio CVaR's
+ given the simulation data.
+ We used this as a comparison to the actual 'optimal' set of portfolios
+ in a mean-CVaR framework.
+ 
+\change_inserted 0 1269754171
+The efficient frontiers are as follows: 
+\change_deleted 0 1269754172
+The results indicate that there exists a set of portfolios that has a lower
+ CVaR (or higher return) than any of the analytical mean variance portfolios.
+ 
+\change_inserted 0 1270055051
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1270055051
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270055051
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270055201
+Single Period Mean-CVaR Efficient Frontiers
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+
+\change_inserted 0 1270055060
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Graphics
+	filename C:/Documents and Settings/Irvin/My Documents/workspace/EconThesis/Refactored_Code/graphs and data/2010-03-02 rebalancing compounding/10 yrs/formatted graphs/200 sims - 10 yrs - one period cvar.jpg
+	scale 50
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269791420
+The results indicate that there exists a set of portfolios that has a lower
+ CVaR (or higher return) than any of the analytical mean-variance portfolios.
+ The portfolios that had maximized return and minimized variance in the
+ previous optimization had a greater CVaR than portfolios that had minimized
+ CVaR.
+ This suggests the mean-variance optimization does not protect against situation
+s of extreme losses and should not be the only consideration in asset allocation
+ especially of preventing extreme downside risk is a concern.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269754627
+Future research into the tradeoff between CVaR and variance may prove rewarding
+ since both risk measures could prove relevant in different contexts.
+ Also, a three dimensional optimization that maximizes return while minimizing
+ variance and minimizing CVaR will produce an efficient frontier that is
+ a plane.
+ This would be an interesting framework for understanding the tradeoffs
+ between return, variance, and downside risk and merits future investigation.
+ 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+Rebalancing and Compounding Mean-CVaR
+\change_inserted 0 1269752360
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1270055163
+In the following efficient frontier, we demonstrate the optimal tradeoff
+ between CVaR and return when comparing annual compounding and annual rebalancin
+g for a 10 year simulation period:
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 0 1270055164
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270055164
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\change_inserted 0 1270055189
+Compounding and Rebalancing Mean-CVaR Efficient Frontiers
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+
+\change_inserted 0 1270055172
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Graphics
+	filename C:/Documents and Settings/Irvin/My Documents/workspace/EconThesis/Refactored_Code/graphs and data/2010-03-02 rebalancing compounding/10 yrs/formatted graphs/200 sims - 10 yrs - rebalance cvar - 4 plots.jpg
+	scale 50
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269790764
+The mean-variance efficient frontier weights are not the most optimal allocation
+s in both the rebalancing mean-CVaR framework and the compounding mean-CVaR
+ framework.
+ Significant improvement in return or in lower CVaR can be obtained in the
+ compounding and rebalancing framework with different allocations than the
+ normal mean-variance framework suggests.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269790787
+The achievement of higher returns and lower CVaR for the compounding portfolios
+ in comparison to the rebalancing portfolios, especially at higher risk
+ and return levels, must be considered in light of the use of a t-copula.
+ The compounding and rebalancing portfolios at lower risk and lower CVaR
+ are very similar but quickly diverge as the risk and CVaR increases.
+ We believe this is because the t-copula is symmetric, so there exists a
+ fat upper tail as well as a fat lower tail.
+ In this case, compounding may outperform rebalancing by becoming overweight
+ in high risk-high return assets.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269756032
+The use of a t-copula to generate simulations appears to play a significant
+ role in comparing the efficient frontiers of compounding and rebalancing
+ in a mean-CVaR framekwork.
+ [Should I run comparisons with a normal copula to see what happens? in
+ comparison? or mention it as future research?]
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269756096
+Future research implementing transaction costs and a decision variable to
+ determine when to rebalance may prove valuable in this mean-CVaR framework.
+\change_unchanged
+
+\end_layout
+
+\begin_layout Section
+\paragraph_spacing double
+
+\change_inserted 0 1269791134
+Future Research Possibilities
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+Back Testing
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+
+\change_deleted 0 1269791139
+Comparison Efficient Frontiers
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+
+\change_deleted 0 1269791139
+Given Weights: Mean-CVaR Efficient Frontier
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+
+\change_deleted 0 1269791139
+Given Weights: Mean-CVaR with Compounding
+\end_layout
+
+\begin_layout Subsubsection
+\paragraph_spacing double
+
+\change_deleted 0 1269791139
+Given Weights: Mean-CVaR with Rebalancing and Compounding
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsection
+\paragraph_spacing double
+
+\change_inserted 0 1269754729
+Other Copulas and Joint Distributions
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\change_inserted 0 1269714799
+Although the standard t-copula to fit to the historical data did account
+ for greater extreme events through a fat tail, the two tails were symmetric.
+ Future research may consider asymmetric copulas such as the Gumbel or Clayton
+ copulas.
+ 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+[Interpretation of results, implications]
+\end_layout
+
+\begin_layout Section
+\paragraph_spacing double
+Conclusion
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+[Concluding thoughts]
+\change_inserted 0 1269408310
+
+\end_layout
+
+\begin_layout Bibliography
+\paragraph_spacing double
+
+\change_inserted 0 1269408319
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-1"
+
+\end_inset
+
+test
+\end_layout
+
+\begin_layout Bibliography
+\paragraph_spacing double
+
+\change_inserted 0 1269408320
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-2"
+
+\end_inset
+
+2
+\change_unchanged
+
+\end_layout
+
+\end_body
+\end_document
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

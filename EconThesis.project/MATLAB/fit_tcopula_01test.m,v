@@ -1,0 +1,69 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+
+
+
+
+
+tic
+
+lowtailp = 0.1;
+hightailp = 0.9;
+
+
+% xlsread to import all the data from an excel
+importfilename = 'G:\IWang\MATLAB\2009_08_03_expectedassumptions_01.xls';
+sheetname = 'Sheet2';
+
+
+%'D7:F186'
+fundReturns = xlsread(importfilename, sheetname, 'H4:L186');   % typically residuals from fitting; i think we can just use the raw monthly returns?
+
+NumofFunds = size(fundReturns, 2);
+    
+
+% U = zeros(x , NumofFunds);
+
+U = [];
+
+for i=1:NumofFunds   
+    GPDfits{i} = paretotails(fundReturns(:,i), lowtailp, hightailp, 'kernel');
+    
+    U = [U GPDfits{i}.cdf(fundReturns(:,i))];
+end
+
+
+U;
+
+
+histCalcCorr = corr(fundReturns)
+% estimate rho using kendalls; to check MATLAB's copulafit
+kendalltau = corr(fundReturns, 'type', 'Kendall');
+rhoestimate = sin(pi/2 * kendalltau)
+
+
+[RHOHAT,nuhat,nuci] = copulafit('t',U)
+
+@

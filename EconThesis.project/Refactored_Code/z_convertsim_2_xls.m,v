@@ -1,0 +1,58 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.02.16.21.40.49;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@'z_convertsims .m added to convert the simulation data into excel format for jing'
+@
+text
+@function y = z_convertsim_2_xls(starttimeperioddummy, endtimeperioddummy)
+
+    starttimeperioddummy = int2str(starttimeperioddummy);
+    endtimeperioddummy = int2str(endtimeperioddummy);
+    importdata = ['importdata_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    load(importdata)
+    savefilename = ['simulations_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    load(savefilename)
+    
+    glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+    
+    sizes = size(glob_tcopdrawReturns);
+
+    % should be 36 x 7 x 1000
+    % permute it to 1000 x 36 x 7
+
+    
+    numofFunds = size(fundNames, 2);
+    
+    newrawsimreturns = permute(glob_tcopdrawReturns, [3, 1, 2]);
+    writefilename = ['graphs and data/z_newsims_' int2str(starttimeperioddummy) '_' int2str(endtimeperioddummy) '.xls'];
+    
+    
+    for i = 1:numofFunds
+        %sheetname = [strcat(fundNames(i))]
+        sheetname = ['a' int2str(i)]
+        
+        size(newrawsimreturns(:, :, i))
+        xlswrite(writefilename, ...
+            newrawsimreturns(:, :, i), ...
+            sheetname) % hist mean-var
+    end
+    
+    
+end@

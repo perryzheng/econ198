@@ -1,0 +1,174 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.17.04;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+classdef class_simulations
+    properties
+        rawReturns
+        
+        NumofFunds
+        
+        samplemonths
+        numofGPDdraws
+        tcopTotalRuns
+        
+        lowtailp
+        hightailp
+        
+        unsmoothedReturns
+        
+        GPDfits
+        GPDdrawresults
+        
+        tcopEstimates
+        
+        tcopdrawRawReturns
+        arithRawFinalFundValue
+        arithRawFinalFundReturns
+        
+    end
+    properties(Dependent = true)
+        
+        unsmoothedSigmas
+        unsmoothedCorr
+        unsmoothedCov
+        
+
+        
+        RHOHAT
+        nuhat
+        CovarHAT
+        
+    end
+    
+    methods
+        function uns = class_simulations(inReturns, samplemonths, numofGPDdraws, tcopTotalRuns, lowtailp, hightailp)
+            uns.rawReturns = inReturns;
+            uns.NumofFunds = size(inReturns, 2);
+            uns.samplemonths = samplemonths;
+            uns.numofGPDdraws = numofGPDdraws;
+            uns.tcopTotalRuns = tcopTotalRuns; 
+            uns.lowtailp = lowtailp;
+            uns.hightailp = hightailp;
+            
+            uns.unsmoothedReturns = fitUnsmooth_01(uns.rawReturns);
+            
+            
+            uns.GPDfits = fitGPDfattail_01(uns.unsmoothedReturns, uns.lowtailp, uns.hightailp);
+            uns.GPDdrawresults = drawGPDfattail_01(uns.GPDfits, uns.samplemonths, uns.numofGPDdraws);      
+            
+            uns.tcopEstimates = fit_tcopula_01(uns.unsmoothedReturns, uns.GPDfits);
+            
+            tcopdrawoutput = tcopsample(uns.nuhat, uns.RHOHAT, uns.GPDdrawresults,...
+                uns.numofGPDdraws, uns.samplemonths, uns.NumofFunds, uns.tcopTotalRuns);
+            uns.tcopdrawRawReturns = tcopdrawoutput{4};
+            
+            startfundvalue = 1;
+            
+            uns.arithRawFinalFundReturns = sum(uns.tcopdrawRawReturns, 1);
+            
+            uns.arithRawFinalFundValue = (sum(uns.tcopdrawRawReturns, 1) + 1) * startfundvalue;
+
+            
+        end      
+        
+        
+     
+        function plot2tcopfinalvalues(obj)
+            obj.NumofFunds
+            permutedrawfinalfundvalues = permute(obj.arithRawFinalFundReturns, [3 2 1]);
+            markersize = 5.5;
+            
+            plot(permutedrawfinalfundvalues(:, 1), permutedrawfinalfundvalues(:, 2), '.','MarkerSize', markersize)
+
+            title('Final Simulations Values: Fund 1 vs Fund 2')         
+            xlabel('Fund 1')
+            ylabel('Fund 2')
+            
+            figure
+            plot(permutedrawfinalfundvalues(:, 1), permutedrawfinalfundvalues(:, 3), '.','MarkerSize',markersize)
+
+            title('Final Simulations Values: Fund 1 vs Fund 3')         
+            xlabel('Fund 1')
+            ylabel('Fund 3')
+            
+            figure
+            plot(permutedrawfinalfundvalues(:, 2), permutedrawfinalfundvalues(:, 3), '.','MarkerSize',markersize)
+
+            title('Final Simulations Values: Fund 2 vs Fund 3')         
+            xlabel('Fund 2')
+            ylabel('Fund 3')
+            
+            
+            figure
+            hold on
+            for i = 1:(obj.numofGPDdraws*obj.tcopTotalRuns)
+                plot(obj.tcopdrawRawReturns(:, 1, i), obj.tcopdrawRawReturns(:, 2, i), '.','MarkerSize', markersize)
+                %plot(obj.tcopdrawRawReturns(:, 1, 2), obj.tcopdrawRawReturns(:, 2, 2), '.')
+                %plot(obj.tcopdrawRawReturns(:, 1, 3), obj.tcopdrawRawReturns(:, 2, 3), '.')
+            
+            end
+            
+            title('Simulated Monthly Returns: Fund 1 vs Fund 2')         
+            xlabel('Fund 1')
+            ylabel('Fund 2')
+            
+            hold off
+        end
+        
+       
+        function unsSig = get.unsmoothedSigmas(obj)
+            unsSig = std(obj.unsmoothedReturns);
+        end
+        function unsCov = get.unsmoothedCov(obj)
+            unsCov = cov(obj.unsmoothedReturns);
+        end
+        function unsCorr = get.unsmoothedCorr(obj)
+            unsCorr = corr(obj.unsmoothedReturns);  
+        end 
+                                
+        
+        % what if we want to use normal returns (not unsmooth) and do GPD
+        % fit?
+    
+                
+    
+        % computes kendall's tau correlation
+        
+        
+        function newrho = get.RHOHAT(obj)
+            newrho = obj.tcopEstimates{1};
+        end
+        
+        function newnu = get.nuhat(obj)
+            newnu = obj.tcopEstimates{2};
+        end
+        
+        function newcovar = get.CovarHAT(obj)
+            newcovar = corr2cov(obj.unsmoothedSigmas, obj.RHOHAT);
+        end
+
+        
+       
+    end
+end@

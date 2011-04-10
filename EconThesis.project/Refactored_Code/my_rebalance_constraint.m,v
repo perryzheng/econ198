@@ -1,0 +1,93 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.01.31.22.16.47;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.01.31.19.50.26;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Add a lot of rebalance comments to CVaR code.
+@
+text
+@function [c,ceq] = my_rebalance_constraint(portweight) 
+    
+	global glob_fv
+    global glob_hist_returns;
+    hist_returns = glob_hist_returns; 
+	rebalancemonth = 12;
+	y = calc_rebalance_cashflows_01(portweight,hist_returns, rebalancemonth);
+	margins = 4; %7 looks good %4 looks good
+
+    %The constraint is that the final portfolio value (finalportvalue or y{2}) 
+    %from calc_rebalance_cashflow_01 method has
+    %to be the same value of the current portfolio return which is 
+    %represented by a global varialbe (glob_pr)
+    %But equality is too strict, so we allow .001 marginal error as
+    %explained below. 
+        
+    %glob_pr - margins <= y{2} <= glob_pr +  margins
+    %==> glob_pr - margins - y{2} <= 0
+    %==> y{2} - glob_pr - margins <= 0
+
+    %The optimization problem is to minimize the variance
+    c = [glob_fv - margins - y{2}; y{2} - glob_fv-margins];
+    ceq = [];
+
+end
+@
+
+
+1.1
+log
+@Add calc_rebalance_cashflows, my_rebalance_constraint, and NormEFWithRebalancing in MATLAB folder
+
+Add calc_norm_variance_helper, calc_norm_variance, calc_rebalance_cashflows, and main_rebalance_NormEF, Mean_Var_EF_Rebalancing, and my_balance_evaluator, my_rebalance_constraint, and NormEFWithRebalancing, and test_helper
+@
+text
+@d3 1
+a3 2
+	global glob_pr
+	%y = my_balance_evaluator(portweight);
+a4 1
+
+d8 1
+a8 1
+	margins = 0; %7 looks good %4 looks good
+d22 1
+a22 3
+    %glob_pr
+    %final_value = y{2}
+    c = [glob_pr - margins - y{2}; y{2} - glob_pr-margins];
+a23 13
+    
+    %{
+	c = [-margins-glob_pr+y{2}; glob_pr-y{2}-margins];
+	ceq=[];
+	c = glob_pr - y{2};
+	ceq = [];
+	c =[-margins-y{2}+glob_pr;y{2}-glob_pr-margins];
+	ceq =[];
+    %}
+
+
+	%c = [];
+    %ceq = glob_pr - y{2};
+@
+

@@ -1,0 +1,203 @@
+head	1.4;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.4
+date	2010.01.19.17.05.06;	author idw3;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2009.11.22.22.25.33;	author idw3;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.11.22.17.14.15;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.4
+log
+@"fixed errors in class_simulations; added obj to methods in subc_ ... EF"
+@
+text
+@% unsmooths returns for ONE FUND 
+function y = fitUnsmooth_01(rawreturns)
+
+    % rawreturns are historical returns for funds, each column is a
+    % different fund
+
+    %{
+    % xlsread to import all the data from an excel
+    importfilename = 'G:\IWang\MATLAB\sampledata2.xls';
+    sheetname = 'Sheet2';
+
+    % Ljung-Box Q test for serial correlation in monthly returns
+
+    fundReturns = xlsread(importfilename, sheetname, 'B8:B187');   % typically residuals from fitting; i think we can just use the raw monthly returns?
+    
+    %}
+    
+    fundReturns = rawreturns;
+    numofReturns = size(fundReturns, 1);
+
+    NumofFunds = size(fundReturns, 2);
+    
+    Lags = 1; % i think this sets it so it only tests for auto correlation b/w consecutive months
+    Alpha = 0.05; % significance level
+    DoF = []; % degrees of freedom, when blank default is lags
+    
+    % since after unsmoothing, we lose 1 time point
+    unsmoothedReturns = zeros(numofReturns - 1, NumofFunds);
+    
+    % each row is for a different fund; since results are row vectors
+    H = zeros(NumofFunds, size(Lags, 1));
+    pValue = zeros(NumofFunds, size(Lags, 1));
+    Qstat = zeros(NumofFunds, size(Lags, 1));
+    chiCriticalValue = zeros(NumofFunds, size(Lags, 1));    
+    
+    for i = 1:NumofFunds    
+        % need to set it so it only does unsmoothing if LBQ test is
+        % significant~!!!!
+        [H(i, :), pValue(i, :), Qstat(i, :), chiCriticalValue(i, :)] = lbqtest(fundReturns(:, i), Lags, Alpha, DoF);
+
+        if H(i, 1) == 1
+            % serial/auto correlation modification 
+            % b is the slope, r are the residuals 
+            % fRtranspose = fundReturns';
+            secondtolast = numofReturns(1) - 1;
+
+            fundReturnsSecond = fundReturns(2:numofReturns, i);
+
+            % simple linear regressions, to do multivariate regression must use
+            % mvregress()
+            % need column of ones to get an intercept
+            regressOn = ones(secondtolast, 2);
+            regressOn(:, 2) = fundReturns(1:secondtolast, i);
+
+            [b, bint, r] = regress(fundReturns(2:numofReturns, i), regressOn);
+            Rcorrected = (fundReturnsSecond - b(2, 1) * fundReturns(1:secondtolast, i)) / (1 - b(2, 1));
+
+            mean(fundReturns(:, i));
+            mean(Rcorrected);
+            std(fundReturns(:, i));
+            std(Rcorrected);
+
+            %{
+            orig = 1 + fundReturns(2:numofReturns);
+            new = 1 + Rcorrected;
+            prod(orig)
+            prod(new)
+            %}
+
+            % hist(fundReturns, 30)
+
+            unsmoothedReturns(:, i) = Rcorrected;
+        else
+            unsmoothedReturns(:, i) = fundReturns(2:numofReturns, i); 
+        end
+    end
+
+    % cash: DO NOT UNSMOOTH
+    if NumofFunds >= 7 % cash is always in ROW 7!
+        % unsmoothedReturns(:, numofReturns) = fundReturns(2:numofReturns, numofReturns); 
+        % unsmoothedReturns(:, NumofFunds) = fundReturns(2:numofReturns, NumofFunds);
+        unsmoothedReturns(:, 7) = fundReturns(2:numofReturns, 7);
+    end
+    
+    if NumofFunds > 7
+        unsmoothedReturns(:, 8) = fundReturns(2:numofReturns, 8);
+    end
+    y = unsmoothedReturns;
+
+end@
+
+
+1.3
+log
+@added global variables for doing VX, expected returns, etc
+graphs and data include results for VX 2004 - 08/09
+@
+text
+@a1 1
+
+d34 1
+a34 2
+    chiCriticalValue = zeros(NumofFunds, size(Lags, 1));
+
+d36 1
+a36 2
+    for i = 1:NumofFunds
+        
+a40 1
+        
+a41 1
+
+a42 1
+
+a43 1
+
+a55 3
+
+            b;
+
+a59 1
+
+a71 1
+
+a72 1
+            
+d74 1
+a74 2
+            unsmoothedReturns(:, i) = fundReturns(2:numofReturns, i);
+            
+a75 1
+
+a88 2
+
+    
+@
+
+
+1.2
+log
+@index: added VX (since 2004), and new credit blend (40/40/20)
+changed fitUnsmooth to only skip cash row 7
+@
+text
+@a96 1
+        
+d98 4
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@d93 7
+a99 6
+		% cash: DO NOT UNSMOOTH
+
+		if numofReturns == 7
+    		unsmoothedReturns(:, numofReturns) = fundReturns(2:numofReturns, numofReturns);
+		end
+
+@
+

@@ -1,0 +1,148 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.01.31.19.50.27;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Add calc_rebalance_cashflows, my_rebalance_constraint, and NormEFWithRebalancing in MATLAB folder
+
+Add calc_norm_variance_helper, calc_norm_variance, calc_rebalance_cashflows, and main_rebalance_NormEF, Mean_Var_EF_Rebalancing, and my_balance_evaluator, my_rebalance_constraint, and NormEFWithRebalancing, and test_helper
+@
+text
+@function y = NormEFWithRebalancing(histreturns, meanvarweights, portreturns, port_variance) 
+	%Take each portReturn level, we return the weights that would minimize
+	%variance, with the constraint that rebalancing at the end of each end
+	%period that the final return annually should be at least that return level. 
+
+    returns = histreturns;
+    
+    %xlsread to import all the data from excel
+	global glob_hist_returns;
+    glob_hist_returns = histreturns;
+    
+    %{
+    filename_weights = './2009-10-08 weights 1973 and 1994 with CVaR - ending May 2008.xls'; 
+	filename_hist_returns = '2009_09_23_expectedassumptions_06.xls';
+    sheetname_weights = '73 - norm wts';
+    sheetname_returns = '6 fact since 73';
+	saveaddress = './NormEFWithRebalancingOutput.mat';
+    
+    weights = xlsread(filename_weights, sheetname_weights);
+    returns = xlsread(filename_hist_returns, sheetname_returns);
+    given_weights = xlsread(filename_weights, sheetname_weights);
+
+    %b/c of basic xlsread functionality on non-windows platforms, need to
+    %further extract hist_weights
+    calc_weights= abs(given_weights(1:12,1:6));
+	glob_hist_returns = returns(4:438, 8:13);
+	port_ret = weights(1:12, 10);
+	port_variance = weights(1:12,11); %original variance
+	%}
+    
+    calc_weights = meanvarweights;
+    numOfFunds = size(calc_weights,2);
+    port_ret = portreturns;
+    
+	%read from spread sheet for now, make it a variable for extensibility
+	variance = zeros(size(port_ret,1), 1);
+    genvariance = zeros(size(port_ret,1), 1);
+    
+	lb = zeros(1,numOfFunds);
+	ub = ones(1,numOfFunds);
+	Aeq = ones(1,numOfFunds);
+	beq = 1; 
+    options = optimset('Algorithm','active-set', 'TolFun', 1e-19, 'TolCon', 1e-19, ...
+        'TolX', 1e-19, 'MaxFunEvals', 1000, 'MaxIter', 2500, 'UseParallel', 'always');
+    
+
+    
+	initial_return = 0.01;
+    NumofFunds = numOfFunds;
+    %{
+    'EliteCount', 2, 'CrossoverFraction', 0.5,...
+              'InitialPopulation', startweights, 'InitialPenalty', 2, 'PenaltyFactor', 5, 'FitnessScalingFcn', {@@fitscalingprop}, 'MutationFcn', {@@mutationadaptfeasible},...
+             'CrossoverFcn', {@@crossoverheuristic}, 
+    %}
+    
+	for i=1:size(port_ret)
+        tic
+		global glob_pr;
+		%glob_pr = port_ret(i)
+		initial_return = initial_return+0.005;
+		glob_pr = initial_return;
+		startweights = calc_weights(i,:);
+		[weights,lowest_variance, exitflag] = fmincon(@@calc_norm_variance, startweights,[], [], Aeq, beq,lb,ub,@@my_rebalance_constraint, options);
+		weights_matrix(i,:) = weights;
+		variance(i,1) = lowest_variance;
+        toc
+        
+
+        genoptions = gaoptimset('PopulationSize', 20, ...
+            'Generations', 45, 'StallGenLimit', 12, 'TolFun', 1e-17, 'UseParallel', 'always',...
+            'Vectorize', 'on', 'StallTimeLimit', 2400);
+       
+        tic
+        [x fval] = ga(@@calc_norm_variance, NumofFunds, [], [], ...
+            Aeq, beq, lb, ub, @@my_rebalance_constraint, genoptions); 
+        toc
+        genvariance(i, 1) = fval;
+        
+    end
+    
+	original_sd = sqrt(port_variance);
+	plot(original_sd, port_ret, '-rd','LineWidth',2);
+    figure
+	hold on
+	sd = sqrt(variance);
+	plot(sd, port_ret, '-bx', 'LineWidth',2);
+    
+    gensd = sqrt(genvariance);
+    plot(gensd, port_ret, '-gx', 'LineWidth',1);
+    
+
+	% save(saveaddress, 'weights_matrix', 'sd', 'port_ret', 'original_sd');
+
+    title('Mean variance EF with Rebalancing');
+    xlabel('Standard Deviation');
+    ylabel('Return (%)');
+	legend('Original Historical EF', 'Historical EF with Rebalancing', 'Genetic Algorithm EF with rebal');
+    
+    hold off
+    
+    y = {weights_matrix, sd, port_ret, original_sd};
+
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@d2 3
+a4 3
+	%{
+		Take each portReturn level, we return the weights that would minimize variance, with the constraint that rebalancing at the end of each end period that the final return annually should be at least that return level. 
+	%}
+@
+

@@ -1,0 +1,89 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.52;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = CVaR_EF_naive_01(samplemonths, numEFportfolios, avgMonthReturnstcop, meanfinalCVaR, tcopfinalfundvalue, NormEFPortReturn)
+
+
+    numofGPDdraws = size(tcopfinalfundvalue, 3);
+    NumofFunds = size(tcopfinalfundvalue, 2);
+    tcopTotalRuns = size(tcopfinalfundvalue, 1);
+
+    lowp = 0.05;
+    
+    portweights = zeros(NumofFunds, numEFportfolios);
+    naiveEFnormReturns = zeros(numEFportfolios, 1);
+    for i = 1:numEFportfolios
+  
+        % naive runs; using individual/independent fund CVaRs
+
+        totalPortReturn = NormEFPortReturn(i, 1);
+
+        Aeq = [avgMonthReturnstcop; ones(size(avgMonthReturnstcop))];
+        Beq = [totalPortReturn; 1];
+
+        meanfinalCVaRtrans = -meanfinalCVaR'; % negative since we want the BEST CVaR, as in least losses --> linprog does min
+        lowerbound = zeros(size(avgMonthReturnstcop));
+        upperbound = ones(size(avgMonthReturnstcop));
+
+        portweights(:, i) = linprog(meanfinalCVaRtrans, [], [], Aeq, Beq, lowerbound, upperbound);
+
+        tempfinalportvalue = portweightfinalvalue(tcopfinalfundvalue, portweights(:, i), numofGPDdraws, NumofFunds, tcopTotalRuns);
+    
+        % sum(meanfinalCVaR*portweights(:, i));
+        
+        numtimeperiods = samplemonths;
+        periodspertime = 12;
+        
+        
+        % ARITHMETIC Annual return
+        naiveEFnormReturns(i, 1) = mean(tempfinalportvalue)/ (samplemonths/12);
+        
+        % geometric
+        % naiveEFnormReturns(i, 1) = (mean(tempfinalportvalue))^(1/(numtimeperiods/periodspertime)) - 1;
+ 
+        % Annual CVaR
+        naiveCVaR(i, 1) = calcCVar95_01(tempfinalportvalue, lowp)/ (samplemonths/12);
+        
+    end
+    
+    naiveportweights = portweights
+    
+    NormEFPortReturn;
+    
+    CVaR = -(naiveCVaR - 1);
+    plot(CVaR, naiveEFnormReturns, '-bo','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor','b',...
+                    'MarkerSize',3)
+
+    title('CVaR Efficient Frontier - naive')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+
+
+    y = {naiveportweights', naiveEFnormReturns, CVaR};
+
+
+
+end
+@

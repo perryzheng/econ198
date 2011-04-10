@@ -1,0 +1,50 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.13.16.03.09;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = portSD(weights)
+    %{
+    load('simulations_1_2.mat');
+
+    table = historicalReturns6fact.covMatrix;
+    var = 0;
+    numPorts = length(weights); 
+    %skips the diagonal 
+    for i = 1:numPorts
+        for j = i+1:numPorts
+            var = var + 2*weights(i)*weights(j)*table(i,j);
+        end
+    end
+    
+    for i = 1:numPorts
+        var = var + weights(i)^2 * table(i,i); 
+    end
+    
+    y = sqrt(var)*12;
+    %}
+    load('simulations_1_2.mat');
+    table = historicalReturns6fact.covMatrix;
+    
+    var = weights * (table *weights');
+    
+    y = sqrt(sum(var))*12;
+end@

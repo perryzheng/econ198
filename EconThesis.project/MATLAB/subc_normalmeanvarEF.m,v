@@ -1,0 +1,101 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.01.14.03.34.04;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Refactor (simply put all the necessary methods there) naively all the subclasses of efficient_frontier class.
+@
+text
+@
+classdef subc_normalmeanvarEF < class_efficientfrontiers
+    properties
+        NumPorts
+        portSDs
+        portReturns       
+        portWts
+        
+        sharpeRatio
+        optSharpePt
+        
+        
+    end
+    
+    methods
+        
+        function normEF = subc_normalmeanvarEF(inAvgReturns, NumPorts, CovarMatrix, RiskFreeRate)
+            normEF = normEF@@class_efficientfrontiers();
+            
+            normEF.NumPorts = NumPorts;
+            
+            NormEFOutput = calc_norm_EF_01(inAvgReturns, NumPorts, CovarMatrix);
+            
+            normEF.portReturns = NormEFOutput{1};
+            normEF.portWts = NormEFOutput{2};
+            normEF.portSDs = NormEFOutput{3};
+            
+            % sharpecalc(normEF)
+                     
+            % annual
+            % TBill3Month = 0.03;
+            monthlyarithriskfreerate = RiskFreeRate/12;
+            normEF.sharpeRatio = (normEF.portReturns - monthlyarithriskfreerate) ./ normEF.portSDs;
+
+
+            maxsharpe = max(normEF.sharpeRatio);
+
+            normEF.optSharpePt = find(normEF.sharpeRatio == maxsharpe);
+        end
+        
+        
+
+                 
+    end
+        
+end
+
+%{
+        function sharpecalc(normEF)
+            TBill3Month = 0;
+            normEF.sharpeRatio = (normEF.portReturns - TBill3Month) ./ normEF.portSDs;
+
+
+            % '2.97 + 1.239740378*x'
+            maxsharpe = max(sharpeRatio);
+            %dum = size(sharpeRatio)
+            %[MSrow, MScol] = ind2sub(sharpeRatio, [maxsharpe])
+            normEF.optSharpePt = find(sharpeRatio == maxsharpe);
+
+        end
+%}@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@a38 2
+
+            
+@
+

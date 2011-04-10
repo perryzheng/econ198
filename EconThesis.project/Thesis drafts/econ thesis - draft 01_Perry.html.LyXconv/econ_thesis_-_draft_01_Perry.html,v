@@ -1,0 +1,476 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2010.02.24.19.39.42;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.24.19.37.16;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@[Econ Thesis Title]
+                         Professor Emma Rasiel, Faculty Advisor
+                                    February 24, 2010
+               Honors Thesis submitted in partial fulfillment of the requirements for Grad-
+            uation with Distinction in Economics in Trinity College of Duke University.
+               Duke University
+               Durham, North Carolina
+               April 15, 2009
+                                            1
+
+            Table of Contents
+                                            2
+
+            Acknowledgements
+                                            3
+
+                                         Abstract
+                   [Abstract text]
+                                            4
+
+            1   Introduction
+               [Introduction text]
+            2   Background/Literature Review
+               [Lit review text]
+            3   Methods
+               [Methods]
+               [Send in a 1 page summary of this to Dr.  Rasiel before Wed Feb 10, 2010
+            meeting]
+               We have reproduced and implemented the concepts of the JPMorgan paper
+            as a starting point for our investigation of the value of rebalancing as a consider-
+            ation for allocating assets in the mean-CVaR framework. The historical return
+            data of our asset classes benchmarks are first tested for first order monthly
+            autocorrelation and then &#8217;unsmoothed&#8217; to remove autocorrelation.  Next, the
+            historical return data are individually fit to marginal Generalized Pareto Dis-
+            tributions before combining the historical correlation matrix and fit to a joint
+            t-Copula distribution. We then run simulations for monthly returns for 3 years
+            by drawing out of the joint t-Copula distribution.  We optimize our efficient
+            frontier for return and CVaR based on this simulation dataset only.
+               We begin the one-period (buy and hold) CVaR analysis by establishing a
+            baseline for comparison.  The weights of the mean-variance efficient frontiers
+            for historical arithmetic averages and unsmoothed historical arithmetic aver-
+            ages are applied to our simulation data to determine the CVaR and return of
+            each weight. The pseudo-mean-CVaR efficient frontier derived from these mean-
+                                            5
+
+            variance weights are used as the starting weights for finding the optimal portfo-
+            lio, assuming there is another weight that can provide a lower CVaR and/or a
+            higher return.  We use MATLAB&#8217;s built-in optimization function &#8217;fmincon&#8217; for
+            finding an optimal efficient frontier. The objective function to be minimized is
+            the CVaR while the non-linear constraint to be satisfied is a set return, the av-
+            erage return of the portfolio across the simulations must be approximately equal
+            to the constraint. We generate an efficient frontier by using each of the histori-
+            cal mean-variance portfolio returns as our non-linear constraints for finding the
+            minimum CVaR.
+               Next, we investigate the ability for multi-period optimization and account for
+            rebalancing in constructing the efficient frontier.  We first implement a simple
+            model that rebalances back to the target weight every 12 months and incurs
+            no transaction costs.  We integrate the rebalancing function to our objective
+            function in calculating portfolio CVaRs and into our non-linear constraint for
+            calculating average portfolio returns across all simulations for our &#8217;fmincon&#8217;
+            optimization.   We are currently investigating the use of a decision function
+            for determining whether to rebalance at each specified time period based on
+            transaction cost, deviation from the target weights, change in portfolio variance,
+            or change in portfolio CVaR.
+               We will compare our CVaR based efficient frontiers to their respective mean-
+            variance counterparts to determine the strengths and weaknesses of both meth-
+            ods.  We will use historical data as well as newly generated simulation data
+            for testing hypotheses. We may also investigate the use of investor expectation
+            in generating the simulation returns by using the expected mean and expected
+            standard deviation of each asset class.
+            ________________________________________________________________________________________________________
+                                            6
+
+            Rebalancing
+               The literature reviewed up to this point only considers a single time frame
+            portfolio optimization, where an asset allocation is set at the beginning of the
+            period and the portfolio is untouched until the end of the investment period.
+            Seth J. Master&#8217;s a simple rebalancing strategy involves setting a target allocation
+            and an investor only rebalances when the allocation deviates beyond a set of
+            trigger points. For instance, if the trigger point is 3% for all asset classes, then an
+            investor only rebalances when the weight for any asset class deviation more than
+            3% from the target weight. This is also known as a tolerance band rebalancing
+            strategy. According to Seth Master, any rebalancing strategy should incorporate
+            some basic assumptions. The benefit of rebalancing is inversely proportional to
+            an investor&#8217;s risk preference: if an investor is risk tolerant, meaning he is willing
+            to endure higher risk for higher potential returns, then his benchmarks will be
+            smaller, meaning he will rebalance less often.  Assuming transaction costs are
+            fixed and not proportional to the transaction size, the cost of rebalancing is
+            linear:  selling twice as much of an asset would cost twice as much.  The net
+            benefit of rebalancing is the difference between the benefit of rebalancing and
+            the cost of rebalancing.
+               Walter Sun extended the idea of Seth Master&#8217;s paper to incorporate dynamic
+            programming to minimize cost of rebalancing. Walter applies the idea to CAPM
+            models, which assume that asset returns are stationary, and that mean and
+            variance are the primary portfolio statistics of interest.  The optimal strategy
+            is that one rebalances only when the expected cost of trading is less than the
+            expected cost of doing nothing.  His conclusion is that periodic or tolerance
+            band rebalancing provide suboptimal rebalance portfolios. However, by treating
+            rebalancing problem as an optimization problem and solving it using dynamic
+            programming, he was able to reduce overall costs of portfolio rebalancing.
+                                            7
+
+               Taking rebalancing one step further, Gianfranco Guastaroba applied rebal-
+            ancing strategies to portfolio optimization model that uses Conditional Value
+            at Risk (CVaR) as a measure of risk, the same framework we are using.  The
+            model incorporated rebalancing as a set of linear programming constraints. He
+            introduced a decision variable that indicated whether to rebalance based on
+            whether portfolio allocation deviated from a certain quantile. He also specified
+            a fixed cost and a variable cost for buying/selling assets.  The constraint was
+            that, during every rebalancing period, an investor rebalanced if net portfolio
+            return taking into account fixed and proportional transaction costs is at least
+            the predetermined required return.  The paper then used four in-sample-out-
+            of-sample windows to test the model for different levels of minimum required
+            returns (0, 5%, and 10%) and different quantile measures (1%, 5%, 10% and
+            25%).  He concluded that for a very risk-averse investor the best choice is to
+            rebalance two or three times in six months. On the other hand, a less risk-averse
+            investor should rebalance one time or not rebalance at all.
+               These papers give us a starting point for incorporating rebalancing into our
+            model. Our goal is to analyze and compare the different rebalancing strategies
+            available:  a simple periodic strategy in which we rebalance every few months,
+            a tolerance-band strategy in which we rebalance when allocation deviates be-
+            yond a predetermined range, or a dynamic programming approach that actively
+            calculates the expected cost of future transactions.  We will then incorporate
+            the use of t-copulas for fat tails, CVaR as a risk measure, and rebalancing as a
+            portfolio strategy to produce a realistic asset allocation framework for a large
+            institutional investor such as an endowment.
+            Implementation
+               In our implementation, we adopt a 12-month periodic rebalancing strategy.
+                                            8
+
+            We have 5000 simulations of returns for seven asset classes, a set of starting
+            weights derived from the mean and variance framework, and a set of fixed port-
+            folio returns.  Every 12 months, we sum up the returns in that year and we
+            distribute the portfolio value according to a predetermined set of weights, and
+            then compound it with future returns.
+               Our rebalancing framework could thus be expressed as a linear programming
+            minimization problem:
+                                  min
+                                w1,w2,...wn CVaR(w1,w2,...,wn)                  (1)
+                                     w1,w2,...,wn &#x003E; 0                       (2)
+                                   w1 + w2 + ... + wn = 1                     (3)
+                              &#x02DC;R(w1,w2,...,wn) = R(w1,w2,...,wn)               (4)
+            where R is the fixed portfolio monthly return rate and  &#x02DC; R is the calculated
+            portfolio monthly return at each run of the simulation.
+               Our goal is to find the set of weights that will minimize CVaR given a fixed
+            level of return.  Our two linear constraints indicate that the weights must be
+            nonnegative since no borrowing is allowed and that the weights sum up to one.
+            We also have a nonlinear constraint. Since we want to fix return, our nonlinear
+            constraint is that our final portfolio return  &#x02DC; R is the same as the given fixed
+            portfolio return R.
+               Our objective function is to find the weights that will minimize CVaR. CVaR
+            is calculated analatically by trying out a set of asset weights all 5000 simulations.
+            Each simulation gives a final portfolio value, from which we could derive the
+            monthly retun rate. For instance, suppose we start with 1 (billion) endowment,
+            and the final portfolio value is 24.62 (billion). Suppose we simulate 36 months
+                                            9
+
+            into the future, rebalancing every 12 months, Then our monthly return rate is
+            24.621&#x2215;35-1
+________
+      12    = 0.00799 monthly return rate. For each set of trying weights, we go
+            throught all 5000 simulations, giving us 5000 monthly return rates. To calculate
+            the CVaR, we take the average of the lowest 5%, or 250 final returns.  That is
+            our CVaR. We will keep trying weigts in an analytical fashion until we find
+            the minimun CVaR. The MATLAB funtion fmincon allows us to do this.  The
+            objective function and the constraints are precisely the same as in the linear
+            programming problem.
+            ________________________________________________________________________________________________________
+            Back Testing
+            4   Results
+               [Results, data, graphs]
+               Given weights compounding are better than given weights rebalancing.
+            5   Discussion
+               [Interpretation of results, implications]
+            6   Conclusion
+               [Concluding thoughts]
+                                            10
+
+
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@d1 177
+a177 258
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  
+  "http://www.w3.org/TR/html4/loose.dtd">  
+<html > 
+<head><title>[Econ Thesis Title]</title> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
+<meta name="generator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/)"> 
+<meta name="originator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/)"> 
+<!-- html --> 
+<meta name="src" content="econ_thesis_-_draft_01_Perry.tex"> 
+<meta name="date" content="2010-02-24 14:33:00"> 
+<link rel="stylesheet" type="text/css" href="econ_thesis_-_draft_01_Perry.css"> 
+</head><body 
+>
+   <div class="maketitle">
+
+
+
+<h2 class="titleHead">[Econ Thesis Title]</h2>
+<div class="author" ><span 
+class="ecrm-1200">Professor Emma Rasiel, Faculty Advisor</span></div><br />
+<div class="date" ><span 
+class="ecrm-1200">February 24, 2010</span></div>
+   </div> Honors Thesis submitted in partial fulfillment of the requirements for Graduation
+with Distinction in Economics in Trinity College of Duke University.
+<!--l. 48--><p class="indent" >   Duke University
+<!--l. 51--><p class="indent" >   Durham, North Carolina
+<!--l. 54--><p class="indent" >   April 15, 2009
+
+   <h3 class="likesectionHead"><a 
+ id="x1-1000"></a>Table of Contents</h3>
+
+<!--l. 72--><p class="noindent" >
+   <h3 class="likesectionHead"><a 
+ id="x1-2000"></a>Acknowledgements</h3>
+
+   <div 
+class="abstract" 
+>
+<div class="center" 
+>
+<!--l. 78--><p class="noindent" >
+<!--l. 78--><p class="noindent" ><span 
+class="ecbx-0900">Abstract</span></div>
+<!--l. 78--><p class="noindent" >
+     <!--l. 80--><p class="indent" >    <span 
+class="ecrm-0900">[Abstract text]</span>
+</div>
+
+<!--l. 89--><p class="noindent" >
+   <h3 class="sectionHead"><span class="titlemark">1   </span> <a 
+ id="x1-30001"></a>Introduction</h3>
+<!--l. 93--><p class="indent" >   [Introduction text]
+<!--l. 98--><p class="noindent" >
+   <h3 class="sectionHead"><span class="titlemark">2   </span> <a 
+ id="x1-40002"></a>Background/Literature Review</h3>
+<!--l. 102--><p class="indent" >   [Lit review text]
+<!--l. 107--><p class="noindent" >
+   <h3 class="sectionHead"><span class="titlemark">3   </span> <a 
+ id="x1-50003"></a>Methods</h3>
+<!--l. 111--><p class="indent" >   [Methods]
+<!--l. 113--><p class="indent" >   [Send in a 1 page summary of this to Dr. Rasiel before Wed Feb 10, 2010
+meeting]
+<!--l. 116--><p class="indent" >   We have reproduced and implemented the concepts of the JPMorgan paper as a
+starting point for our investigation of the value of rebalancing as a consideration
+for allocating assets in the mean-CVaR framework. The historical return
+data of our asset classes benchmarks are first tested for first order monthly
+autocorrelation and then &#8217;unsmoothed&#8217; to remove autocorrelation. Next, the
+historical return data are individually fit to marginal Generalized Pareto
+Distributions before combining the historical correlation matrix and fit to a
+joint t-Copula distribution. We then run simulations for monthly returns
+
+for 3 years by drawing out of the joint t-Copula distribution. We optimize
+our efficient frontier for return and CVaR based on this simulation dataset
+only.
+<!--l. 128--><p class="indent" >   We begin the one-period (buy and hold) CVaR analysis by establishing a baseline
+for comparison. The weights of the mean-variance efficient frontiers for historical
+arithmetic averages and unsmoothed historical arithmetic averages are applied to our
+simulation data to determine the CVaR and return of each weight. The
+pseudo-mean-CVaR efficient frontier derived from these mean-variance weights are
+used as the starting weights for finding the optimal portfolio, assuming there is
+another weight that can provide a lower CVaR and/or a higher return. We use
+MATLAB&#8217;s built-in optimization function &#8217;fmincon&#8217; for finding an optimal
+efficient frontier. The objective function to be minimized is the CVaR while the
+non-linear constraint to be satisfied is a set return, the average return of
+the portfolio across the simulations must be approximately equal to the
+constraint. We generate an efficient frontier by using each of the historical
+mean-variance portfolio returns as our non-linear constraints for finding the minimum
+CVaR.
+<!--l. 144--><p class="indent" >   Next, we investigate the ability for multi-period optimization and account for
+rebalancing in constructing the efficient frontier. We first implement a simple model
+that rebalances back to the target weight every 12 months and incurs no transaction
+costs. We integrate the rebalancing function to our objective function in calculating
+portfolio CVaRs and into our non-linear constraint for calculating average
+portfolio returns across all simulations for our &#8217;fmincon&#8217; optimization. We are
+currently investigating the use of a decision function for determining whether to
+rebalance at each specified time period based on transaction cost, deviation
+from the target weights, change in portfolio variance, or change in portfolio
+CVaR.
+
+<!--l. 156--><p class="indent" >   We will compare our CVaR based efficient frontiers to their respective
+mean-variance counterparts to determine the strengths and weaknesses of both
+methods. We will use historical data as well as newly generated simulation data for
+testing hypotheses. We may also investigate the use of investor expectation in
+generating the simulation returns by using the expected mean and expected standard
+deviation of each asset class.
+<!--l. 162--><p class="noindent" >__________________________________________________________________
+<!--l. 167--><p class="noindent" >
+   <h4 class="likesubsectionHead"><a 
+ id="x1-60003"></a>Rebalancing </h4>
+<!--l. 171--><p class="indent" >   The literature reviewed up to this point only considers a single time frame
+portfolio optimization, where an asset allocation is set at the beginning of the period
+and the portfolio is untouched until the end of the investment period. Seth J.
+Master&#8217;s a simple rebalancing strategy involves setting a target allocation and an
+investor only rebalances when the allocation deviates beyond a set of trigger points.
+For instance, if the trigger point is 3% for all asset classes, then an investor only
+rebalances when the weight for any asset class deviation more than 3% from the
+target weight. This is also known as a tolerance band rebalancing strategy. According
+to Seth Master, any rebalancing strategy should incorporate some basic assumptions.
+The benefit of rebalancing is inversely proportional to an investor&#8217;s risk
+preference: if an investor is risk tolerant, meaning he is willing to endure
+higher risk for higher potential returns, then his benchmarks will be smaller,
+meaning he will rebalance less often. Assuming transaction costs are fixed and
+not proportional to the transaction size, the cost of rebalancing is linear:
+selling twice as much of an asset would cost twice as much. The net benefit of
+rebalancing is the difference between the benefit of rebalancing and the cost of
+
+rebalancing.
+<!--l. 191--><p class="indent" >   Walter Sun extended the idea of Seth Master&#8217;s paper to incorporate dynamic
+programming to minimize cost of rebalancing. Walter applies the idea to
+CAPM models, which assume that asset returns are stationary, and that mean
+and variance are the primary portfolio statistics of interest. The optimal
+strategy is that one rebalances only when the expected cost of trading is less
+than the expected cost of doing nothing. His conclusion is that periodic or
+tolerance band rebalancing provide suboptimal rebalance portfolios. However, by
+treating rebalancing problem as an optimization problem and solving it
+using dynamic programming, he was able to reduce overall costs of portfolio
+rebalancing.
+<!--l. 203--><p class="indent" >   Taking rebalancing one step further, Gianfranco Guastaroba applied rebalancing
+strategies to portfolio optimization model that uses Conditional Value at Risk
+(CVaR) as a measure of risk, the same framework we are using. The model
+incorporated rebalancing as a set of linear programming constraints. He
+introduced a decision variable that indicated whether to rebalance based on
+whether portfolio allocation deviated from a certain quantile. He also specified
+a fixed cost and a variable cost for buying/selling assets. The constraint
+was that, during every rebalancing period, an investor rebalanced if net
+portfolio return taking into account fixed and proportional transaction costs
+is at least the predetermined required return. The paper then used four
+in-sample-out-of-sample windows to test the model for different levels of minimum
+required returns (0, 5%, and 10%) and different quantile measures (1%, 5%,
+10% and 25%). He concluded that for a very risk-averse investor the best
+choice is to rebalance two or three times in six months. On the other hand,
+a less risk-averse investor should rebalance one time or not rebalance at
+all.
+
+<!--l. 221--><p class="indent" >   These papers give us a starting point for incorporating rebalancing into our
+model. Our goal is to analyze and compare the different rebalancing strategies
+available: a simple periodic strategy in which we rebalance every few months, a
+tolerance-band strategy in which we rebalance when allocation deviates beyond a
+predetermined range, or a dynamic programming approach that actively calculates
+the expected cost of future transactions. We will then incorporate the use of t-copulas
+for fat tails, CVaR as a risk measure, and rebalancing as a portfolio strategy to
+produce a realistic asset allocation framework for a large institutional investor such
+as an endowment.
+<!--l. 235--><p class="noindent" >
+   <h5 class="likesubsubsectionHead"><a 
+ id="x1-70003"></a>Implementation</h5>
+<!--l. 239--><p class="indent" >   In our implementation, we adopt a 12-month periodic rebalancing strategy. We
+have 5000 simulations of returns for seven asset classes, a set of starting weights
+derived from the mean and variance framework, and a set of fixed portfolio returns.
+Every 12 months, we sum up the returns in that year and we distribute the portfolio
+value according to a predetermined set of weights, and then compound it with future
+returns.
+<!--l. 247--><p class="indent" >   Our rebalancing framework could thus be expressed as a linear programming
+minimization problem:
+   <table 
+class="equation"><tr><td><a 
+ id="x1-7001r1"></a>
+   <center class="math-display" >
+
+<img 
+src="econ_thesis_-_draft_01_Perry0x.png" alt="w1m,wi2n,...wnCVaR (w1,w2,...,wn )
+" class="math-display" ></center></td><td class="equation-label">(1)</td></tr></table>
+<!--l. 251--><p class="nopar" >
+   <table 
+class="equation"><tr><td><a 
+ id="x1-7002r2"></a>
+   <center class="math-display" >
+<img 
+src="econ_thesis_-_draft_01_Perry1x.png" alt="w1,w2, ...,wn &#x003E; 0
+" class="math-display" ></center></td><td class="equation-label">(2)</td></tr></table>
+<!--l. 253--><p class="nopar" >
+   <table 
+class="equation"><tr><td><a 
+ id="x1-7003r3"></a>
+   <center class="math-display" >
+<img 
+src="econ_thesis_-_draft_01_Perry2x.png" alt="w1 + w2 + ...+ wn = 1
+" class="math-display" ></center></td><td class="equation-label">(3)</td></tr></table>
+<!--l. 255--><p class="nopar" >
+   <table 
+class="equation"><tr><td><a 
+ id="x1-7004r4"></a>
+   <center class="math-display" >
+<img 
+src="econ_thesis_-_draft_01_Perry3x.png" alt=" &#x02DC;
+R (w1,w2,...,wn ) = R(w1,w2,...,wn)
+" class="math-display" ></center></td><td class="equation-label">(4)</td></tr></table>
+<!--l. 257--><p class="nopar" >
+where <span 
+class="cmmi-10">R </span>is the fixed portfolio monthly return rate and <img 
+src="econ_thesis_-_draft_01_Perry4x.png" alt="R&#x02DC;"  class="tilde" > is the calculated portfolio
+monthly return at each run of the simulation.
+<!--l. 261--><p class="indent" >   Our goal is to find the set of weights that will minimize CVaR given a fixed level
+of return. Our two linear constraints indicate that the weights must be nonnegative
+since no borrowing is allowed and that the weights sum up to one. We also have a
+nonlinear constraint. Since we want to fix return, our nonlinear constraint is that
+our final portfolio return <img 
+src="econ_thesis_-_draft_01_Perry5x.png" alt="&#x02DC;R"  class="tilde" > is the same as the given fixed portfolio return
+<span 
+class="cmmi-10">R</span>.
+<!--l. 269--><p class="indent" >   Our objective function is to find the weights that will minimize CVaR. CVaR is
+calculated analatically by trying out a set of asset weights all 5000 simulations. Each
+simulation gives a final portfolio value, from which we could derive the monthly retun
+
+rate. For instance, suppose we start with 1 (billion) endowment, and the final
+portfolio value is 24.62 (billion). Suppose we simulate 36 months into the future,
+rebalancing every 12 months, Then our monthly return rate is <img 
+src="econ_thesis_-_draft_01_Perry6x.png" alt="24.621&#x2215;35-1-
+   12"  class="frac" align="middle"> = 0.00799
+monthly return rate. For each set of trying weights, we go throught all 5000
+simulations, giving us 5000 monthly return rates. To calculate the CVaR, we take the
+average of the lowest 5%, or 250 final returns. That is our CVaR. We will
+keep trying weigts in an analytical fashion until we find the minimun CVaR.
+The MATLAB funtion <span 
+class="ecss-1000">fmincon </span>allows us to do this. The objective function
+and the constraints are precisely the same as in the linear programming
+problem.
+<!--l. 285--><p class="noindent" >__________________________________________________________________
+<!--l. 290--><p class="noindent" >
+   <h4 class="likesubsectionHead"><a 
+ id="x1-80003"></a>Back Testing</h4>
+<!--l. 295--><p class="noindent" >
+   <h3 class="sectionHead"><span class="titlemark">4   </span> <a 
+ id="x1-90004"></a>Results</h3>
+<!--l. 299--><p class="indent" >   [Results, data, graphs]
+<!--l. 301--><p class="indent" >   Given weights compounding are better than given weights rebalancing.
+<!--l. 306--><p class="noindent" >
+   <h3 class="sectionHead"><span class="titlemark">5   </span> <a 
+ id="x1-100005"></a>Discussion</h3>
+
+<!--l. 310--><p class="indent" >   [Interpretation of results, implications]
+<!--l. 315--><p class="noindent" >
+   <h3 class="sectionHead"><span class="titlemark">6   </span> <a 
+ id="x1-110006"></a>Conclusion</h3>
+<!--l. 319--><p class="indent" >   [Concluding thoughts]
+    
+</body></html> 
+
+@
+

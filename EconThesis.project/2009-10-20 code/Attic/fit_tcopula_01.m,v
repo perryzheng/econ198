@@ -1,0 +1,61 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function y = fit_tcopula_01(fundReturns, GPDfits)
+
+    NumofFunds = size(fundReturns, 2);
+    U = [];
+    
+    for i=1:NumofFunds   
+        % GPDfits{i} = paretotails(fundReturns(:,i), lowtailp, hightailp, 'kernel');
+
+        U = [U GPDfits{i}.cdf(fundReturns(:,i))];
+    end
+    
+    %U is an n-by-p matrix of values in the open interval (0,1)
+    %representing n points in the p-dimensional unit hypercube.
+    [RHOHAT,nuhat,nuci] = copulafit('t',U);
+    
+    % estimate rho using kendalls; to check MATLAB's copulafit
+    kendalltau = corr(fundReturns, 'type', 'Kendall');
+    rhoestimate = sin(pi/2 * kendalltau);    
+    
+    RHOHAT;
+    nuhat;
+    y = {RHOHAT, nuhat, nuci};
+
+end@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

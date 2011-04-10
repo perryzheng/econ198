@@ -1,0 +1,31 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.13.16.03.09;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = calSD(weights) 
+    load('simulations_1_2.mat');
+    table = historicalReturns6fact.covMatrix;
+    
+    var = weights * (table *weights');
+    
+    y = sqrt(sum(var))*12;
+end@

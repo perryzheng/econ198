@@ -1,0 +1,48 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.51;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@% calculates the CVar## of a set of return data
+% returns must be in column form
+% different columns = different funds' returns
+
+% simReturnData is a m x n matrix
+% m return periods, n funds
+
+function y = calcCVar95_01(simReturnData, lowp)
+    numFunds = size(simReturnData, 2);
+    CVar = zeros(1, numFunds); % pre allocate
+    % to calculate CVaR: sort from lowest to highest return
+    % then take average of lowest 5% (x%)
+    sortedreturns = sort(simReturnData);
+    for i = 1:numFunds
+        numReturns = size(simReturnData(:, i), 1);
+        lowestpbarrier = lowp * numReturns;
+        lowestprounded = ceil(lowestpbarrier);
+        lowestptile = sum(sortedreturns(1:lowestprounded, i));
+        CVar(1, i) = sum(lowestptile) / lowestprounded;
+    end
+    y = CVar;
+end
+
+
+@

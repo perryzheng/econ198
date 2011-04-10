@@ -1,0 +1,418 @@
+head	1.8;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.8
+date	2010.04.10.18.05.21;	author xz27;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.04.10.16.29.25;	author idw3;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.04.10.16.02.35;	author idw3;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.04.10.14.52.54;	author idw3;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.04.10.14.13.21;	author idw3;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.03.28.16.35.46;	author idw3;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.02.24.05.04.56;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.21.23.16.35;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.8
+log
+@*** empty log message ***
+@
+text
+@classdef subc_givenweights_rebalancing_CVaREF < class_efficientfrontiers
+
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts        
+        
+        sharpeRatio
+        optSharpePt
+    end
+    
+    methods
+        function rebalancing = subc_givenweights_rebalancing_CVaREF(NumPorts,...
+                givenweights, RiskFreeRate, compound_dummy)
+
+            %global glob_tcopdrawReturns; %got from histSims.tcopdrawRawReturns
+
+            rebalancing.portWts = givenweights;
+            rebalancing.NumPorts = NumPorts;
+            
+            for i=1:NumPorts
+                rebalancing.portCVaRs(i,:) = calcCVaRWithRebalancing(rebalancing, givenweights(i,:), compound_dummy);
+                rebalancing.portReturns(i,:) = calcPortReturn(rebalancing, givenweights(i,:), compound_dummy);
+            end
+
+            rebalancing.portCVaRs
+            rebalancing.portReturns
+
+            rebalancing.sharpeRatio = (rebalancing.portReturns - RiskFreeRate) ./ rebalancing.portCVaRs;
+            maxsharpe = max(rebalancing.sharpeRatio);
+            rebalancing.optSharpePt = find(rebalancing.sharpeRatio == maxsharpe);
+        end % end initiator function
+
+        function y = calcPortReturn(obj, portWeights, compound_dummy) % after fmincon; to get the y-value
+            global glob_tcopdrawReturns; %got from histSims.tcopdrawRawReturns
+            numOfMonths = size(glob_tcopdrawReturns,1);
+            numOfFunds = size(glob_tcopdrawReturns,2);
+            numOfSims = size(glob_tcopdrawReturns,3);
+            
+            global rebalanceMonth
+            
+            numPeriods = floor(numOfMonths/rebalanceMonth);
+            simReturnData = zeros(numOfSims, numOfFunds);
+            
+            for i=1:numOfSims
+                oneSimReturns = glob_tcopdrawReturns(:,:,i);
+                y = runWeightWithRebalancing(obj, portWeights,oneSimReturns,rebalanceMonth,compound_dummy);
+                finalValues = y{1}; % a row vector of the final values
+                simReturnData(i,:) = finalValues;
+            end
+            %Now need to convert each return in simReturnData to a monthly return
+            %rate
+            %mean outputs the average of the columns the result is a 1 by numFund matrix
+            %sum simply sums them up
+            finalValue = sum(mean(simReturnData,1));
+            %From the final value, we deduce the monthly return
+            if compound_dummy == 1 
+                %empiricalReturn = (finalValue^(1/numPeriods) - 1)/rebalanceMonth; %compounding
+                empiricalReturn = (finalValue);% - 1); % testing --> output only FINAL VALUE
+            elseif compound_dummy == 0
+                'NOT USED! SHOULD NOT SEE'
+                %empiricalReturn = (finalValue - 1) / numOfMonths; %arithmetic
+            else
+                'else: SHOULD NOT SEE - variable compound_dummy declared?'
+            end
+            y = empiricalReturn;
+        end %end of calcPortfolioReturn
+
+        function y = runWeightWithRebalancing(obj, portWeight, oneSimReturns, rebalanceMonth, compound_dummy)
+            % Convert would convert portWeight to row vector 
+            sampleMonths = size(oneSimReturns,1);
+            if size(portWeight, 2) == 1
+                portWeight = portWeight';
+            end
+            proceed = 1;
+            if proceed == 1
+                    samplemonths = size(oneSimReturns, 1);    
+                    numOfFunds = size(oneSimReturns, 2);
+                    startMoney = 1;
+                    numOfTrials = floor(sampleMonths/rebalanceMonth);
+                    balancedportValue = zeros(numOfTrials+ 1, numOfFunds);    
+                    %Start the portfolio by putting the startMoney among the
+                    %asset classes according to portfolio weights
+                    balancedportValue(1, :) = startMoney.*portWeight;
+                    port_value_at_each_reb = zeros(numOfTrials,1);
+                    returnPlusOne = oneSimReturns + 1;
+                    
+                    
+                    %At after each period we rebalance and redistribute the period
+                    %portfolio value by the portWeight row vector and we store that
+                    %in balancedportValue
+                    for i = 1:numOfTrials
+                        %periodreturn = sum(oneSimReturns((i-1)*rebalanceMonth + 1 : i*rebalanceMonth, :), 1);
+                        periodreturn = prod(returnPlusOne((i-1)*rebalanceMonth + 1 : i*rebalanceMonth, :), 1); % compound MONTHLY
+                        if compound_dummy == 1
+                            balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn);% + 1); % compounds instead of arithmetic
+                        else
+                            balancedportValue(i+1,:) = balancedportValue(i,:) + periodreturn; %arithmetic
+                        end
+                        periodportVal = sum(balancedportValue(i+1, :), 2);
+                        port_value_at_each_reb(i,1) = periodportVal; %port_value_at_each_reb is the portfolio value at the end of each rebalancing period
+                        balancedportValue(i+1, :) = periodportVal * portWeight; 
+                    end
+                    finalvalues = balancedportValue(numOfTrials+1, :);
+                    finalportvalue = sum(finalvalues);
+                    y = {finalvalues, finalportvalue, port_value_at_each_reb};
+            end % end proceed = 1
+        end % end runWeightWithRebalancing
+
+        function y = calcCVaRWithRebalancing(obj, portWeights, compound) 
+            %***glob_tcopdrawReturns***: a m by n by numGDPDraws matrix
+            % The idea here is to use calcVaRWithRelancingHelper for each sheet
+            % Each sheet represents a m by n matrix, we calculate the final
+            % portfolio value of the sheet
+            %May need to change this to simulation returns
+            global glob_tcopdrawReturns; %got from histSims.tcopdrawRawReturns
+            numOfMonths = size(glob_tcopdrawReturns,1);
+            numOfFunds = size(glob_tcopdrawReturns,2);
+            numOfSims = size(glob_tcopdrawReturns,3);
+            simReturnData = zeros(numOfSims, 1);
+
+            global rebalanceMonth
+            
+            numPeriods = floor(numOfMonths/rebalanceMonth);
+            for i=1:numOfSims
+                oneSimReturns = glob_tcopdrawReturns(:,:,i);
+                y = calcCVaRWithRebalancingHelper(obj, portWeights,oneSimReturns,rebalanceMonth, compound);
+                finalValue = y{2}; % a scalar indicating final portfolio value
+                simReturnData(i,1) = finalValue;
+            end
+            lowp = 0.05;
+            % attempt to vectorize, each row is a different weight, calcCVaR gives
+            % results in each column
+            simReturnData;
+            if compound == 1
+                %simReturnData = (simReturnData.^(1/numPeriods) - 1)/rebalanceMonth; %compounding
+                simReturnData = (simReturnData);% - 1); % testing --> output only final value
+            elseif compound == 0
+                % simReturnData = (simReturnData - 1) ./ numOfMonths; %arithmetic
+                'NOT USED!!!!! SHOULD NOT SEE'
+            end
+            y = - (calcCVar95_01(simReturnData, lowp)'); 
+            %***Important***: Check if it makes any difference if we do 
+            % the conversion of simReturnData from
+            % final value to montly return AFTER we put it in calcCVaR95_01 first
+            % That is, does it make a difference if we switch the above two lines
+            % of code? (My hypothesis is no but we need to check)
+        end
+
+        function y = calcCVaRWithRebalancingHelper(obj, portWeight, oneSimReturns, rebalanceMonth, compound)
+            % Convert would convert portWeight to column vector 
+            sampleMonths = size(oneSimReturns,1);
+            if size(portWeight, 2) == 1
+                %Assume the portWeight is a vector. Then if the number of columns 
+                %is one, which means it's a column vector, then make it a row
+                %vector
+                portWeight = portWeight';
+            end
+            proceed = 1;
+            %for i=1:size(portWeight) 
+            %	if(portWeight(i)<0 || portWeight(i)>1) 
+            %		proceed = 0
+            %	end
+            %end
+            if proceed == 1  
+                    samplemonths = size(oneSimReturns, 1);    
+                    numOfFunds = size(oneSimReturns, 2);
+                    startMoney = 1;
+                    numOfTrials = floor(sampleMonths/rebalanceMonth);
+                    balancedportValue = zeros(numOfTrials+ 1, numOfFunds)  ;  
+                    %Start the fortfolio by putting the startMoney among the
+                    %asset classes according to portfolio weights
+                    balancedportValue(1, :) = startMoney.*portWeight;
+                    port_value_at_each_reb = zeros(numOfTrials,1);
+                    returnPlusOne = oneSimReturns+1;
+                    %At after each period we rebalance and redistribute the period
+                    %portfolio value by the portWeight row vector and we store that
+                    %in balancedportValue
+                    for i = 1:numOfTrials
+                        periodreturn = prod(returnPlusOne((i-1)*rebalanceMonth +1 : i*rebalanceMonth, :), 1);
+                        if compound == 1
+                            balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn); % compounds instead of arithmetic
+                        else
+                            balancedportValue(i+1,:) = balancedportValue(i,:) + periodreturn; %arithmetic
+                        end
+                        periodportVal = sum(balancedportValue(i+1, :), 2);
+                        port_value_at_each_reb(i,1) = periodportVal; %port_value_at_each_reb is the portfolio value at the end of each rebalancing period
+                        balancedportValue(i+1, :) = periodportVal * portWeight; 
+                    end
+                    finalvalues = balancedportValue(numOfTrials+1, :);
+                    finalportvalue = sum(finalvalues);
+                    y = {finalvalues, finalportvalue, port_value_at_each_reb};
+            end
+        end %end of calcCVaRWithRebalancingHelper
+    end % end methods
+end % end subclass
+
+
+
+
+
+@
+
+
+1.7
+log
+@*** empty log message ***
+@
+text
+@d176 1
+a176 1
+                    returnPlusOne = oneSimReturns;
+d181 1
+a181 1
+                        periodreturn = sum(returnPlusOne((i-1)*rebalanceMonth +1 : i*rebalanceMonth, :), 1);
+d183 1
+a183 1
+                            balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn+1); % compounds instead of arithmetic
+@
+
+
+1.6
+log
+@*** empty log message ***
+@
+text
+@d26 4
+a29 1
+            
+d61 3
+d65 1
+a65 1
+                empiricalReturn = (finalValue - 1) / numOfMonths; %arithmetic
+d87 3
+a89 1
+                    returnPlusOne = oneSimReturns;
+d94 2
+a95 1
+                        periodreturn = sum(returnPlusOne((i-1)*rebalanceMonth +1 : i*rebalanceMonth, :), 1);
+d97 1
+a97 1
+                            balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn+1); % compounds instead of arithmetic
+d139 3
+a141 2
+            else
+                simReturnData = (simReturnData - 1) ./ numOfMonths; %arithmetic    
+@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@d32 1
+a32 1
+        function y = calcPortReturn(obj, portWeights, compound_dummy)
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d57 1
+a57 1
+                empiricalReturn = (finalValue - 1); % testing --> output only final value - 1
+d77 1
+a77 1
+                    %Start the fortfolio by putting the startMoney among the
+d129 1
+a129 1
+                simReturnData = (simReturnData - 1); % testing --> output only final value - 1
+@
+
+
+1.3
+log
+@added references; draft 03-28-10 sent to rasiel
+@
+text
+@d56 2
+a57 1
+                empiricalReturn = (finalValue^(1/numPeriods) - 1)/rebalanceMonth; %compounding
+d128 2
+a129 1
+                simReturnData = (simReturnData.^(1/numPeriods) - 1)/rebalanceMonth; %compounding
+@
+
+
+1.2
+log
+@'given weights rebalancing works'
+@
+text
+@d37 3
+a39 1
+            rebalanceMonth = 12;
+d42 1
+a42 1
+            rebalanceMonth = 12;
+d112 3
+a114 1
+            rebalanceMonth = 12;
+@
+
+
+1.1
+log
+@'given weights rebalancing w compounding now added'
+@
+text
+@d14 2
+a15 2
+        function fminconcvar = subc_givenweights_rebalancing_CVaREF(samplemonths, NumPorts,...
+                givenweights, returnconstraints, RiskFreeRate, compound_dummy)
+d19 2
+a20 2
+            compounding.portWts = givenweights;
+            compounding.NumPorts = NumPorts;
+d22 4
+a25 2
+            compounding.portCVaRs = calcCVaRWithRebalancing(givenweights);
+            compounding.portReturns = calcPortReturn(givenweights, compound_dummy);
+d27 3
+a29 3
+            compounding.sharpeRatio = (compounding.portReturns - monthlyarithriskfreerate) ./ compounding.portCVaRs;
+            maxsharpe = max(compounding.sharpeRatio);
+            compounding.optSharpePt = find(compounding.sharpeRatio == maxsharpe);
+d32 1
+a32 1
+        function y = calcPortReturn(portWeights, compound_dummy) 
+d43 1
+a43 1
+                y = runWeightWithRebalancing(portWeights,oneSimReturns,rebalanceMonth,compound_dummy);
+d57 1
+a57 1
+            end 
+d61 1
+a61 1
+        function y = runWeightWithRebalancing(portWeight, oneSimReturns, rebalanceMonth, compound_dummy)
+d68 1
+a68 1
+            if proceed == 1  
+d99 1
+a99 1
+        function y = calcCVaRWithRebalancing(portWeights) 
+d114 1
+a114 1
+                y = calcCVaRWithRebalancingHelper(portWeights,oneSimReturns,rebalanceMonth);
+d135 1
+a135 1
+        function y = calcCVaRWithRebalancingHelper(portWeight, oneSimReturns, rebalanceMonth)
+d155 1
+a155 1
+                    balancedportValue = zeros(numOfTrials+ 1, numOfFunds);    
+@
+

@@ -1,0 +1,64 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.38;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function y = calc_AACR_01(returns, periodspertime)
+
+    % calculates annual compound return for each fund
+    % each fund is a column
+    
+    
+    NumofFunds = size(returns, 2);
+    numtimeperiods = size(returns, 1);
+    
+    returnsplusone = returns + 1;
+    
+    AACR = zeros(1, NumofFunds);
+    
+    for i = 1:NumofFunds
+        
+        productreturns = prod(returnsplusone(:, i));
+        AACR(1, i) = (productreturns)^(1/(numtimeperiods/periodspertime)) - 1;
+        
+    end
+
+
+
+
+    y = AACR;
+
+
+end@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

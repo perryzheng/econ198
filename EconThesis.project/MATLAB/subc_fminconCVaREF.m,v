@@ -1,0 +1,56 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+classdef subc_fminconCVaREF < class_efficientfrontiers
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts        
+        
+        sharpeRatio
+        optSharpePt
+    end
+    
+    methods
+        function fminconcvar = subc_fminconCVaREF(samplemonths, NumPorts,...
+                startweights, returnconstraints, RiskFreeRate)
+            fmincontestout = fmincon_test(samplemonths, NumPorts, startweights, returnconstraints);
+            
+            fminconcvar.portCVaRs = fmincontestout{3};
+            fminconcvar.portReturns = fmincontestout{2};
+            fminconcvar.portWts = fmincontestout{1};
+                        
+            
+            monthlyarithriskfreerate = RiskFreeRate/12;
+            fminconcvar.sharpeRatio = (fminconcvar.portReturns - monthlyarithriskfreerate) ./ fminconcvar.portCVaRs;
+
+
+            maxsharpe = max(fminconcvar.sharpeRatio);
+
+            fminconcvar.optSharpePt = find(fminconcvar.sharpeRatio == maxsharpe);
+        end
+    end
+    
+end@

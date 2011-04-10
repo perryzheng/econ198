@@ -1,0 +1,44 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+classdef subc_simAnnealCVaREF < class_efficientfrontiers
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts
+        
+        
+        sharpeRatio
+        optSharpePt
+    end
+    
+    methods
+        function simanneal =  subc_simAnnealCVaREF(samplemonths, NumPorts, tcopNormWtsCVaREF.portWts)
+            simulated_annealing_01(samplemonths, NumPorts, portWts);
+        end
+        
+    end
+    
+end@

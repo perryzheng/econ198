@@ -1,0 +1,237 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.38;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@
+% avgMonthReturnstcop,  
+function y = CVaR_EF_02(samplemonths, numEFportfolios, avgMonthReturnstcop, meanfinalCVaR, tcopfinalfundvalue, NormEFPortWts, NormEFPortReturn)
+
+% NormEF wts, returns are a column array
+
+    numofGPDdraws = size(tcopfinalfundvalue, 3);
+    NumofFunds = size(tcopfinalfundvalue, 2);
+    tcopTotalRuns = size(tcopfinalfundvalue, 1);
+
+    lowp = 0.05;
+    
+    portweights = zeros(NumofFunds, numEFportfolios);
+    naiveEFnormReturns = zeros(numEFportfolios, 1);
+    for i = 1:numEFportfolios
+  
+        % naive runs; using individual/independent fund CVaRs
+
+        totalPortReturn = NormEFPortReturn(i, 1);
+
+        Aeq = [avgMonthReturnstcop; ones(size(avgMonthReturnstcop))];
+        Beq = [totalPortReturn; 1];
+
+        % A = ones(size(avgMonthReturnstcop))
+        % b = 1
+
+        meanfinalCVaRtrans = -meanfinalCVaR'; % negative since we want the BEST CVaR, as in least losses --> linprog does min
+        lowerbound = zeros(size(avgMonthReturnstcop));
+        upperbound = ones(size(avgMonthReturnstcop));
+
+        portweights(:, i) = linprog(meanfinalCVaRtrans, [], [], Aeq, Beq, lowerbound, upperbound);
+
+        tempfinalportvalue = portweightfinalvalue(tcopfinalfundvalue, portweights(:, i), numofGPDdraws, NumofFunds, tcopTotalRuns);
+    
+        % sum(meanfinalCVaR*portweights(:, i));
+        
+        numtimeperiods = samplemonths;
+        periodspertime = 12;
+        naiveEFnormReturns(i, 1) = (mean(tempfinalportvalue))^(1/(numtimeperiods/periodspertime)) - 1;
+ 
+        
+        naiveCVaR(i, 1) = calcCVar95_01(tempfinalportvalue, lowp);
+        
+    end
+    
+    figure
+    NormEFPortReturn;
+    
+    CVaR = -(naiveCVaR - 1);
+    plot(CVaR, naiveEFnormReturns, '-bo','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor','g',...
+                    'MarkerSize',3)
+
+    title('CVaR Efficient Frontier - naive')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+    
+    figure
+    NormEFPortReturn;
+    
+    CVaR = -(naiveCVaR - 1);
+    plot(CVaR, naiveEFnormReturns, '-bo','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor','g',...
+                    'MarkerSize',3)
+
+    title('CVaR Efficient Frontier - both naive and normal')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+    
+    
+    % get CVaRs for normal mean variance EF weights
+    
+    EFnormCVaR = zeros(numEFportfolios, 1);
+    EFnormReturns = zeros(numEFportfolios, 1);
+    for i = 1:numEFportfolios
+        tempEFweight = NormEFPortWts(i,:)';
+        tempEFfinalvalue = portweightfinalvalue(tcopfinalfundvalue, tempEFweight, numofGPDdraws, NumofFunds, tcopTotalRuns);
+        
+        numtimeperiods = samplemonths;
+        periodspertime = 12;
+        EFnormReturns(i, 1) = mean(tempEFfinalvalue)^(1/(numtimeperiods/periodspertime)) - 1;
+        
+        EFnormCVaR(i, 1) = calcCVar95_01(tempEFfinalvalue, lowp);
+    end
+    
+    EFnormCVaR;
+    hold on
+    
+    normCVaR = -(EFnormCVaR - 1);
+    plot(normCVaR, EFnormReturns, '-bd','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerSize',3)
+
+    title('CVaR Efficient Frontier - both naive and normal')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+    
+    %{
+    hold off
+    
+    figure
+        
+    plot(normCVaR, EFnormReturns, '-bd','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerSize',3)
+
+    title('CVaR Efficient Frontier - normal weights')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+    
+    %}
+    portweights'
+    NormEFPortWts
+    
+    
+    % GENETIC ALGORITHM for CVaR
+    
+    geneticCVaR = zeros(numEFportfolios, 1);
+    geneticreturns = NormEFPortReturn;
+    geneticOutput = {};
+    geneticportweights = zeros(numEFportfolios, NumofFunds);
+    for i = 1:numEFportfolios
+        geneticOutput = CVaR_gen_alg_01(avgMonthReturnstcop, NormEFPortReturn(i, 1), NormEFPortWts(i,:));
+        geneticCVaR(i, 1) = geneticOutput{2};
+        geneticportweights(i, :) = geneticOutput{1};
+        
+        tempgeneticfinalvalue = portweightfinalvalue(tcopfinalfundvalue, geneticOutput{1}', numofGPDdraws, NumofFunds, tcopTotalRuns);
+        geneticcalcReturns(i, 1) = mean(tempgeneticfinalvalue)^(1/(numtimeperiods/periodspertime)) - 1;
+    end
+    
+    
+    geneticportweights
+    %{
+    plot(geneticCVaR, geneticreturns, '-bd','LineWidth',0.5,...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor','b',...
+                'MarkerSize',3)
+
+    title('CVaR Efficient Frontier - genetic, given target returns')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+    %}
+    
+    plot(geneticCVaR, geneticcalcReturns, '-bo','LineWidth',0.5,...
+            'MarkerEdgeColor','k',...
+            'MarkerFaceColor','r',...
+            'MarkerSize',3)
+
+    title('CVaR Efficient Frontier - genetic, calculated returns')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+    
+    geneticreturns
+    geneticcalcReturns
+    
+    
+    hold off
+    %{
+    % EF using expected returns/SD/corr
+    
+    importfilename = 'G:\IWang\MATLAB\2009_08_03_expectedassumptions_01.xls';
+    sheetname = 'Sheet1';
+    corrsheet = 'Sheet1';
+
+    [HistCorr, Benchmarks] = xlsread(importfilename, corrsheet, 'I3:M8');
+    HistSigma = xlsread(importfilename, sheetname, 'C4:C8');
+    CalcCovariance = corr2cov(HistSigma, HistCorr);
+    HistReturn = xlsread(importfilename, sheetname, 'B4:B8');
+    NumPorts = 20;
+    [expSDport, expreturns, PortWts] = frontcon(HistReturn, CalcCovariance, NumPorts);
+    
+    numexpports = size(PortWts, 1);
+    expEFnormCVaR = zeros(numEFportfolios, 1);
+    expEFnormReturns = zeros(numEFportfolios, 1);
+    for i = 1:numexpports
+        tempexpwt = PortWts(i, :)';
+        expectedportfinalva =  portweightfinalvalue(tcopfinalfundvalue, tempexpwt, numofGPDdraws, NumofFunds, tcopTotalRuns);
+        
+        numtimeperiods = samplemonths;
+        periodspertime = 12;
+        expEFnormReturns(i, 1) = mean(expectedportfinalva)^(1/(numtimeperiods/periodspertime)) - 1;
+        expEFnormCVaR(i, 1) = calcCVar95_01(expectedportfinalva, lowp);
+    end
+    hold on
+    
+    expnormCVaR = -(expEFnormCVaR - 1);
+    plot(expnormCVaR, expEFnormReturns, '-bs','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor','r',...
+                    'MarkerSize',3)
+
+    title('CVaR Efficient Frontier - both naive and normal')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+    hold off
+    %}
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

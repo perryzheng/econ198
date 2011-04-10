@@ -1,0 +1,61 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@fmincon
+
+class_constraintcreater_01.m
+aaa_CVaR_EF_sim_02.m
+calc_norm_EF_01.m
+fmincon-test.m
+gen_alg_nonlinconstr.m
+class_rebalancedreturns.m
+calc_rebalance_cahs
+
+xz27@@perry-laptop:~/matlab/2009-10-20 code$ gvim class_constraintcreator_01.m 
+xz27@@perry-laptop:~/matlab/2009-10-20 code$ gvim aaa_CVaR_EF_sim_02.m 
+xz27@@perry-laptop:~/matlab/2009-10-20 code$ gvim calc_norm_EF_01.m 
+xz27@@perry-laptop:~/matlab/2009-10-20 code$ gvim fmincon_test.m 
+xz27@@perry-laptop:~/matlab/2009-10-20 code$ gvim gen_alg_
+gen_alg_initiatetest.m  gen_alg_min_cvar.m      gen_alg_nonlinconstr.m  
+xz27@@perry-laptop:~/matlab/2009-10-20 code$ gvim gen_alg_nonlinconstr.m 
+xz27@@perry-laptop:~/matlab/2009-10-20 code$ gvim class_rebalancedreturns.m 
+xz27@@perry-laptop:~/matlab/2009-10-20 code$ gvim calc_rebalance_cashflows_01.m 
+xz27@@perry-laptop:~/matlab/2009-10-20 code$ gvim 10-21-2009-notes
+
+
+1. 
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

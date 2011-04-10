@@ -1,0 +1,114 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.51;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = drawGPDfattail_01(GPDfitFcts, samplemonths, runsofmontecarlo)
+
+    % run multiple Markov Chain Monte Carlo simulations
+        % for each simulation, do for a certain # of months into the future
+    % calculate returns starting with $100
+
+    rawGPDfit = GPDfitFcts;
+    numFcts = size(rawGPDfit, 2);
+
+    % samplemonths = 120;
+    % runsofmontecarlo = 1000;
+
+    startingmoney = 1;
+    
+    icdfmonthlyreturns = zeros(samplemonths, numFcts, runsofmontecarlo);
+    geomAvgAnnReturn = zeros(1, numFcts, runsofmontecarlo);
+    geomAvgMonthReturn = zeros(1, numFcts, runsofmontecarlo);
+    
+    arithmAvgAnnReturn = zeros(1, numFcts, runsofmontecarlo);
+    arithmAvgMonthReturn = zeros(1, numFcts, runsofmontecarlo);
+    icdfcompavgMonthSD = zeros(1, numFcts, runsofmontecarlo);
+    
+    monthlyreturnsAdjusted = zeros(samplemonths, numFcts, runsofmontecarlo);
+    
+    % using inverse transform sampling
+    for n = 1:runsofmontecarlo            
+        for h = 1:numFcts
+            
+            icdfmonthlyreturns(:, h, n) = icdfsample01(@@(x) rawGPDfit{h}.icdf(x), samplemonths);
+
+            % if lose all money, won't make future geom returns have
+            % negative NAV
+            for i = 1:samplemonths
+                if i == samplemonths
+                    monthlyreturnsAdjusted(:, h, n) = icdfmonthlyreturns(:, h, n);
+                end                    
+                if icdfmonthlyreturns(i, h, n) <= -1
+                    monthlyreturnsAdjusted(i, h, n) = 0;
+                    monthlyreturnsAdjusted(1:i-1, h, n) = icdfmonthlyreturns(1:i-1, h, n);
+                    break                    
+                end
+            end
+            
+            geomAvgAnnReturn(1, h, n) = avgreturn_geometric_01(monthlyreturnsAdjusted(:, h, n), 12);
+            geomAvgMonthReturn(1, h, n) = avgreturn_geometric_01(monthlyreturnsAdjusted(:, h, n), 1);
+            
+            % doesn't matter if NAV < 0 for arithmetic
+            arithmAvgAnnReturn(1, h, n) = avgreturn_arithmetic_01(monthlyreturnsAdjusted(:, h, n), 12);
+            arithmAvgMonthReturn(1, h, n) = avgreturn_arithmetic_01(monthlyreturnsAdjusted(:, h, n), 1);
+            
+            % Standard deviation is ARITHMETIC... deviation from
+            % arithmetic mean
+            icdfcompavgMonthSD(1, h, n) = std(icdfmonthlyreturns(:, h, n));
+        end                  
+    end
+    y = {geomAvgMonthReturn, icdfcompavgMonthSD, arithmAvgMonthReturn};
+end
+
+
+
+%{
+
+    icdfmonthlyreturns = zeros(samplemonths, numFcts, runsofmontecarlo);
+    icdfmoneyarray = zeros(samplemonths + 1, numFcts, runsofmontecarlo);
+    icdffinalfundvalue = zeros(1, numFcts, runsofmontecarlo);
+
+
+
+        icdfmoneyarray(1, h, n) = startingmoney;
+
+            for i = 1:samplemonths
+                icdfmoneyarray(i+1, h, n) = icdfmoneyarray(i, h, n) * (1 + icdfmonthlyreturns(i, h, n));
+
+                if icdfmoneyarray(i+1, h, n) <= 0
+                    icdfmoneyarray(i+1, h, n) = 0;
+                    break
+                end
+            end
+
+            icdffinalfundvalue(1, h, n) = icdfmoneyarray(samplemonths + 1, h, n);
+
+            geomAvgAnnReturn(1, h, n) = (icdffinalfundvalue(1, h, n)/startingmoney)^(1/(samplemonths/12)) - 1; 
+
+            geomAvgMonthReturn(1, h, n) = (icdffinalfundvalue(1, h, n)/startingmoney)^(1/(samplemonths)) - 1;
+            icdfcompavgMonthSD(1, h, n) = std(icdfmonthlyreturns(:, h, n));
+
+
+    simGPDmoCorrs(:, :, n) = corr(icdfmonthlyreturns(:, :, n));     
+%}
+
+@

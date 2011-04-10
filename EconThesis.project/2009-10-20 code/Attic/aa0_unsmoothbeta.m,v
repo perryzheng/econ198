@@ -1,0 +1,85 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@% unsmooth
+
+samplemonths = 36;
+numofGPDdraws = 10;
+tcopTotalRuns = 10;
+lowtailp = 0.05;
+hightailp = 0.95;
+
+
+importfilename = 'G:\IWang\Public\Risk Management\Policy Review\unsmoothed Benchmark regression simulations v18 - 6 factors.xlsm';
+
+sheetname = 'raw funds';
+    
+[fundReturns, fundNames] = xlsread(importfilename, sheetname, 'A1:I187');   % typically residuals from fitting; i think we can just use the raw monthly returns?
+
+HSreturns = xlsread(importfilename, sheetname, 'J8:J187');
+GEglobalreturns = xlsread(importfilename, sheetname, 'K117:K187');
+HScredit = xlsread(importfilename, sheetname, 'L82:L177');
+HSmultestrat = xlsread(importfilename, sheetname, 'M80:M187');
+ISreturns = xlsread(importfilename, sheetname, 'N134:N188');
+FIretruns = xlsread(importfilename, sheetname, 'O76:O188');
+RA = xlsread(importfilename, sheetname, 'P80:P187');
+blackwellreturns = xlsread(importfilename, sheetname, 'Q151:Q187');
+
+unsHSreturns = fitUnsmooth_01(HSreturns);
+unsGEglobalreturns = fitUnsmooth_01(GEglobalreturns);
+unsHScredit = fitUnsmooth_01(HScredit);
+unsHSmultestrat = fitUnsmooth_01(HSmultestrat);
+unsISreturns = fitUnsmooth_01(ISreturns);
+unsFIretruns = fitUnsmooth_01(FIretruns);
+unsRA = fitUnsmooth_01(RA);
+unsblackwellreturns = fitUnsmooth_01(blackwellreturns);
+
+
+usmoothedreturns = fitUnsmooth_01(fundReturns);
+
+factorsheet = 'raw factors';
+[factorReturns, factorNames] = xlsread(importfilename, factorsheet, 'D6:I188');
+
+unsmoothedfactorreturns = fitUnsmooth_01(factorReturns);
+
+
+% histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths,...
+ %   numofGPDdraws, tcopTotalRuns, lowtailp, hightailp);
+
+
+
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

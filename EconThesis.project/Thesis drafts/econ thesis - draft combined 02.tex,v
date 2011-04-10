@@ -1,0 +1,1051 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@% @;
+expand	@b@;
+
+
+1.1
+date	2010.04.14.05.39.12;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@%% LyX 1.6.5 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage[letterpaper]{geometry}
+\geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1.5in,rmargin=1in}
+\usepackage{float}
+\usepackage{amstext}
+\usepackage{setspace}
+\usepackage{esint}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+\makeatother
+
+\usepackage{babel}
+
+\begin{document}
+\begin{doublespace}
+
+\title{Rebalancing, Conditional Value at Risk, and t-Copula in Asset Allocation}
+\end{doublespace}
+
+
+\author{Irvin Di Wang and Perry Zheng\\
+Professor Emma Rasiel and Professor Aino Levonmaa, Faculty Advisors}
+
+\maketitle
+\begin{doublespace}
+Honors Thesis submitted in partial fulfillment of the requirements
+for Graduation with Distinction in Economics in Trinity College of
+Duke University.
+
+Duke University
+
+Durham, North Carolina
+\end{doublespace}
+
+\begin{doublespace}
+
+\date{April 15, 2010}
+\end{doublespace}
+
+\begin{doublespace}
+\pagebreak{}
+\end{doublespace}
+
+\begin{doublespace}
+
+\section*{Table of Contents}
+\end{doublespace}
+
+\begin{doublespace}
+\pagebreak{}
+\end{doublespace}
+
+\begin{doublespace}
+
+\section*{Acknowledgments}
+\end{doublespace}
+
+\begin{doublespace}
+\pagebreak{}
+
+{[}Abstract text{]}
+
+\pagebreak{}
+\end{doublespace}
+
+\begin{doublespace}
+
+\section{Introduction}
+\end{doublespace}
+
+\begin{doublespace}
+The tradeoff between risk and return is the fundamental principle
+of the investment process. Although choosing individual investment
+opportunities is important, the top-down analysis of the entire investment
+portfolio is crucial for maintaining and updating investment goals.
+The decision of how to allocate capital to a few select asset classes
+is a very important investment decision; the asset allocation has
+been shown to influence almost 80\% of  portfolio returns. 
+
+Traditional mean-variance asset allocation frameworks use a normal
+distribution to model returns and variance as a risk measure. While
+these traditional methods for understanding risk and return have come
+under fire in the recent financial turmoil, research in alternative
+models is a growing and promising field. Recent research focuses on
+other risk measures for capturing downside risk and different probability
+distributions to account for extreme events. We are interested in
+building upon the recent research in asset allocation models by investigating
+how portfolio rebalancing can be included. 
+
+The central assumption to asset allocation research and implementation
+is that investors can reasonably model future market behavior using
+historical data and past events. The historical return data are fit
+to probability distributions and correlations are used to understand
+how asset classes behave together. The normal distribution has been
+popular because of the simplicity of obtaining an analytical solution
+to the variance minimization and mean return maximization problems.
+The assumption that future returns will follow the same distribution
+as historical data allows the simulation of future returns. Our research
+aims to utilize other distributions and joint distributions that better
+account for extreme events in novel asset allocation frameworks. 
+
+The minimization of risk is required in the asset allocation process.
+Variance may not be the best risk measure to account for downside
+risk since it is a measure of upside and downside volatility. Recent
+research has utilized other risk measures instead of variance to better
+account for downside risk. The minimization of these new risk measures
+has been proven theoretically and demonstrated using simulations. 
+
+Our research goal is to build off of the recent advances in asset
+allocation research by developing a rebalancing framework. We will
+investigate how using non-normal probability distributions along with
+downside risk measures perform in a rebalancing asset allocation optimization
+problem.
+
+In this paper, we will first present the previous literature and the
+theoretical framework for each concept used in current asset allocation
+research. Next, we will describe our methods and implementation of
+the different parts of the asset allocation models. We will then end
+with our results and discussion.
+\end{doublespace}
+
+\begin{doublespace}
+
+\section{Theoretical Framework and Literature Review}
+\end{doublespace}
+
+\begin{doublespace}
+Markowitz (1952) pioneered the use of mean-variance optimization to
+understand the tradeoff between risk and return for a portfolio of
+risky assets. Markowitz assumed asset returns are normally distributed,
+allowing for an analytical solution to the minimization of variance
+and the maximization of expected return. The elegant analytical solution
+of this optimization problem is a set of portfolios along the efficient
+frontier that represents the best possible returns for each level
+of variance. Markowitz set the foundation for asset allocation research
+and understanding the tradeoff between risk and return in a portfolio
+of risky assets.
+
+The assumptions of normality and variance as a risk measure in asset
+allocation have come under pressure since the groundbreaking work
+of Markowitz's portfolio theory in light of the market crises in the
+past two decades. Research in the past decade has focused on accommodating
+the occurrence of extreme events and more relevant measures of risk
+besides variance. The application of this research utilizes simulation
+data to understand the tradeoff between risk and return with computer
+optimization techniques. Our research aims to further develop the
+mean-CVaR framework along with the t-Copula probability distribution
+to incorporate portfolio rebalancing and to compare these strategies
+against traditional mean-variance frameworks. 
+
+In traditional mean-variance portfolio optimization frameworks, Monte
+Carlo simulations are run from a Gaussian (normal) joint distribution
+for a basket of asset classes. The shortfall of this method is the
+thinness of the tail, implying a very low likelihood for situations
+where all asset classes are falling significantly in market crash
+scenarios. The advantage of using a t-copula is that it can accommodate
+higher probabilities of joint events (crashes or bubbles). A copula
+combines marginal cumulative distribution functions (CDF) and historical
+data of each asset class to create a best fit joint multivariate distribution.
+A Gaussian copula assumes a multivariate normal distribution whereas
+a t-copula utilizes a multivariate Student\textquoteright{}s t-distribution,
+allowing for fatter tails. The t-copula provides a more accurate representation
+of real world financial markets and the probability of extreme events
+(Demarta and McNeil, 2004). 
+
+Another problem with the mean-variance optimization framework is that
+it assumes underlying returns are uncorrelated across time (Fisher,
+1994). This is clearly not the case, as higher returns in one period
+may lead to equally higher returns the next period because of high
+expectations of market trends. To correct for this auto-correlation
+between period-to-period returns and to establish the independence
+of single-period returns, we used the well-known Fisher-Geltner-Webb's
+{}``unsmoothing'' methodology. 
+
+Variance provides a mathematically simple measure of risk for asset
+allocation, but it is insufficient as a measure of downside risk.
+Variance symmetrically accounts for both upside risk and downside
+risk since it is simply a measure of the sample\textquoteright{}s
+average squared deviation from the arithmetic mean. When investment
+managers assess risk, they are typically more concerned with downside
+risk or losses and view upside risk (which may be referred to as \textquotedblleft{}excess
+return\textquotedblright{}) favorably. Value-at-risk (VaR) has been
+incorporated as another risk measure that aims to better account for
+downside risk than variance. VaR is the minimum expected loss at a
+certain confidence level (typically 5\%) and can be calculated by
+taking the value of the return at the specified (5\%) boundary of
+a probability density function (PDF) of return data (either historical
+or simulated). Although VaR better accounts for downside risk than
+variance does, it fails to capture the extent of the possible losses
+beyond the specified (5\%) cutoff. It is possible to have two PDF\textquoteright{}s
+with the same VaR (loss associated with the cutoff of 5\%) but one
+with a fatter tail and greater losses to the left of the specified
+(5\%) cutoff. 
+
+Conditional value-at-risk (CVaR) attempts to rectify this problem:
+it is the expected loss given a negative outcome that is greater than
+the VaR level, and it can be calculated as a weighted average of the
+worst case losses (Agrawal, 2008). Formally, let X be a random variable
+denoting a portfolio's loss and $VaR_{\alpha}(X)$ be the VaR at the
+$100(1-\alpha)\%$ confidence level. Then $CVaR_{a}(X)$ is defined
+as:
+
+\[
+CVaR_{\alpha}(X)=E[X|X\text{\ensuremath{\ge}}Var_{\alpha}(X)]\]
+
+
+Furthermore, CVaR is a more reliable risk measure than VaR under non-normal
+and non-continuous probability distributions because it is a \textquotedblleft{}coherent
+risk measure\textquotedblright{} and is \textquotedblleft{}sub-additive
+and convex\textquotedblright{} (p. 3, Krohmal, Palmquist, and Uryasev,
+2002). This means that the CVaR of a portfolio is always less than
+or equal to the sum of the CVaR of the weights of the individual asset
+classes; furthermore, it can be extended from continuous probability
+distributions to discrete scenarios, allowing for optimization using
+simulations or discrete distributions and eliminating anomalous results
+such as multiple local minima. 
+
+Rockafellar and Uryasev (1999) demonstrate the use of CVaR in an asset
+allocation framework and the ability to optimize CVaR using linear
+programming methods. The ability to use linear programming stems from
+the way CVaR is calculated. Theoretically, CVaR is simply the average
+value beyond the specified cutoff (5\%) calculated using the calculus
+of integrals. Rockafellar and Uryasev demonstrate that the use of
+simulations and a summation to estimate the theoretical CVaR can be
+exploited to find the minimum CVaR. The minimization of CVaR in most
+situations also provides a minimum VaR because CVaR is always greater
+than VaR. Only in situations of extreme skewness does the minimum
+VaR differ greatly from the minimum CVaR. Rockafellar and Uryasev
+demonstrate the theoretical and mathematical possibility of optimizing
+CVaR for portfolio asset allocation. 
+
+Sheikh and Qiao (2009) provide a real world application and verification
+of the use of fat tail distributions and CVaR as a risk measure in
+an asset allocation framework. They demonstrate that a fat tail distribution
+better describes the real world market environment than a normal distribution
+by showing that the Student\textquoteright{}s t-copula more closely
+fits the historical data, especially the extreme events, than does
+the normal copula. The paper also briefly touches on CVaR as a risk
+measure that better accounts for downside risk than variance. The
+paper then looks at asset allocation using CVaR as a risk measure.
+It shows that the use of a Student\textquoteright{}s t-copula assumption
+provides a lower downside risk (through lower CVaR) than does the
+use of a normal copula. Our research will focus on  a continuation
+of this asset allocation model with rebalancing. We will also look
+at the historical accuracy and advantage of using our asset allocation
+model in comparison to the traditional mean-variance asset allocation
+framework. 
+
+So far, we have discussed methods for single period buy and hold portfolio
+optimization using CVaR as a risk measure and t-Copula as a joint
+probability distribution. Realistically, as certain assets outperform
+others, the asset allocation changes endogenously as well. Recent
+research considers expanding the optimization to incorporate multiple
+period rebalancing using the mean-variance framework as well as the
+mean-CVaR framework. 
+
+Master (2003) offers a simple rebalancing strategy, which involves
+setting a target allocation. The investor only rebalances when the
+allocation deviates beyond a set of trigger points. For instance,
+if the trigger point is 3\% for all asset classes, then an investor
+only rebalances when the weight for any asset class deviates more
+than 3\% from the target weight. This is also known as a tolerance
+band rebalancing strategy. According to Master, any rebalancing strategy
+should incorporate some basic assumptions. The benefit of rebalancing
+is inversely proportional to an investor's risk preference: if an
+investor is risk tolerant, meaning he is willing to endure higher
+risk for higher potential returns, then his tolerance band will be
+wider, meaning he will rebalance less often. It should also be noted
+that the benefit of rebalancing rises geometrically. For example,
+rebalancing at a deviation of 6\% from the target allocation provides
+up to four times as much benefit as rebalancing at deviation of 3\%
+of target allocation. The key benefit of rebalancing is to reduce
+the tracking error. Mathematically this can be represented as $\text{Rebalancing Benefit }=\frac{{\text{Tracking Error}^{2}\cdot\delta^{2}}}{2\cdot\text{Risk Tolerance}}$
+where $\delta$ is the deviation from the target allocation and Tracking
+Error represents how closely a portfolio follows the target allocation
+to which it is benchmarked. The process of rebalancing involves the
+movement of capital across asset classes and incurs costs. While the
+benefit of rebalancing rises geometrically, the transaction costs
+of rebalancing are linear: selling twice as much of an asset would
+cost twice as much. The net benefit of rebalancing is the difference
+between the benefit of rebalancing and the cost of rebalancing. 
+
+Sun (2006) extends the concepts of Master\textquoteright{}s research
+to incorporate dynamic programming to minimize the cost of rebalancing.
+Sun applies the idea to CAPM models, which use mean and variance as
+the primary portfolio statistics of interest. The optimal strategy
+is to rebalance only when the expected cost of trading is less than
+the expected cost of doing nothing. His conclusion is that periodic
+or tolerance band rebalancing provides suboptimal rebalanced portfolios.
+However, by treating the rebalancing problem as an optimization problem
+and solving it using dynamic programming, Sun was able to reduce overall
+costs of portfolio rebalancing. 
+
+Guastaroba (2009) applies rebalancing strategies to a portfolio optimization
+model that uses Conditional Value at Risk (CVaR) as the risk measure.
+The model incorporates rebalancing as a set of linear programming
+constraints. He introduces a decision variable to determine whether
+to rebalance based on how much the portfolio allocation deviates from
+a predetermined quantile. Fixed and variable transaction costs are
+both incorporated in the rebalancing decision. During every rebalancing
+period, an investor rebalances if net portfolio return, taking into
+account fixed and proportional transaction costs, is at least the
+predetermined required return. The paper then uses four in-and-out-of-sample
+windows to test the model for different levels of minimum required
+returns (0, 5\%, and 10\%) and different quantile measures (1\%, 5\%,
+10\% and 25\%). Based on the back-testing results, he concludes that
+for a very risk-averse investor the best choice is to rebalance two
+or three times in six months. On the other hand, a less risk-averse
+investor should rebalance one time or not rebalance at all. 
+
+These papers give us a starting point for incorporating rebalancing
+into our model. We also incorporated t-copula joint distributions
+and CVaR as a risk measure when rebalancing. 
+\end{doublespace}
+
+\begin{doublespace}
+
+\section{Data}
+\end{doublespace}
+
+\begin{doublespace}
+We used benchmark data obtained from the Duke University Management
+Company (DUMAC). The data consisted of historical monthly returns
+for the benchmarks representing seven asset classes: Morgan Stanley
+Capital International (MSCI) All World (\$) for equity, Goldman Sachs
+Commodity index (GSCI) for commodities, a blend of benchmarks  for
+credit%
+\footnote{1973-1984 Investment Grade Index, %
+}, Barclays Capital U.S. Treasury Intermediate for interest rate, a
+blend of benchmarks  for inflation sensitive%
+\footnote{inflation blend%
+}, National Association of Real Estate Investment Trusts (NaREIT) for
+real estate, and Citi 3-month T-bills for cash. The benchmark return
+data ranged from 1973 to 2009 and are all publicly available. We also
+used the historical asset allocations of DUMAC as a reference.
+
+%
+\begin{table}[H]
+\caption{Annual Statistics: Historical Data}
+
+
+\begin{doublespace}
+\hspace*{\fill}\begin{tabular}{|c||c|c|c|c|c|c|c|}
+\hline 
+ & Equity & Comm. & Credit & IR & Inflation  & RE & Cash\tabularnewline
+\hline
+\hline 
+$\mu$ & 9.83\% & 10.37\% & 8.49\% & 7.71\% & 8.54\% & 10.21\% & 5.80\%\tabularnewline
+\hline 
+$\sigma$ & 15.29\% & 20.64\% & 5.25\% & 4.24\% & 6.13\% & 18.24\% & 0.87\%\tabularnewline
+\hline
+\end{tabular}\hspace*{\fill}\end{doublespace}
+
+\end{table}
+
+
+%
+\begin{table}[H]
+\caption{Historical Correlation of Monthly Returns}
+
+
+\begin{doublespace}
+\hspace*{\fill}\begin{tabular}{|c||c|c|c|c|c|c|c|}
+\hline 
+ & Equity & Comm. & Credit & IR & Inflation  & RE & Cash\tabularnewline
+\hline
+\hline 
+Equity & 100.00\% & 10.44\% & 39.22\% & 9.76\% & 14.70\% & 56.24\% & -2.62\%\tabularnewline
+\hline 
+Comm. & 10.44\% & 100.00\% & -2.78\% & -6.40\% & 16.30\% & 5.41\% & 2.56\%\tabularnewline
+\hline 
+Credit & 39.22\% & -2.78\% & 100.00\% & 80.31\% & 62.91\% & 43.80\% & 6.42\%\tabularnewline
+\hline 
+IR & 9.76\% & -6.40\% & 80.31\% & 100.00\% & 66.43\% & 14.98\% & 16.04\%\tabularnewline
+\hline 
+Inflation  & 14.70\% & 16.30\% & 62.91\% & 66.43\% & 100.00\% & 22.75\% & 5.24\%\tabularnewline
+\hline 
+RE & 56.24\% & 5.41\% & 43.80\% & 14.98\% & 22.75\% & 100.00\% & -3.26\%\tabularnewline
+\hline 
+Cash & -2.62\% & 2.56\% & 6.42\% & 16.04\% & 5.24\% & -3.26\% & 100.00\%\tabularnewline
+\hline
+\end{tabular}\hspace*{\fill}\end{doublespace}
+
+\end{table}
+
+\end{doublespace}
+
+\begin{doublespace}
+
+\section{Methodology}
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{Arithmetic and Compounding Returns}
+\end{doublespace}
+
+\begin{doublespace}
+We use two methods for calculating returns for a given time period.
+In the arithmetic approach, returns from a period are added to returns
+in the next period. In the compounding approach, returns from a period
+are multiplied to the returns in the next period. Let $r_{t}$ be
+the return during period $t$ and $V_{t}$ be the portfolio value
+at the end of period $t$, we can express the two approaches as:
+
+\begin{equation}
+\text{Compounding: }V_{t+1}=V_{t}\cdot(1+r_{t+1})\end{equation}
+
+
+\begin{equation}
+\text{Arithmetic: }V_{t+1}=V_{t}+r_{r+1}.\end{equation}
+The use of arithmetic returns is mathematically and computationally
+convenient. Our initial analyses utilize arithmetic returns before
+extending the mean-CVaR framework to consider compounding and rebalancing.
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{t-Copula}
+\end{doublespace}
+
+\begin{doublespace}
+The historical return data of each individual asset class are first
+fit to independent, marginal Generalized Pareto Distribution; this
+GPD fit is piecewise so that a different function is fit to the lower
+tail and upper tail to account for marginal distribution fat tails.
+Next, independent marginal CDFs are transformed into their inverses,
+creating a uniform distribution over {[}0, 1{]}. The historical returns
+are then applied to their respective inverse CDF's to determine a
+marginal probability of each return given the PDF. Using Maximum Likelihood,
+a multivariate t-distribution fit is then constructed over these inverse
+CDF historical probabilities to construct a t-copula that is identified
+by a new correlation matrix and a single degree of freedom. 
+
+The resulting t-Copula fit is centered at zero with characteristic
+fat tails, similar to a standard normal distribution, and is used
+for generating simulations. The multivariate t probability density
+function is defined as follows:
+
+\begin{equation}
+f(x)=\frac{\Gamma(\frac{v+d}{2})}{\Gamma(\frac{v}{2})\sqrt{(\pi v)^{d}|\Sigma|}}(1+\frac{(x+\mu)'\Sigma^{-1}(x-\mu)}{v})^{-\frac{v+d}{2}}\end{equation}
+
+
+\begin{equation}
+\Gamma(x)=\int_{0}^{\inf}t^{x-1}e^{-t}dt\label{eq:Gamma function}\end{equation}
+ where $d$ is the number of dimensions, $v$ is the degrees of freedom,
+$\mu$ is the mean (zero, in this case), $\Sigma$ is the correlation
+matrix, and $\Gamma$ is the gamma function as defined in Equation
+\ref{eq:Gamma function}.
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsubsection{Generate Simulations}
+\end{doublespace}
+
+\begin{doublespace}
+In order to simulate a certain number of months into the future, we
+generate multiple single month returns for all asset classes. A single
+month's return is simulated for all asset classes by generating multivariate
+random numbers from the t-Copula fit and applying it to the following
+formula:
+
+\begin{equation}
+\text{Simulated One Month Return}=\mu+\sigma\cdot\vec{x}\end{equation}
+
+
+where $\mu$ is a vector of the historical monthly returns for each
+asset class, $\sigma$ is a vector of the historical standard deviations
+for each asset class, and $\vec{x}$ is a vector of the generated
+multivariate t random numbers. We use the average historical, empirical
+monthly returns and historical, empirical standard deviations of each
+asset class in our research for consistency and objectiveness. When
+simulations are drawn out of a t-copula, the likelihood of a market
+crash scenario is an order of magnitude higher than that of a Gaussian
+copula. 
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{Conditional Value at Risk (CVaR) }
+\end{doublespace}
+
+\begin{doublespace}
+In order to calculate the CVaR of a certain portfolio over a set of
+simulations, we sort the average returns of all the simulations from
+lowest to highest and take the average of the lowest $\beta * Number of Simulation$
+values.
+
+\begin{equation}
+\beta\text{-CVaR}=\frac{{1}}{(\beta\cdot n)}\sum_{i=1}^{\beta\cdot n}r_{i}\label{eq:CVaR calculation}\end{equation}
+where $n$ is the number of simulations, $r_{i}$ is the i-th lowest
+simulated return of an asset class, and $\beta$ is the desired CVaR
+level (expressed as a percentage, e.g. 5\%). 
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{Analytical Mean-Variance Optimization}
+\end{doublespace}
+
+\begin{doublespace}
+Markowitz (1952) pioneered the use of the normal mean-variance optimization
+framework for maximizing portfolio returns and minimizing portfolio
+risk (standard deviation). This framework analytically calculates
+the optimal set of portfolio returns and variances using the historical
+average return and historical standard deviation of each asset class
+along with the historical covariance between each pair of asset classes.
+Let $R$ be the fixed portfolio monthly return rate and $r_i$ the
+average historical monthly return of each asset class. The optimization
+problem can be expressed as follows:\begin{equation}
+\min_{w_{1},w_{2},...w_{n}}\text{{\ensuremath{\sigma^{2}}}}(w_{1},w_{2},...,w_{n})\end{equation}
+
+
+\begin{equation}
+\sigma^{2}(w_{1},w_{2},...,w_{n})=\sum_{i=1}^{n}w_{i}^{2}\cdot\sigma_{i}^{2}+2\sum_{i=1}^{n}\sum_{j>i}^{n}w_{i}\cdot w_{j}\cdot\text{Cov(}i,j\text{) }\end{equation}
+
+\end{doublespace}
+
+\begin{equation}
+\text{Cov(}i,j\text{)}=\sigma_{i}\cdot\sigma_{j}\cdot\rho_{ij}\end{equation}
+
+
+\begin{doublespace}
+\begin{equation}
+w_{1},w_{2},...,w_{n}>0\end{equation}
+
+
+\begin{equation}
+w_{1}+w_{2}+...+w_{n}=1\end{equation}
+\begin{equation}
+\sum_{i=1}^{n}w_{i}\cdot r_{i}=R\end{equation}
+The optimization uses multiple levels of $R$ between the lowest and
+highest single asset class return (where the portfolio is 100\% weighted
+in that single asset class) to determine the set of portfolios along
+the efficient frontier. 
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{Single Period Simulated Mean-CVaR Optimization }
+\end{doublespace}
+
+\begin{doublespace}
+The single period optimization of mean-CVaR minimizes CVaR at each
+given level of return. The optimization calculates the CVaR as described
+in Equation \ref{eq:CVaR calculation} while satisfying the condition
+that the average return across all simulations is equal to the given
+level of return we are optimizing on. Since this is a single period
+optimization, arithmetic returns are used. 
+
+Let $w_{i}$ denote the weight for asset class $i$, $R$ be the fixed
+portfolio monthly return rate as defined before and $\tilde{R}$ be
+the calculated portfolio monthly return rate at each run of the simulation.
+We have the following optimization problem: 
+
+\begin{equation}
+\min_{w_{1},w_{2},...w_{n}}\text{{CVaR}}(w_{1},w_{2},...,w_{n})\end{equation}
+\begin{equation}
+w_{1},w_{2},...,w_{n}>0\end{equation}
+\begin{equation}
+w_{1}+w_{2}+...+w_{n}=1\end{equation}
+\begin{equation}
+\tilde{R}(w_{1},w_{2},...,w_{n})=R(w_{1},w_{2},...,w_{n})\end{equation}
+\begin{equation}
+V_{t}=V_{t}+\sum_{i=1}^{t}r_{i}\end{equation}
+
+
+Our two linear constraints indicate that the weights must sum to one
+and be nonnegative (since no borrowing is allowed). Since we want
+to optimize on a fixed return, our nonlinear constraint is that our
+average final portfolio return $\tilde{R}$ across all simulations
+must be equivalent to the given fixed portfolio return $R$. 
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{Simulated Mean-CVaR Optimization with Compounding \label{sub:Simulated-Mean-CVaR-Optimization}}
+\end{doublespace}
+
+\begin{doublespace}
+We adopt the compounding approach in this optimization. 
+
+\begin{equation}
+\min_{w_{1},w_{2},...w_{n}}\text{{CVaR}}(w_{1},w_{2},...,w_{n})\end{equation}
+\begin{equation}
+w_{1},w_{2},...,w_{n}>0\end{equation}
+\begin{equation}
+w_{1}+w_{2}+...+w_{n}=1\end{equation}
+\begin{equation}
+\tilde{R}(w_{1},w_{2},...,w_{n})=R(w_{1},w_{2},...,w_{n})\end{equation}
+
+
+\begin{equation}
+V_{t+1}=V_{t}\cdot(1+r_{t+1})\end{equation}
+
+
+Our two linear constraints indicate that the weights must sum to one
+and be nonnegative (since no borrowing is allowed). Since we want
+to fix return, our nonlinear constraint is that our final portfolio
+return $\tilde{R}$ must be the same as the given fixed portfolio
+return $R$. 
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{Simulated Mean-CVaR Optimization with Rebalancing and Compounding}
+\end{doublespace}
+
+\begin{doublespace}
+The implementation is the same as in Section \ref{sub:Simulated-Mean-CVaR-Optimization}
+with one additional feature: every 12 months, we rebalance the portfolio
+to the predetermined weights. We sum up the returns in that year and
+we distribute the portfolio value according to a predetermined set
+of weights and then compound it with future returns. Keeping all the
+variables the same, and let $\vec{{V}_{t}^{'}}$ be the portfolio
+vector after rebalancing. $\vec{{V}_{t}^{'}}$ contains the value
+of each asset class at the end of time $t$. We have the following
+nonlinear programming optimization problem:
+
+\begin{equation}
+\min_{w_{1},w_{2},...w_{n}}\text{{CVaR}}(w_{1},w_{2},...,w_{n})\end{equation}
+\begin{equation}
+w_{1},w_{2},...,w_{n}>0\end{equation}
+\begin{equation}
+w_{1}+w_{2}+...+w_{n}=1\end{equation}
+\begin{equation}
+\tilde{R}(w_{1},w_{2},...,w_{n})=R(w_{1},w_{2},...,w_{n})\end{equation}
+\begin{equation}
+V_{t+1}=V_{t}\cdot(1+r_{t+1})\end{equation}
+\begin{equation}
+\vec{{V}_{t}^{'}}=V_{t}\cdot(w_{1},w_{2},..,w_{n})\label{eq:constraint}\end{equation}
+
+
+where the only addition is equation \ref{eq:constraint}. It specifies
+that at each time period $t$, we redistribute the value of the portfolio
+according to a predetermined vector of weights to obtain a portfolio
+vector containing the values of each asset class.
+
+Our objective function is to find the weights that will minimize CVaR.
+CVaR is calculated analytically by trying out a set of asset weights
+for all 5000 simulations. Each simulation gives a final portfolio
+value, from which we can derive the monthly return rate by the formula: 
+
+\begin{equation}
+r=\frac{{V_{f}^{1/p}-1}}{b}\end{equation}
+where $r$ is the monthly return rate, $V_{f}$ is the final portfolio
+value, $p$ is the number of periods we simulate into the future,
+and $b$ is number of months in between which we rebalance. A period
+is the interval in which we rebalance once; it is equal to $b$ months.
+For instance, suppose we start with a \$1 billion endowment and the
+final portfolio value is \$24.62 billion. Suppose further that we
+simulate 36 months into the future, rebalancing every 12 months. Then
+our monthly return rate is $\frac{24.62^{1/3}-1}{12}=0.16$ monthly
+return rate by the formula. For each set of weights, we carry out
+5000 simulations, giving us 5000 monthly return rates. We take the
+average of the lowest 5\%, or 250 final returns, to give us one CVaR.
+Our objective is to find the minimum CVaR. We will keep trying weights
+in an analytical fashion until we find the minimum CVaR. 
+\end{doublespace}
+
+\begin{doublespace}
+
+\section{Results and Discussion}
+\end{doublespace}
+
+\begin{doublespace}
+{[}Results, data, graphs{]}
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{Data and Simulations}
+\end{doublespace}
+
+\begin{doublespace}
+We simulated monthly returns of the seven asset classes for ten years
+into the future. Two hundred simulations were run, and the arithmetic,
+annual summary statistics of the simulations and historical data (average
+return and standard deviation) are as follows:
+
+%
+\begin{table}[H]
+\caption{Annual Statistics: Historical Data}
+
+
+\begin{doublespace}
+\hspace*{\fill}\begin{tabular}{|c||c|c|c|c|c|c|c|}
+\hline 
+ & Equity & Comm. & Credit & IR & Inflation  & RE & Cash\tabularnewline
+\hline
+\hline 
+$\mu$ & 9.83\% & 10.37\% & 8.49\% & 7.71\% & 8.54\% & 10.21\% & 5.80\%\tabularnewline
+\hline 
+$\sigma$ & 15.29\% & 20.64\% & 5.25\% & 4.24\% & 6.13\% & 18.24\% & 0.87\%\tabularnewline
+\hline
+\end{tabular}\hspace*{\fill}\end{doublespace}
+
+\end{table}
+
+
+%
+\begin{table}[H]
+\caption{Annual Statistics: Unsmoothed Historical Data}
+
+
+\begin{doublespace}
+\hspace*{\fill}\begin{tabular}{|c||c|c|c|c|c|c|c|}
+\hline 
+ & Equity & Comm. & Credit & IR & Inflation  & RE & Cash\tabularnewline
+\hline
+\hline 
+$\mu$ & 9.85\% & 10.25\% & 8.55\% & 7.74\% & 8.56\% & 10.45\% & 5.80\%\tabularnewline
+\hline 
+$\sigma$ & 17.38\% & 24.63\% & 7.67\% & 5.08\% & 6.13\% & 20.10\% & 0.87\%\tabularnewline
+\hline
+\end{tabular}\hspace*{\fill}\end{doublespace}
+
+\end{table}
+
+
+%
+\begin{table}[H]
+\caption{Annual Statistics: t-Copula Simulation Data:}
+
+
+\begin{doublespace}
+\hspace*{\fill}\begin{tabular}{|c||c|c|c|c|c|c|c|}
+\hline 
+ & Equity & Comm. & Credit & IR & Inflation  & RE & Cash\tabularnewline
+\hline
+\hline 
+$\mu$ & 10.63\% & 10.18\% & 8.74\% & 7.74\% & 8.87\% & 10.50\% & 5.84\%\tabularnewline
+\hline 
+$\sigma$ & 18.75\% & 26.28\% & 8.24\% & 5.30\% & 6.39\% & 21.02\% & 0.94\%\tabularnewline
+\hline
+\end{tabular}\hspace*{\fill}\end{doublespace}
+
+\end{table}
+
+
+The summary statistics of the t-copula simulations in comparison to
+the historical data shows that the simulations have average returns
+close to the historical averages but have a wider range of returns
+as seen in the higher standard deviation. 
+
+The following are the historical correlations and the correlation
+of the t-copula fit with the degrees of freedom:
+
+%
+\begin{table}[H]
+\caption{Historical Correlation of Monthly Returns}
+
+
+\begin{doublespace}
+\hspace*{\fill}\begin{tabular}{|c||c|c|c|c|c|c|c|}
+\hline 
+ & Equity & Comm. & Credit & IR & Inflation  & RE & Cash\tabularnewline
+\hline
+\hline 
+Equity & 100.00\% & 10.44\% & 46.26\% & 9.76\% & 14.70\% & 56.24\% & -2.62\%\tabularnewline
+\hline 
+Comm. & 10.44\% & 100.00\% & 1.27\% & -6.40\% & 16.30\% & 5.41\% & 2.56\%\tabularnewline
+\hline 
+Credit & 46.26\% & 1.27\% & 100.00\% & 67.06\% & 57.85\% & 52.12\% & 3.38\%\tabularnewline
+\hline 
+IR & 9.76\% & -6.40\% & 67.06\% & 100.00\% & 66.43\% & 14.98\% & 16.04\%\tabularnewline
+\hline 
+Inflation  & 14.70\% & 16.30\% & 57.85\% & 66.43\% & 100.00\% & 22.75\% & 5.24\%\tabularnewline
+\hline 
+RE & 56.24\% & 5.41\% & 52.12\% & 14.98\% & 22.75\% & 100.00\% & -3.26\%\tabularnewline
+\hline 
+Cash & -2.62\% & 2.56\% & 3.38\% & 16.04\% & 5.24\% & -3.26\% & 100.00\%\tabularnewline
+\hline
+\end{tabular}\hspace*{\fill}\end{doublespace}
+
+\end{table}
+
+
+%
+\begin{table}[H]
+\caption{t-Copula Correlation of Monthly Returns}
+
+
+\begin{doublespace}
+\hspace*{\fill}\begin{tabular}{|c||c|c|c|c|c|c|c|}
+\hline 
+ & Equity & Comm. & Credit & IR & Inflation  & RE & Cash\tabularnewline
+\hline
+\hline 
+Equity & 100.00\% & 11.66\% & 43.49\% & 17.47\% & 14.82\% & 49.85\% & -2.07\%\tabularnewline
+\hline 
+Comm. & 11.66\% & 100.00\% & -0.21\% & -0.99\% & 12.78\% & 0.87\% & 1.70\%\tabularnewline
+\hline 
+Credit & 43.49\% & -0.21\% & 100.00\% & 77.04\% & 56.86\% & 48.43\% & -0.03\%\tabularnewline
+\hline 
+IR & 17.47\% & -0.99\% & 77.04\% & 100.00\% & 69.25\% & 23.56\% & 8.34\%\tabularnewline
+\hline 
+Inflation  & 14.82\% & 12.78\% & 56.86\% & 69.25\% & 100.00\% & 22.51\% & 1.63\%\tabularnewline
+\hline 
+RE & 49.85\% & 0.87\% & 48.43\% & 23.56\% & 22.51\% & 100.00\% & -4.32\%\tabularnewline
+\hline 
+Cash & -2.07\% & 1.70\% & -0.03\% & 8.34\% & 1.63\% & -4.32\% & 100.00\%\tabularnewline
+\hline
+\end{tabular}\hspace*{\fill}\end{doublespace}
+
+\end{table}
+
+
+t-Copula degrees of freedom: 25.25
+
+The degrees of freedom signifies the extent of the fat tails. A degree
+of freedom of infinite is essentially a normal distribution; previous
+literature have found t-copulas with a degree of freedom of 32 to
+be a very close approximation of a normal copula.
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{Efficient Frontiers}
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsubsection{Analytical Mean-Variance}
+\end{doublespace}
+
+\begin{doublespace}
+We created analytical mean-variance efficient frontiers using the
+average returns and observed variances of the historical data, the
+unsmoothed historical data, and the simulation data. The similarity
+of the three efficient frontiers is a result of the similarity of
+the mean and variance statistics. 
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsubsection{Single Period (buy and hold) Mean-CVaR }
+\end{doublespace}
+
+\begin{doublespace}
+We first used the resulting weights of the analytical, normal mean-variance
+efficient frontiers to find their corresponding portfolio CVaR's given
+the simulation data. We used this as a comparison to the actual {}``optimal''
+set of portfolios in a mean-CVaR framework. The efficient frontiers
+are as follows: 
+
+The results indicate that there exists a set of portfolios that has
+a lower CVaR (or higher return) than any of the analytical mean-variance
+portfolios. This is intuitively captured by the fact that optimal
+mean-CVaR frontier lies to the Northwest. The portfolios that had
+maximized return and minimized variance in the previous optimization
+had a greater CVaR than portfolios that had minimized CVaR. This suggests
+the mean-variance optimization does not protect against situations
+of extreme losses and should not be the only consideration in asset
+allocation especially if preventing extreme downside risk is a central
+concern. 
+\end{doublespace}
+
+The convergence of the efficient frontiers at the end points is due
+to the fact that only a portfolio that is 100\% weighted in a single
+asset class can achieve the lowest possible return and the highest
+possible return. The outperformance of the optimal mean-CVaR efficient
+frontier in comparison to the mean-variance efficent frontier can
+be seen in the portfolios between the two endpoints. 
+
+Unlike the analytical mean-variance framework, the mean-CVaR framework
+allows for the risk value to be negative. A CVaR less than zero means
+that the worst 5\% performance is a negative loss or a small gain.
+It is difficult to use an {}``information ratio'' or a {}``Sharpe
+ratio'' since the intersection of the efficient frontier and the
+y-axis leads to arbitrarily large ratios. It is interesting to note
+that for an expected loss of 0\%, the optimal mean-CVaR portfolio
+will return almost 35 basis points more than the mean-variance portfolio. 
+
+\begin{doublespace}
+
+\subsubsection{Rebalancing and Compounding Mean-CVaR}
+\end{doublespace}
+
+\begin{doublespace}
+In the following efficient frontier, we demonstrate the optimal tradeoff
+between CVaR and return when comparing annual compounding and annual
+rebalancing for a 10 year simulation period:
+
+The mean-variance efficient frontier weights are not the most optimal
+allocations in both the rebalancing mean-CVaR framework and the compounding
+mean-CVaR framework. The results indicate that an optimal mean-CVaR
+portfolio exists in both the compounding and the rebalancing frameworks
+that significantly outperforms the mean-variance portfolios in the
+respective frameworks. Significant improvement in higher returns or
+in lower CVaRs can be obtained over the normal mean-variance efficient
+frontiers. 
+
+The achievement of higher returns and lower CVaR for the compounding
+portfolios in comparison to the rebalancing portfolios, especially
+at higher risk and return levels, must be considered in light of the
+use of a t-copula. The compounding and rebalancing portfolios at lower
+risk and lower CVaR are very similar but quickly diverge as the risk
+and CVaR increases. We believe this is because the t-copula is symmetric,
+so there exists a fat upper tail as well as a fat lower tail. In this
+case, compounding may outperform rebalancing by allowing the portfolio
+to become overweight in high risk-high return assets. 
+
+The use of a t-copula to generate simulations appears to play a significant
+role in comparing the efficient frontiers of compounding and rebalancing
+in a mean-CVaR framework. 
+
+Future research implementing transaction costs and a decision variable
+to determine when to rebalance may prove valuable in this mean-CVaR
+framework.
+\end{doublespace}
+
+\begin{doublespace}
+
+\section{Future Research Possibilities}
+\end{doublespace}
+
+\begin{doublespace}
+
+\subsection{Back Testing}
+
+
+\subsection{Other Copulas and Joint Distributions}
+\end{doublespace}
+
+\begin{doublespace}
+Although the standard t-copula to fit to the historical data did account
+for greater extreme events through a fat tail, the two tails were
+symmetric. Future research may consider asymmetric copulas such as
+the Gumbel or Clayton copulas. 
+
+{[}Interpretation of results, implications{]}
+\end{doublespace}
+
+\begin{doublespace}
+
+\section{Conclusion}
+\end{doublespace}
+
+We have developed a set of asset allocation models that utilize a
+non-normal joint probability distribution, minimize CVaR as the risk
+measure, and account for portfolio rebalancing. Our results support
+the previous literature that a mean-variance framework under estimates
+downside risk. We have shown that variance minimization does not lead
+to the minimization of downside risk and underperforms the optimal
+minimum CVaR efficient frontier. Our results suggest that CVaR is
+a viable and important risk measure for investors to continue alongside
+variance since it better accounts for downside risk. However, in the
+pursuit of outperformance, investors should carefully consider the
+tradeoff between higher returns and both risk factors, variance and
+CVaR. 
+
+We have demonstrated that the optimal set of mean-variance portfolios
+perform poorly when looking at downside risk using CVaR in a single
+period buy-and-hold strategy. The mean-variance portfolios are suboptimal
+in the single period mean-CVaR framework, where a different set of
+portfolio weights has a higher return and/or a lower CVaR. Mean-variance
+especially underperforms in the cases of intermediate returns and
+medium levels of risk, suggesting that portfolios with low risk/returns
+and high risk/returns share similar CVaR and variance levels. 
+
+Since mean-variance inherently utilizes a normal distribution, the
+optimal mean-variance efficient frontiers do not account for scenarios
+of extreme joint losses. Our use of a t-copula allowed us to properly
+simulate scenarios with a frequency of extreme losses similar to that
+observed in the historical data. The outperformance of the optimal
+mean-CVaR efficient frontier in comparison to the mean-variance efficient
+frontier is evidence that the mean-variance optimization does not
+account for the extreme losses. 
+
+We have produced promising results for understanding rebalancing in
+the mean-CVaR framework with non-normal joint distributions. Our rebalancing
+framework assumed no transaction costs and enforced a mandatory annual
+redistribution of capital to the original weights. It was surprising
+for us to find that the mean-CVaR single period compounding efficient
+frontier outperforms the corresponding rebalancing efficient frontier.
+This suggests that the endogenous process of a high risk, high return
+asset class becoming overweight in a single period portfolio contributes
+significantly. It may be interesting to investigate a dynamic optimization
+technique that includes a decision variable whether to rebalance;
+however, we suspect that the difficulty in predicting future random
+returns may hinder the value of this process. The real value in a
+dynamic optimization process would be to bring our current rebalancing
+model a step closer to real world situations with transaction costs. 
+
+\begin{doublespace}
+Future research into the tradeoff between CVaR and variance may prove
+rewarding since both risk measures could prove relevant in different
+contexts. A three dimensional optimization that maximizes return while
+minimizing variance and minimizing CVaR will produce an efficient
+frontier that is a plane. This would be an interesting framework for
+understanding the tradeoffs between return, variance, and downside
+risk and merits future investigation. 
+\end{doublespace}
+
+The process of asset allocation is critical for understanding the
+overall behavior of a portfolio of risky assets. Our research has
+built off of the recent developments in applying fat-tail distributions,
+downside risk measures, and rebalancing. We have developed a simple
+rebalancing model that incorporates a fat-tail joint distribution
+in a mean-CVaR freamwork and have demonstrated the underperformance
+of the traditional mean-variance framework. Our results have posed
+several new and interesting questions for future research in asset
+allocation with rebalancing. 
+
+\begin{doublespace}
+
+\end{doublespace}
+\begin{thebibliography}{2}
+\begin{doublespace}
+\bibitem{key-1}
+
+\bibitem{key-2}2\end{doublespace}
+
+\end{thebibliography}
+
+\end{document}
+@

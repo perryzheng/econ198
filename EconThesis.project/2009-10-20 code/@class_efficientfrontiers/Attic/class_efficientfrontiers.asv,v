@@ -1,0 +1,75 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.38;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.15;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@
+classdef class_efficientfrontiers
+    properties
+    
+    end
+    methods
+        
+        function EFplotter(obj, plotcolor)
+            
+            try 
+                obj.portSDs;
+                  
+                plot(obj.portSDs .* (sqrt(12) * 100), obj.portReturns .* (12 * 100), '-bo','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor', plotcolor,...                    
+                    'MarkerSize',4)
+                
+
+            catch me1
+            end
+            
+            try 
+                obj.portCVaRs;
+                
+                plot(obj.portCVaRs .* ((12) * 100), obj.portReturns .* (12 * 100), '-bo','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor', plotcolor,...                    
+                    'MarkerSize',4)
+            catch me2
+            end
+            
+        end
+        
+
+        
+        
+    end
+end@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

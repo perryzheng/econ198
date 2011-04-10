@@ -1,0 +1,46 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@classdef class_expectedreturns
+    properties
+        expavgret
+        expavgSD
+        expCorr
+        expCov
+        
+        NumofFunds
+                
+    end
+    methods
+        function expret = class_expectedreturns(expavgret, expavgSD, expCorr)
+            expret.expavgret = expavgret;
+            expret.expavgSD = expavgSD;
+            expret.expCorr = expCorr;
+            expret.expCov = corr2cov(expavgSD, expCorr);
+            
+            expret.NumofFunds = size(expavgret, 2);
+        end
+    end
+    
+    
+end@

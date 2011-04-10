@@ -1,0 +1,42 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.02.21.21.54.10;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.15.06.14.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@'stress test stuff for jing'
+@
+text
+@function y = run_cvarstuff()
+
+aaa_CVaR_EF_sim_02(36, 1000, 0.1, 0.9, 1, 0, 1, 2, 1, .15)
+aaa_CVaR_EF_sim_02(36, 1000, 0.1, 0.9, 1, 0, 1, 2, 1, .25)
+end@
+
+
+1.1
+log
+@'create histogram for simulations given weights; rolling period (annual) almost complete'
+@
+text
+@@
+

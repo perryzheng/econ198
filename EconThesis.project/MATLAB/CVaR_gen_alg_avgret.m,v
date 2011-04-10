@@ -1,0 +1,68 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+function y = CVaR_gen_alg_avgret(avgFundReturns, returnconstraint, startweights)
+    tic
+    
+    NumofFunds = size(avgFundReturns, 2);
+    
+    %
+    options = gaoptimset('PopulationSize', [50], 'InitialPopulation', startweights, ...
+        'Generations', 150, 'StallGenLimit', 50, 'TolFun', 1e-13, 'UseParallel', 'always',...
+        'Vectorize', 'on', 'StallTimeLimit', 2400, ...
+        'PopInitRange',[zeros(1, NumofFunds); ones(1, NumofFunds)]);
+%, 'MutationFcn',(@@mutationadaptfeasible)
+    % global globalavgtcopAnnreturn;
+
+    global globalreturnconstraint
+    globalreturnconstraint = returnconstraint;
+    
+    A = ones(1, NumofFunds);
+    b = 1;
+
+    Aeq = [ones(1, NumofFunds); avgFundReturns];
+    beq = [1; returnconstraint];
+
+    LB = zeros(1, NumofFunds);
+    UB = ones(1, NumofFunds);
+
+    Aeq2 = [ones(1, NumofFunds)];
+    beq2 = [1];
+    
+%{
+    [x fval exitflag output] = ga(@@gen_alg_min_cvar, NumofFunds, [], [], ...
+        Aeq, beq, LB, UB, @@gen_alg_nonlinconstr, options);
+
+    
+    [x fval exitflag output] = ga(@@gen_alg_min_cvar, NumofFunds, [], [], ...
+        [], [], LB, UB, @@gen_alg_nonlinconstr, options);
+%}
+    [x fval exitflag] = ga(@@gen_alg_min_cvar, NumofFunds, [], [], ...
+        Aeq2, beq2, LB, UB, @@gen_alg_nonlinconstr, options);
+
+
+    % x = ga(fitnessfcn,nvars,A,b,Aeq,beq,LB,UB,nonlcon,options)
+
+    toc
+    y = {x fval};@

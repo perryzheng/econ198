@@ -1,0 +1,56 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.52;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function deltaPP = purchasing_power(simulation, weights, inflation) 
+    %Preconditions
+    %simulation is a numMonths x numFacts matrix
+    %weights is a row vector of size numFacts
+    %inflation is a vector of each year's inflation. It is technically not
+    %necessary because we assume it to be 2.5% every year but this is more
+    %extensible
+    
+    %Postconditions
+    %Returns the change in purchasing power from first year to last year
+    
+    %VARIABLES
+    y = spending(simulation, weights, .055, 3, .05);
+    
+    %Need to discount the value at year t by (1+inflation_rate)^t. 
+    %First year has discount rate of (1+inflation_rate)^0 = 1
+    maxYear = size(y,1);
+    difference = (y(maxYear,:) / ((1+inflation)^maxYear)) - y(1,:);
+    
+    %What we want at the end is the difference in portfolio values
+    %However, we are allowed to sum up the asset values for last year and
+    %first year and take the quotient of them. Why?
+    %Because the second approach looks like asset1/(1+inflation)^maxYear +
+    %asset2/(1+inflation)^maxYear + ... + assetn/(1+inflation)^maxYear -
+    %asset1/1 - asset2/1 - asset3/1 - ... - assetn/1. But that's exactly
+    %the the difference in portfolio returns, which is
+    %(asset1+asset2+...assetn)/(1+inflation)^maxYear -
+    %asset1-asset2...-assetn. Thus the two approaches are equivalent
+    deltaPP = sum(difference) / sum(y(1,:));
+    
+    %If we have starting_money, then starting_money*deltaPP is how
+    %much we have gained or lost. 
+end@

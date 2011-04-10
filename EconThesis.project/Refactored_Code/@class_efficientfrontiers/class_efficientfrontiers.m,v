@@ -1,0 +1,199 @@
+head	1.6;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.6
+date	2010.04.18.23.18.58;	author idw3;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.04.13.16.03.09;	author xz27;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.04.10.16.29.25;	author idw3;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.04.10.15.45.01;	author xz27;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.01.14.03.34.04;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.12.17.20.48.23;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.6
+log
+@*** empty log message ***
+@
+text
+@
+classdef class_efficientfrontiers
+    properties
+    
+        rebalavgPortVal
+        rebalavgFundsVals
+    end
+    methods
+        
+        function EFplotter(obj, plotcolor)
+            global globalsamplemonths;
+            geometric = 1;
+            try 
+                obj.portSDs;
+                  
+                plot(obj.portSDs .* (sqrt(12) * 100), obj.portReturns .* (12 * 100), ['-' plotcolor],'LineWidth',1.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor', plotcolor,...                    
+                    'MarkerSize',.001)
+            catch me1
+            end
+            
+            try %all CVaR is geometric 
+                if geometric == 1 
+                    CVaR_converted = -obj.portCVaRs;
+                    y_monthly_returns = (obj.portReturns/1).^(1/globalsamplemonths)-1; %obj.portReturns is the average final fund value 
+                    x_monthly_returns = (CVaR_converted/1).^(1/globalsamplemonths)-1;
+                    x_value_real_returns = (x_monthly_returns+1).^12 -1; %obj.portCVaRs .* (12) * (3 * 1e9);
+                    x_value = -x_value_real_returns;
+                    y_value = (y_monthly_returns+1).^12 - 1; %annual return rate 
+                    %plot(obj.portCVaRs .* (12) * (3 * 1e9), obj.portReturns .* (12 * 100), '-bo','LineWidth',0.5,...
+                    plot(x_value, y_value, '-bo','LineWidth',0.5,...
+                        'MarkerEdgeColor','k',...
+                        'MarkerFaceColor', plotcolor,...                    
+                        'MarkerSize',4)
+                elseif geometric == 0
+                    x_value = obj.portCVaRs .* (12) * (3 * 1e9); %old code; need to change 
+                    y_value = obj.portReturns .* (12 * 100);
+                    plot(x_value, y_value, '-bo','LineWidth',2,...
+                        'MarkerEdgeColor','k',...
+                        'MarkerFaceColor', plotcolor,...                    
+                        'MarkerSize',.001)
+                end
+                    
+            catch me2
+            end
+            
+        end
+        
+        % Rebalancing is inherently GEOMETRIC!
+        function rebalancedreturns(obj, simulatedrawreturns, rebalancemonth)
+            numsims = size(simulatedrawreturns, 3);
+            
+            rebalfinalFundvalues = zeros(1, obj.NumPorts, numsims);
+            rebalfinalPortvalue = zeros(1, obj.NumPorts, numsims);
+            
+            for i = 1:numsims
+                tempout = calc_rebalance_cashflows_01(obj.portWts, simulatedrawreturns(:, :, i), rebalancemonth);
+                rebalfinalFundvalues(:, :, i) = tempout{1};
+                rebalfinalPortvalue(:, :, i) = tempout{2};
+            end        
+            obj.rebalavgFundsVals = mean(rebalfinalFundvalues, 3);
+            
+            obj.rebalavgPortVal = mean(rebalfinalPortvalue, 3);
+            
+        end
+        
+    end
+end@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@d16 1
+a16 1
+                plot(obj.portSDs .* (sqrt(12) * 100), obj.portReturns .* (12 * 100), '-bo','LineWidth',0.5,...
+d19 1
+a19 1
+                    'MarkerSize',4)
+d39 1
+a39 1
+                    plot(x_value, y_value, '-bo','LineWidth',0.5,...
+d42 1
+a42 1
+                        'MarkerSize',4)
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@a24 1
+                    'in geometric' 
+@
+
+
+1.3
+log
+@EFplotter working - everything else needs to be fixed
+@
+text
+@d27 2
+a28 2
+                    y_monthly_returns = (obj.portReturns/1).^(1/globalsamplemonths)-1 %obj.portReturns is the average final fund value 
+                    x_monthly_returns = (CVaR_converted/1).^(1/globalsamplemonths)-1
+d31 1
+a31 1
+                    y_value = (y_monthly_returns+1).^12 - 1 %annual return rate 
+@
+
+
+1.2
+log
+@Refactor (simply put all the necessary methods there) naively all the subclasses of efficient_frontier class.
+@
+text
+@d11 2
+a12 1
+            
+d23 23
+a45 7
+            try 
+                obj.portCVaRs;
+                
+                plot(obj.portCVaRs .* (12) * (3 * 1e9), obj.portReturns .* (12 * 100), '-bo','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor', plotcolor,...                    
+                    'MarkerSize',4)
+@
+
+
+1.1
+log
+@Add subc_fminconCVaREF, subc_givenweightsCVaREF, subc_givenweightsCVaREF and subc_normalmeanvarEF and @@class_efficientfrontier
+@
+text
+@a18 2
+                
+
+a49 1
+            
+a50 2
+
+        
+@
+

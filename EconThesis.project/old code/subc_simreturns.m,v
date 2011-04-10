@@ -1,0 +1,57 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.04.10.06.13.51;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@classdef subc_simreturns < class_rawreturns
+    
+    properties
+        
+        RHOHAT
+        nuhat
+        
+        StandDev
+        SimAvgArithMoAvgRet
+        SimAvgArithMoAvgSD
+    end
+    
+    properties(Dependent = true)
+        
+
+    end
+    
+    methods
+        function simret = subc_simreturns(inReturns, RHOHAT, nuhat)
+            simret = simret@@class_rawreturns(inReturns);
+            simret.RHOHAT = RHOHAT;
+            simret.nuhat = nuhat;
+            
+            simret.StandDev = std(simret.rawReturns, [], 1);
+            
+            simret.SimAvgArithMoAvgRet = mean(simret.arithMoAvg, 3);
+            simret.SimAvgArithMoAvgSD = mean(simret.StandDev, 3);
+            
+        end
+          
+        
+   
+    end
+end@

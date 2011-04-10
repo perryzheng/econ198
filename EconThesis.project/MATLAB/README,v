@@ -1,0 +1,66 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.1
+date	2009.12.17.15.45.06;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@I put my grasp of the aaa_CVaR_EF_sim_02.m in a text document called README. It includes all the important classes used.
+@
+text
+@aaa_CVaR_EF_sim_02.m is broken down into several functions:
+
+1. aaa_CVaR_EF_sim_02 takes a bunch of inputs and decide if it's dealing with expectedOnly simulation or all_time simulations. 
+
+2. expecteonly()
+	- Deals with expected data
+	- Uses the following class structures:
+		- expectedReturnsObj = class_expectedreturns(expectedReturn, expectSigma, expectCorr);
+		- globalEFconstraints = class_constraintcreator_01(fundNames, constraintDummy);
+		- expNormMeanVarEF = subc_normalmeanvarEF(expectedReturnsObj.expavgret, ... NumNormPorts, expectedReturnsObj,.expCov, RiskFreeRate);
+
+3. main(...)
+	- Deals with everything except expected data
+	- if windummy==1 save to windows if not save to Linux server (convenience tweak)
+	- Uses the following methods / class structures:
+		- importdata
+		- globalEFconstraints = class_constraintcreator_01(fundNames, constraintDummy);
+		- historicalReturns6fact = subc-histreturns(fundReturns);
+		- histSims = class_simulations(historicalReturns6fact.rawReturns, samplemonths, ... numofGPDdraws, tcopTotalRuns, lowtailp, hightailp); (this actually doesn't appear anywhere in the workspace?!!)
+		- unshistrawReturnsObj = subc_simreturns(histSims.unsmoothedReturns,histSims.RHOHAT,histSims.nuhat);
+		- tcoprawReturnsObj = subc_simreturns(histSims.tcopdrawRawReturns,histSims.RHOHAT,histSims.nuhat);
+		- histNormMeanVarEF = subc_normalmeanvarEF(historicalReturns6fact.arithMoAvg,...NumNormPorts,historicalReturns6fact.covMatrix,RiskFreeRate); 
+			- and also for unshistNormMeanVarEF, tcopNormMeanVarEF)
+		- optsharpeplotter //which plots the optimal sharpe ratio line
+		- histNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths,...NumPorts, histSims.arithRawFinalFundValue, histNormMeanVarEF.portWts,RiskFreeRate);
+			- and also for unshistNormWtsCVaREF, tcopNormWtsCVaREF, and expectedWtsCVaREF
+		- EFplotter
+		- fminconCVaREF = subc_fminconCVaREF(samplemonths, NumPorts,...tcopNormWtsCVaREF.portWts,tcopNormMeanVarEF.portReturns,RiskFreeRate);
+		- optinforatioplotter
+
+4. optsharpeplotter(obj)
+
+5. optinforatioplotter(obj)
+
+6. importplotter
+	- optsharpeplotter
+	- EFplotter
+	- optinforatioplotter
+
+7. importdata
+
+8. writedata
+@

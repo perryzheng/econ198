@@ -1,0 +1,25 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2009.11.22.22.25.33;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@added global variables for doing VX, expected returns, etc
+graphs and data include results for VX 2004 - 08/09
+@
+text
+@1.  PATH!  errors arise when in the wrong path in MATLAB terminal, duh
+2.  when adding/removing an asset class, make sure the constraints and expected returns match@

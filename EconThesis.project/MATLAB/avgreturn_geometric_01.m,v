@@ -1,0 +1,49 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+
+
+function y = avgreturn_geometric_01(returns, monthsperperiod)
+    % calculates geometric/annnualized/compounded return for each fund separately
+    % each fund is a column
+
+    % totalsimulations = size(returns, 3);    
+    % NumofFunds = size(returns, 2);
+    numtimeperiods = size(returns, 1);
+    
+    returnsplusone = returns + 1;    
+    
+    productreturns = prod(returnsplusone, 1);
+    AACR = (productreturns).^(1/(numtimeperiods/monthsperperiod)) - 1;
+
+    y = AACR;
+end
+
+%{    
+    AACR = zeros(1, NumofFunds);
+    for i = 1:NumofFunds
+        productreturns = prod(returnsplusone(:, i));
+        AACR(1, i) = (productreturns)^(1/(numtimeperiods/monthsperperiod)) - 1;
+    end
+%}@

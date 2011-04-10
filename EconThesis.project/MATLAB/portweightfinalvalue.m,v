@@ -1,0 +1,76 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2010.01.20.07.13.08;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@"Refactored code works"
+@
+text
+@% calculates final fund value for all simulations given a weight --> to be
+% used as input to find cvar
+
+function y = portweightfinalvalue(tcopfinalfundvalue, portweights)
+
+    %portfinalvaluearray = zeros(totalsimulations * tcopTotalRuns, 1);
+    totalsimulations = size(tcopfinalfundvalue, 3);
+
+    portfinalvaluearray = [];
+    % counter = 1;
+    
+    vectorizeGA = size(portweights, 2);
+    weightedfinalfundvalue = zeros(totalsimulations, vectorizeGA);
+
+    for i = 1:totalsimulations
+
+        weightedfinalfundvalue(i, :) = tcopfinalfundvalue(1, :, i) * portweights;
+
+        % counter = counter + 1;
+    end
+    % portfinalvaluearray = [portfinalvaluearray; weightedfinalfundvalue(:, :)];
+
+    portfinalvaluearray = weightedfinalfundvalue;
+    
+    weightedfinalfundvalue;
+    portfinalvaluearray;
+    y = portfinalvaluearray;
+end@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@a3 2
+
+
+a6 1
+    
+a8 1
+    
+a13 1
+    
+a27 1
+
+@
+

@@ -1,0 +1,142 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@% regular mean-variance model
+% 2009-07-16
+% 2009 Policy Review
+
+importfilename = 'G:\IWang\MATLAB\2009_08_03_expectedassumptions_01.xls';
+sheetname = 'Sheet1';
+corrsheet = 'Sheet1';
+
+[HistCorr, Benchmarks] = xlsread(importfilename, corrsheet, 'J3:O8');
+HistSigma = xlsread(importfilename, sheetname, 'D4:D8');
+CalcCovariance = corr2cov(HistSigma, HistCorr)
+HistReturn = xlsread(importfilename, sheetname, 'C4:C8');
+% NumPorts = xlsread(importfilename, sheetname, 'B18:B18');
+NumPorts = 20
+% runs the efficient frontier calcs
+[CPortRisk, CPortReturn, PortWts] = frontcon(HistReturn, CalcCovariance, NumPorts)
+
+hold on
+
+% calculate sharpe ratio = [ (return - riskless rate) / SD ] for each portfolio
+TBill3Month = 0.0297
+
+sharpeRatio = (CPortReturn - TBill3Month) ./ CPortRisk
+
+
+
+% '2.97 + 1.239740378*x'
+maxsharpe = max(sharpeRatio)
+%dum = size(sharpeRatio)
+%[MSrow, MScol] = ind2sub(sharpeRatio, [maxsharpe])
+optSharpePt = find(sharpeRatio == maxsharpe)
+
+% calc utility function
+BorrowRate = .07055
+RiskAversion = 3
+
+portalloc(CPortRisk, CPortReturn, PortWts, ... 
+    TBill3Month, BorrowRate, RiskAversion)
+[RiskyRisk, RiskyReturn, RiskyWts, RiskyFraction, OverallRisk, OverallReturn] = ...
+    portalloc(CPortRisk, CPortReturn, PortWts, ... 
+    TBill3Month, BorrowRate, RiskAversion)
+
+% plot sharpe line
+fplot(@@(x)(TBill3Month + maxsharpe * x), [0, 0.2], '-r')
+
+plot(CPortRisk(optSharpePt, 1), CPortReturn(optSharpePt, 1), '-o', 'MarkerSize', 10)
+
+
+figure
+
+    % xlsread to import all the data from an excel
+    histreturnsfilename = 'G:\IWang\MATLAB\2009_08_03_expectedassumptions_01.xls';
+    histreturnssheet = 'Sheet2';
+
+    % Ljung-Box Q test for serial correlation in monthly returns
+    %'D7:F186'
+    fundReturns = xlsread(histreturnsfilename, histreturnssheet, 'H4:L186');   % typically residuals from fitting; i think we can just use the raw monthly returns?
+    
+    NumofFunds = size(fundReturns, 2);
+
+
+    histmeanMOreturn = calc_AACR_01(fundReturns, 12);
+histresults = calc_norm_EF_01(histmeanMOreturn, NumPorts, fundReturns)
+
+hold off
+
+
+unsmoothedReturns = fitUnsmooth_01(fundReturns);
+unsmoothmeanMOreturn = calc_AACR_01(fundReturns, 12);
+unsmoothresults = calc_norm_EF_01(unsmoothmeanMOreturn, NumPorts, unsmoothedReturns)
+
+figure
+
+hold on
+plot(histresults{3}.*sqrt(12), histresults{1}, '-bo','LineWidth',0.5,...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor','g',...
+                'MarkerSize',3)
+plot(unsmoothresults{3}.*sqrt(12), unsmoothresults{1}, '-bd','LineWidth',0.5,...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor','b',...
+                'MarkerSize',3)
+% plots efficient frontier, risk vs return
+plot(CPortRisk, CPortReturn, '-bs','LineWidth',0.5,...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor','r',...
+                'MarkerSize',3)
+
+
+    title('Normal Mean Vairance Efficient Frontier')         
+    xlabel('Risk (Standard Deviation %)')
+    ylabel('Return (%)')
+    legend('Historical Raw EF', 'Unsmoothed Historical EF', 'Expected Assumptions EF', 'Location', 'SouthEast')
+    
+% fplot(@@(y)(RiskyReturn - 0.005 * RiskAversion* RiskyRisk^2 * y), [0, 10], '-g')
+%{
+
+% plots efficient frontier, risk vs return
+plot(CPortRisk, CPortReturn, '-bo','LineWidth',0.5,...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor','g',...
+                'MarkerSize',3)
+            
+title('Efficient Frontier')         
+xlabel('Risk (Standard Deviation %)')
+ylabel('Return (%)')
+
+
+plot(RiskyRisk, RiskyReturn, '-d', 'MarkerSize', 10)
+plot(OverallRisk, OverallReturn, '-x', 'MarkerSize', 10)
+%}
+hold off
+
+
+
+
+
+
+@

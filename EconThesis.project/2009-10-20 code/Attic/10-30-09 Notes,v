@@ -1,0 +1,54 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@Linear constraints
+
+1. 
+2. Calculate variance according to the same time period. 
+3. Look up literature on rebalancing and fmincon. Active investment book. John Camel 
+4. Or use each level of volatility, try to maximum return. 
+5. The portfolio allocations are rather disturbing - we need better numbers. 
+	- 
+6. Garch Model
+7. Compare historical expectations and historical realities and how off they are. 
+	- Estimates for Garch model. 
+8. Can we get the expectations from past years? 
+9. 
+10. 11:20am Next Friday November 7. Meeting again. 
+
+
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

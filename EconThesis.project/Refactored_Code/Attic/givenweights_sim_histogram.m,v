@@ -1,0 +1,204 @@
+head	1.3;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.3
+date	2010.02.21.21.54.10;	author idw3;	state dead;
+branches;
+next	1.2;
+
+1.2
+date	2010.02.16.21.40.49;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.15.06.14.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.3
+log
+@'stress test stuff for jing'
+@
+text
+@function y = givenweights_sim_histogram(samplemonths, alltimedummy, starttimeperioddummy, endtimeperioddummy)
+
+    portweights = [0.3037	0.1157	0.1013	0.1033	0.0592	0.0942	0.2225
+0.3906	0.1488	0.1304	0.1329	0.0762	0.1212	0.0000
+0.4175	0.1590	0.1393	0.1421	0.0815	0.1295	-0.0690
+0.4555	0.1735	0.1520	0.1550	0.0889	0.1413	-0.1662
+0.4934	0.1880	0.1647	0.1679	0.0963	0.1531	-0.2634
+0.5314	0.2024	0.1773	0.1808	0.1037	0.1649	-0.3605
+0.5694	0.2169	0.1900	0.1938	0.1111	0.1766	-0.4577
+];
+
+    if alltimedummy == 0
+        main(samplemonths, starttimeperioddummy, endtimeperioddummy, portweights)
+    end
+    % input:
+        % set of weights
+        % saved simulations
+
+    % analysis:
+        % distribution of monthly returns for the entire portfolio
+        % distribution of rolling annual returns for the entire portfolio
+        
+    % output:
+        % 
+        
+    % need something that calculates a portfolios monthly return based on
+    % simulations
+
+
+end
+
+function y = main(samplemonths, starttimeperioddummy, endtimeperioddummy, portweights)
+
+    starttimeperioddummy = int2str(starttimeperioddummy);
+    endtimeperioddummy = int2str(endtimeperioddummy);
+
+    importdata = ['importdata_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    load(importdata)
+    savefilename = ['simulations_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    load(savefilename)
+
+    %exportresultsdata = ['exportresults_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    %load(exportresultsdata)
+    
+    outputfile = ['y_prctilestuff_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    
+
+    glob_tcopdrawReturns = histSims.tcopdrawRawReturns;
+    
+    numOfMonths = size(glob_tcopdrawReturns,1);
+    numOfFunds = size(glob_tcopdrawReturns,2);
+    numOfSims = size(glob_tcopdrawReturns, 3);
+    numports = size(portweights, 1); % each row is a portfolio
+    total_sim_months = numOfSims * numOfMonths;
+    
+    
+    monthlyreturns = zeros(total_sim_months, 1 ,numports); % each sheet is a different portfolio
+    size(monthlyreturns);
+    
+    monthsperperiod = 12;
+    rollingperiods = numOfMonths - monthsperperiod + 1; % how many rollings periods there are, assume one for each month    
+    rollingannualreturns = zeros(rollingperiods * numOfSims, 1, numports);
+    
+    % this section calculates the monthly returns and then aggregates them
+    % by portfolio
+    for p = 1:numports % do 1 portfolio at a time        
+        oneweight = portweights(p, :);
+        for i=1:numOfSims
+            oneSimReturns = glob_tcopdrawReturns(:,:,i);
+            % monthly portfolio returns
+            temp_portreturns = portmonthreturns(oneweight, oneSimReturns);
+            monthlyreturns((i-1) * samplemonths + 1 : i * samplemonths, 1, p) = temp_portreturns; % append monthly returns to big matrix
+            % rolling annual portfolio returns
+            temprollingreturns = portrollingannualreturns(oneweight, oneSimReturns, temp_portreturns);
+            rollingannualreturns((i-1) * rollingperiods + 1: i * rollingperiods, 1, p) = temprollingreturns;
+        end
+    end
+    
+    % this section does the percentiles for the entire matrix of data
+    test_percentiles = [10,20,30,40,50,60,70,80,90,100]
+    result_percentiles = prctile(monthlyreturns, test_percentiles)
+    permute_results_mo = permute(result_percentiles, [3, 1, 2]) % each row is a portfolio, each column is a percentile
+    averagereturn = mean(monthlyreturns, 1);
+    permute_avg_mo = permute(averagereturn, [3, 1, 2]);
+    
+    result_percentiles_rollingann = prctile(rollingannualreturns, test_percentiles);
+    permute_results_ann = permute(result_percentiles_rollingann, [3, 1, 2]) % each row is a portfolio, each column is a percentile
+    averagereturn_rollann = mean(rollingannualreturns, 1);
+    permute_avg_rollann = permute(averagereturn_rollann, [3, 1, 2]);
+    
+    save(outputfile, 'permute_results_mo', 'permute_avg_mo', 'permute_results_ann', 'permute_avg_rollann');
+end
+
+% for 1 simulation, one set of weights, outputs monthly returns
+function y = portmonthreturns(oneweight, oneSimReturns)
+    transposeweight = oneweight';
+    monthreturns = oneSimReturns * transposeweight; % simple matrix multiplication to calculate monthly returns
+    size(oneSimReturns);
+    size(monthreturns);
+    %for i = 1:nummonths    
+    %ends
+    y = monthreturns;
+end
+
+% for 1 simulation, one set of weights, outputs monthly returns
+% compute arithmetic rolling returns for simulations
+function y = portrollingannualreturns(oneweight, oneSimReturns, port_monthreturns)
+    numOfMonths = size(oneSimReturns, 1);
+    %numports = size(portweights, 1); % each row is a portfolio
+    % port_monthreturns = portmonthreturns(oneweight, oneSimReturns); % months x 1
+
+    monthsperperiod = 12;
+    rollingperiods = numOfMonths - monthsperperiod + 1; % how many rollings periods there are, assume one for each month
+
+    rollingreturns = zeros(rollingperiods, 1);
+    
+    for i = 1:rollingperiods
+        oneperiodreturn = sum(port_monthreturns(i : (i - 1) + monthsperperiod, 1), 1); % sum down rows, for all portfolios
+        rollingreturns(i) = oneperiodreturn;
+    end
+    
+    y = rollingreturns;
+end
+
+
+@
+
+
+1.2
+log
+@'z_convertsims .m added to convert the simulation data into excel format for jing'
+@
+text
+@@
+
+
+1.1
+log
+@'create histogram for simulations given weights; rolling period (annual) almost complete'
+@
+text
+@d60 4
+d70 1
+a71 1
+            
+d73 3
+d82 3
+a84 1
+    permute_results = permute(result_percentiles, [3, 1, 2]) % each row is a portfolio, each column is a percentile
+d86 4
+a89 2
+    averagereturn = mean(monthlyreturns, 1);
+    permute_avg = permute(averagereturn, [3, 1, 2]);
+d91 1
+a91 1
+    save(outputfile, 'permute_results', 'permute_avg');
+d97 1
+a97 1
+    portmonthreturns = oneSimReturns * transposeweight; % simple matrix multiplication to calculate monthly returns
+d99 1
+a99 1
+    size(portmonthreturns);
+d107 1
+a107 1
+function y = rollingannualreturns(oneweight, oneSimReturns)
+d110 1
+a110 2
+    
+    port_monthreturns = portmonthreturns(oneweight, oneSimReturns); % months x 1
+@
+

@@ -1,0 +1,73 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.37;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = spending(simulation, weights, MAperc, MAyears, cap) 
+    %Preconditions:
+    %simulation has # of rows divisible by 12; it's represented in whole
+    %number of years
+    
+    %Postconditions:
+    %Return the number of spending drops in the simulation
+    %Yearly asset values taking into account the spending for each
+    %year, a numYrs by numFacts matrix
+    
+    %VARIBLES
+    spendingdrops = 0;
+    monsInYr = 12;
+    numMonths = size(simulation,1);
+    numYrs = floor(numMonths/monsInYr); %not necessary if precondition is met, but just in case then we would truncate the leftover months
+    numFacts = size(simulation,2);
+    yrlyReturns = size(numYrs, numFacts); %convert simulation returns, which are monthly, into yearly returns
+    spending = zeros(numYrs, numFacts); %spending and adj keep track of YEARLY spending and returns
+    adj = zeros(numYrs, numFacts); %adj stands for adjusted asset values, it dynamically encapsulates the asset values by 
+    %taking into account the spending for each year
+    
+    %convert simulation returns to yearly returns
+    for i=1:numYrs
+        yrlyReturns(i,:) = sum(simulation((i-1)*(monsInYr)+1:i*monsInYr, :),1);
+    end
+    
+    adj(1,:) = yrlyReturns(1,:);
+    
+    for i=2:numYrs
+        adj(i,:) = yrlyReturns(i,:).*weights+adj(i-1,:);
+        %Need to take spending into account
+        if i<=MAyears
+            continue; %for first MAyears, don't have any moving average to calculate, so move on to next iteration
+        end
+        ma = 1/3 * sum(adj(i-MAyears:i-1,:),1); %ma is a row moving average vector of the past MAyears, not including current year
+        spendingFromMA = MAperc * sum(ma); %spending based on moving average
+        maxAllowedSpending = cap * sum(spending(i-1),1); %university restriction of not spending more than cap of previous year's spending
+        %Adjust spending
+        if spendingFromMA > maxAllowedSpending
+            spending(i,:) = cap * spending(i-1,:);
+        else
+            spending(i,:) = MAperc * ma(1,:);
+        end
+        adj(i,:) = adj(i,:) - spending(i,:);
+        if sum(spending(i,:)) < sum(spending(i-1,:))
+            spendingdrops = spendingdrops + 1;
+        end 
+    end
+    y = {spendingdrops, adj};
+end@

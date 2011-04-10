@@ -1,0 +1,72 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.38;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function [c, ceq] = gen_alg_nonlinconstr(portweight)
+
+    global globalreturnconstraint
+    global tcopfinalfundvalue
+
+    global globalsamplemonths
+    
+    portweight = portweight';
+    
+    % must be the monthly final portfolio value
+    
+    tempfinalportvalue = portweightfinalvalue(tcopfinalfundvalue, portweight);
+    avgfinalportvalue = mean(tempfinalportvalue, 1);
+    portfinalmoreturn = (avgfinalportvalue - 1) / (globalsamplemonths/1);
+
+   
+    % attempt to vectorize
+    
+   
+    margins = .0001;
+    %{
+    c = [(portfinalmoreturn' - globalreturnconstraint - margins) ; - (portfinalmoreturn' - globalreturnconstraint + margins)];
+    ceq = [];
+    %}
+    
+    c = [];
+    ceq = (portfinalmoreturn' - globalreturnconstraint);
+     
+   
+end
+
+    
+    
+    % ceq = (portfinalvalue - globalreturnconstraint);
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

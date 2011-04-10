@@ -1,0 +1,30 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@function y = my_rebalance_constraint(portweight) 
+	global glob_hist_returns;
+
+	rebalancemonth = 12;
+	y = calc_rebalance_cashflows_01(portweight,glob_hist_returns, rebalancemonth);
+end
+@

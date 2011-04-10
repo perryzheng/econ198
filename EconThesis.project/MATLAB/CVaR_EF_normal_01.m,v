@@ -1,0 +1,81 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@% calculates CVaR EF GIVEN portfolio weights and returns
+
+function y = CVaR_EF_normal_01(samplemonths, numEFportfolios, tcopfinalfundvalue, NormEFPortWts)
+    % get CVaRs for normal mean variance EF weights
+    
+    totalsimulations = size(tcopfinalfundvalue, 3);
+    NumofFunds = size(tcopfinalfundvalue, 2);
+    tcopTotalRuns = size(tcopfinalfundvalue, 1);
+
+    numtimeperiods = samplemonths;
+    periodspertime = 12;
+    lowp = 0.05;
+    
+    EFnormCVaR = zeros(numEFportfolios, 1);
+    EFnormMoCVaR = zeros(numEFportfolios, 1);
+    EFnormMoReturns = zeros(numEFportfolios, 1);
+    EFnormReturns = zeros(numEFportfolios, 1);
+    for i = 1:numEFportfolios
+        tempEFweight = NormEFPortWts(i,:)';
+        tempEFfinalvalue = portweightfinalvalue(tcopfinalfundvalue, tempEFweight);
+        
+        % ARITHMETIC ANNUAL RETURN
+        EFnormReturns(i, 1) = (mean(tempEFfinalvalue, 1) - 1) / (samplemonths/12);
+        
+        % ARITHMETIC Monthly RETURN
+        EFnormMoReturns(i, 1) = (mean(tempEFfinalvalue, 1) - 1) / (samplemonths/1);
+        
+        % Geometric
+        % EFnormReturns(i, 1) = mean(tempEFfinalvalue)^(1/(numtimeperiods/periodspertime)) - 1;
+        
+        % ANNUAL CVaR
+        EFnormCVaR(i, 1) = calcCVar95_01(tempEFfinalvalue, lowp) ; %/ (samplemonths/12);
+        % EFnormMoCVaR(i, 1) = calcCVar95_01(tempEFfinalvalue, lowp) / (samplemonths/1); %/ (samplemonths/12);
+    end
+    
+    EFnormCVaR;
+    
+    startingvalue = 1;
+    
+    normCVaR = -(EFnormCVaR - startingvalue);
+    normMoCVaR = normCVaR / (samplemonths/1);
+
+    y = {NormEFPortWts, EFnormMoReturns, normMoCVaR};
+
+end
+    
+    
+    %{
+    
+    plot(normCVaR, EFnormReturns, '-bd','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerSize',3)
+
+    title('CVaR Efficient Frontier - normal')         
+    xlabel('Risk (CVaR %)')
+    ylabel('Return (%)')
+    
+    %}@

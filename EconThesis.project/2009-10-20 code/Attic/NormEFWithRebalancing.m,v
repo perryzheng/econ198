@@ -1,0 +1,99 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function NormEFWithRebalancing() 
+	%{
+		Take each portReturn level, we return the weights that would minimize variance, with the constraint that rebalancing at the end of each end period that the final return annually should be at least that return level. 
+	%}
+
+    %xlsread to import all the data from excel
+	global glob_hist_returns;
+
+    filename_weights = './2009-10-08 weights 1973 and 1994 with CVaR - ending May 2008.xls'; 
+	filename_hist_returns = '2009_09_23_expectedassumptions_06.xls';
+    sheetname_weights = '73 - norm wts';
+    sheetname_returns = '6 fact since 73';
+	saveaddress = './NormEFWithRebalancingOutput.mat';
+    
+    weights = xlsread(filename_weights, sheetname_weights);
+    returns = xlsread(filename_hist_returns, sheetname_returns);
+    given_weights = xlsread(filename_weights, sheetname_weights);
+
+
+    %b/c of basic xlsread functionality on non-windows platforms, need to
+    %further extract hist_weights
+    calc_weights= abs(given_weights(1:12,1:6));
+	glob_hist_returns = returns(4:438, 8:13);
+	port_ret = weights(1:12, 10);
+	port_variance = weights(1:12,11); %original variance
+	numOfFunds = size(calc_weights,2);
+
+	%read from spread sheet for now, make it a variable for extensibility
+	variance = zeros(size(port_ret,1), 1);
+	lb = zeros(1,numOfFunds);
+	ub = ones(1,numOfFunds);
+	Aeq = ones(1,numOfFunds);
+	beq = 1; 
+    options = optimset('Algorithm','active-set', 'TolFun', 1e-19, 'TolCon', 1e-19, ...
+        'TolX', 1e-19, 'MaxFunEvals', 1000, 'MaxIter', 2500, 'UseParallel', 'always');
+    
+	initial_return = 0.01;
+	for i=1:size(port_ret)
+		global glob_pr;
+		%glob_pr = port_ret(i)
+		initial_return = initial_return+0.005;
+		glob_pr = initial_return;
+		startweights = calc_weights(i,:);
+		[weights,lowest_variance, exitflag] = fmincon(@@calc_norm_variance, startweights,[], [], Aeq, beq,lb,ub,@@my_rebalance_constraint, options);
+		weights_matrix(i,:) = weights';
+		variance(i,1) = lowest_variance;
+	end
+	original_sd = sqrt(port_variance);
+	plot(original_sd, port_ret, '-rd','LineWidth',2);
+	hold on
+	sd = sqrt(variance);
+	plot(sd, port_ret, '-bx', 'LineWidth',2);
+
+	save(saveaddress, 'weights_matrix', 'sd', 'port_ret', 'original_sd');
+
+    title('Mean variance EF with Rebalancing');
+    xlabel('Standard Deviation');
+    ylabel('Return (%)');
+	legend('Original Historical EF', 'Historical EF with Rebalancing');
+
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

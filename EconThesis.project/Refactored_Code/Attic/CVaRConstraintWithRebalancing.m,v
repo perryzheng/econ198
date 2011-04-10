@@ -1,0 +1,284 @@
+head	1.9;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.9
+date	2010.02.17.01.59.13;	author xz27;	state dead;
+branches;
+next	1.8;
+
+1.8
+date	2010.02.10.03.56.52;	author xz27;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.02.07.22.22.34;	author idw3;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.02.07.04.52.56;	author idw3;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.02.07.00.00.39;	author idw3;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.02.03.06.35.05;	author idw3;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.02.03.02.30.23;	author xz27;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.02.03.02.18.05;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.01.22.49.45;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.9
+log
+@change rebalancing code to automate CVaR with or without rebalancing
+@
+text
+@function [c,ceq] = CVaRConstraintWithRebalancing(portWeights) 
+    global glob_returnconstraint
+    %global glob_pr; %global portfolio return 
+    global glob_tcopdrawReturns;
+
+    
+    numOfMonths = size(glob_tcopdrawReturns,1);
+    numOfFunds = size(glob_tcopdrawReturns,2);
+    numOfSims = size(glob_tcopdrawReturns,3);
+    rebalanceMonth = 12;
+    
+    numPeriods = floor(numOfMonths/rebalanceMonth);
+    simReturnData = zeros(numOfSims, numOfFunds);
+    
+	rebalanceMonth = 12;
+    
+    for i=1:numOfSims
+        oneSimReturns = glob_tcopdrawReturns(:,:,i);
+        y = CVaRConstraintWithRebalancingHelper(portWeights,oneSimReturns,rebalanceMonth);
+        finalValues = y{1}; % a row vector of the final values
+        simReturnData(i,:) = finalValues;
+    end
+    
+    %Now need to convert each return in simReturnData to a monthly return
+    %rate
+    %mean outputs the average of the columns the result is a 1 by numFund matrix
+    %sum simply sums them up
+    finalValue = sum(mean(simReturnData,1));
+    %From the final value, we deduce the monthly return
+    %empiricalReturn = (finalValue^(1/numPeriods) - 1)/rebalanceMonth;
+    %compounding
+    empiricalReturn = (finalValue - 1) / numOfMonths; %arithmetic
+
+    c = [];
+    % ceq = (empiricalReturn - glob_pr);
+    ceq = (empiricalReturn - glob_returnconstraint);
+end
+
+% ARITHMETICALLY CALCULATED PERIOD RETURNS, compounded periodically 
+
+%***portWeight***: a 1 by numOfFunds row vector, indicating weights of that
+%portfolio 
+%***oneSimReturns***: a numMonths by numOfFunds matrix
+%***rebalanceMonth***: a fixed constant indicating how many months one
+%should rebalance Output: 
+function y = CVaRConstraintWithRebalancingHelper(portWeight, oneSimReturns, rebalanceMonth)
+    % Convert would convert portWeight to column vector 
+    
+    if size(portWeight, 2) == 1
+        %Assume the portWeight is a vector. Then if the number of columns 
+        %is one, which means it's a column vector, then make it a row
+        %vector
+        portWeight = portWeight';
+    end
+    
+	proceed = 1;
+
+	%for i=1:size(portWeight) 
+	%	if(portWeight(i)<0 || portWeight(i)>1) 
+	%		proceed = 0
+	%	end
+    %end
+    
+	if proceed == 1  
+			samplemonths = size(oneSimReturns, 1);    
+			numOfFunds = size(oneSimReturns, 2);
+
+			startMoney = 1;
+			
+			numOfTrials = floor(samplemonths/rebalanceMonth);
+			balancedportValue = zeros(numOfTrials+ 1, numOfFunds);    
+            %Start the fortfolio by putting the startMoney among the
+            %asset classes according to portfolio weights
+			balancedportValue(1, :) = startMoney.*portWeight;
+			port_value_at_each_reb = zeros(numOfTrials,1);
+			
+			returnPlusOne = oneSimReturns;
+            %At after each period we rebalance and redistribute the period
+            %portfolio value by the portWeight row vector and we store that
+            %in balancedportValue
+			for i = 1:numOfTrials
+				periodreturn = sum(returnPlusOne((i-1)*rebalanceMonth +1 : i*rebalanceMonth, :), 1);
+				
+				%balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn+1); % compounds instead of arithmetic
+                balancedportValue(i+1,:) = balancedportValue(i,:) + periodreturn; %arithmetic
+				periodportVal = sum(balancedportValue(i+1, :), 2);
+				port_value_at_each_reb(i,1) = periodportVal; %port_value_at_each_reb is the portfolio value at the end of each rebalancing period
+				
+				balancedportValue(i+1, :) = periodportVal * portWeight; 
+			end
+			
+			finalvalues = balancedportValue(numOfTrials+1, :);
+			finalportvalue = sum(finalvalues);
+            y = {finalvalues, finalportvalue, port_value_at_each_reb};
+    end
+end@
+
+
+1.8
+log
+@*** empty log message ***
+@
+text
+@@
+
+
+1.7
+log
+@*** empty log message ***
+@
+text
+@d30 3
+a32 1
+    empiricalReturn = (finalValue^(1/numPeriods) - 1)/rebalanceMonth; 
+d84 2
+a85 1
+				balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn+1); % compounds instead of arithmetic
+@
+
+
+1.6
+log
+@'untested compounding CVaR added to fmincon, need to use compound_dummy; need to check proceed step, changed to ||'
+@
+text
+@d56 5
+a60 5
+	for i=1:size(portWeight) 
+		if(portWeight(i)<0 || portWeight(i)>1) 
+			proceed = 0
+		end
+    end
+@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@d57 1
+a57 1
+		if(portWeight(i)<0 && portWeight(i)>1) 
+@
+
+
+1.4
+log
+@'CVaRConstraintWithRebalancing() --> fixed global return constraint, it was not declared before; CVaR w rebalancing appears to be working'
+@
+text
+@d82 1
+a82 1
+				balancedportValue(i+1, :) = balancedportValue(i, :) .* (periodreturn+1);
+@
+
+
+1.3
+log
+@add return types to calcCVaRWithRebalancing
+@
+text
+@d2 2
+a3 1
+    global glob_pr; %global portfolio return 
+d5 1
+d33 2
+a34 1
+    ceq = (empiricalReturn - glob_pr);
+a92 1
+	
+@
+
+
+1.2
+log
+@fixed CVaRconstraintWithRebalancing
+@
+text
+@a15 1
+        tic
+a19 1
+        toc
+@
+
+
+1.1
+log
+@More rebalancing for CVaR
+@
+text
+@d1 1
+a1 1
+function y = CVaRConstraintWithRebalancing(portWeights) 
+d8 1
+d10 1
+a10 1
+    numPeriods = floor(numOfMonths/
+d29 2
+a30 14
+    empiricalReturn = finalValue^(1/
+    
+	margins = 4; %7 looks good %4 looks good
+
+    %The constraint is that the final portfolio value (finalportvalue or y{2}) 
+    %from calc_rebalance_cashflow_01 method has
+    %to be the same value of the current portfolio return which is 
+    %represented by a global varialbe (glob_pr)
+    %But equality is too strict, so we allow .001 marginal error as
+    %explained below. 
+        
+    %glob_pr - margins <= y{2} <= glob_pr +  margins
+    %==> glob_pr - margins - y{2} <= 0
+    %==> y{2} - glob_pr - margins <= 0
+d32 2
+a33 3
+    %The optimization problem is to minimize the variance
+    c = [glob_fv - margins - y{2}; y{2} - glob_fv-margins];
+    ceq = [];
+@
+

@@ -1,0 +1,83 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.12.17.20.48.23;	author xz27;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Add subc_fminconCVaREF, subc_givenweightsCVaREF, subc_givenweightsCVaREF and subc_normalmeanvarEF and @@class_efficientfrontier
+@
+text
+@
+classdef subc_givenweightsCVaREF < class_efficientfrontiers
+    properties
+        NumPorts
+        portCVaRs
+        portReturns       
+        portWts
+        
+        sharpeRatio
+        optSharpePt
+    end
+    
+    methods
+        function givenweightscvar = subc_givenweightsCVaREF(samplemonths, ...
+                NumPorts, finalfundvalue, givenweights, RiskFreeRate)
+            
+            givenweightscvar = givenweightscvar@@class_efficientfrontiers();
+            givenweightscvar.NumPorts = NumPorts;            
+
+            histCVaREF = CVaR_EF_normal_01(samplemonths, NumPorts, finalfundvalue, givenweights);
+            givenweightscvar.portWts = histCVaREF{1};
+            givenweightscvar.portReturns = histCVaREF{2};
+            givenweightscvar.portCVaRs = histCVaREF{3};
+     
+            
+            
+            monthlyarithriskfreerate = RiskFreeRate/12;
+            givenweightscvar.sharpeRatio = (givenweightscvar.portReturns - monthlyarithriskfreerate) ./ givenweightscvar.portCVaRs;
+
+
+            maxsharpe = max(givenweightscvar.sharpeRatio);
+
+            givenweightscvar.optSharpePt = find(givenweightscvar.sharpeRatio == maxsharpe);
+            
+        end
+                
+    end
+    
+    
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@d24 1
+a24 1
+            
+d40 1
+a40 1
+end@
+

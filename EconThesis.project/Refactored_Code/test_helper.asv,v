@@ -1,0 +1,74 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.1
+date	2010.01.31.22.16.47;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Add a lot of rebalance comments to CVaR code.
+@
+text
+@function z = test_helper()
+
+    %Input data
+    %Read weights, NumOfPortfolioPoints by numofFunds matrix
+    load('exported results/credit blend no vix/exportresults_1_1');
+    weights = histNormMeanVarEF.portWts;
+    port_return = histNormMeanVarEF.portReturns;
+
+    
+    %Read historical returns matrix from excel
+    filename_hist_returns = './2009_11_12_expectedassumptions_10.xls';
+    sheetname_returns = '6 fact since 73'; 
+    saveaddress = './NormEFWithRebalancingOutput.mat';
+    returns = xlsread(filename_hist_returns, sheetname_returns, 'H6:I429');
+    hist_returns = returns(:,:);
+    returns =  xlsread(filename_hist_returns, sheetname_returns, 'K6:N429');
+    hist_returns = [hist_returns returns(:,:)];
+    returns =  xlsread(filename_hist_returns, sheetname_returns, 'Q6:Q429');
+    hist_returns = [hist_returns returns(:,:)];
+    
+    for i=1:size(weights,1) 
+        port_num = i;
+        one_weight = weights(port_num,:)
+        one_return = port_return(port_num,1);
+
+        NumPeriods = size(hist_returns,1)/(12);
+        final_calculated_value = (1+one_return*12)^(NumPeriods)
+        y = calc_norm_variance_helper(one_weight, hist_returns, rebalancemonth);
+
+            final_value_reb = y{2}
+
+%{
+        final_values_no_weight = sum(hist_returns, 1)+1;
+        ['final values of asset class without rebalancing']
+        final_values = one_weight .* final_values_no_weight
+        %variance = var(value_vector) %not right because can't calc var of
+        %different asset classes for the final value
+        ['final value of the portfolio from hist_returns without rebalancing']
+        final_value = sum(final_values,2)
+
+        rebalancemonth = 12;
+
+        ['final values of each asset class with rebalancing']
+        final_values_reb = y{1}
+        ['final value of the portfolio with rebalancing']
+        final_value_reb = y{2}
+        %['portfolio vale at each rebalance period']
+        %port_value_at_each_reb = y{3}
+%}
+    end
+end@

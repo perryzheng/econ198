@@ -1,0 +1,55 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2010.01.31.19.50.26;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Add calc_rebalance_cashflows, my_rebalance_constraint, and NormEFWithRebalancing in MATLAB folder
+
+Add calc_norm_variance_helper, calc_norm_variance, calc_rebalance_cashflows, and main_rebalance_NormEF, Mean_Var_EF_Rebalancing, and my_balance_evaluator, my_rebalance_constraint, and NormEFWithRebalancing, and test_helper
+@
+text
+@function y = main_rebalance_NormEF() 
+    
+    %Input data
+    %Read weights, NumOfPortfolioPoints by numofFunds matrix
+    load('exported results/credit blend no vix/exportresults_1_1');
+    weights = histNormMeanVarEF.portWts;
+    
+    %Read return and variance matrix; 
+    %Both are NumOfPortfolioPoints by 1 matrices indicating portfolio
+    %return and portfolio variance
+    portreturns = histNormMeanVarEF.portReturns;
+    port_SD = (histNormMeanVarEF.portSDs);
+    port_variance = port_SD.^2;
+    
+    %Read historical returns matrix from excel
+    filename_hist_returns = './2009_11_12_expectedassumptions_10.xls';
+    sheetname_returns = '6 fact since 73'; 
+    saveaddress = './NormEFWithRebalancingOutput.mat';
+    returns = xlsread(filename_hist_returns, sheetname_returns, 'H6:I429');
+    hist_returns = returns(:,:);
+    returns =  xlsread(filename_hist_returns, sheetname_returns, 'K6:N429');
+    hist_returns = [hist_returns returns(:,:)];
+    returns =  xlsread(filename_hist_returns, sheetname_returns, 'Q6:Q429');
+    hist_returns = [hist_returns returns(:,:)];
+
+    %Call the main function
+    NormEFWithRebalancing(hist_returns, weights, portreturns, port_variance); 
+    return
+end
+@

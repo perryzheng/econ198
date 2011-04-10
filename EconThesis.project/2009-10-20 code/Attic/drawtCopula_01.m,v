@@ -1,0 +1,148 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@ 
+
+function y = drawtCopula_01(samplemonths, nu, TotalRuns, HistReturn, HistSigma, HistCorr, histannualreturns)
+    % clc; close all; % clear;
+    r = HistCorr;
+    
+    % histCalcCorr = corr(fundReturns);
+    % r = histCalcCorr;     
+
+    % assuming each column is a different fund
+    numofFunds = size(HistReturn, 2);
+
+    monthlyreturns = zeros(1, numofFunds);
+    monthlysigma = zeros(1, numofFunds);
+
+    % convert to monthly if everyting is annual returns/sd
+    if histannualreturns == 1    
+        for i = 1:numofFunds        
+            monthlyreturns(1, i) = (HistReturn(1, i) + 1)^(1 / 12) - 1;
+            monthlysigma(1, i) = sqrt(12) * HistSigma(1, i);
+        end    
+        Mu = monthlyreturns;  
+        sigma = monthlysigma;
+    else
+        Mu = HistReturn; 
+        sigma = HistSigma;
+    end
+
+    % extra row for month 0 / initial start
+    startmoney = 1;
+    
+    monthlyreturnsAdjusted = zeros(samplemonths, numofFunds, TotalRuns);
+    
+    % runs the t-copula simulations; generates random future returns
+    for n = 1:TotalRuns
+
+        C = r;
+        Std_X=mvtrnd(C, nu, samplemonths); % standardized multi-variate t simulation
+
+        X = zeros(samplemonths, numofFunds);
+        RawReturns = zeros(samplemonths, numofFunds, TotalRuns);
+
+        for i = 1:numofFunds
+
+            % X is the randomly generated monthly returns in the future
+            X_temp = Mu(i)+sigma(i)*Std_X(:,i);
+
+            X(:, i) = X_temp;
+            for j = 1:samplemonths
+                if j == samplemonths
+                    monthlyreturnsAdjusted(:, i, n) = X(:, i);
+                end                
+                if X(j, i) <= -1
+                    monthlyreturnsAdjusted(j, i, n) = 0;
+                    monthlyreturnsAdjusted(1:(j-1), i, n) = X(1:(j-1), i);
+                    break                    
+                end
+            end
+  
+        end
+        RawReturns(:, :, n) = X;
+    end
+    
+    % AnnCompPortReturn = FundAllocation * compavgannreturn'; 
+
+    % compavgannreturn;
+
+    '...';
+    % AnnCompPortReturn;   
+
+    
+    y = {[], [], monthlyreturnsAdjusted, [], []};
+    % y = {compavgannreturn, meanCVaR, RawReturns, compavgMonthreturn, finalfundvalue};
+end
+
+
+%{
+            % calculates each months value --> for doing total return later
+            for j = 1:samplemonths
+                fundMoney(j+1, i) = fundMoney(j, i) * (1 + X(j, i));
+                % if the fund ever goes negative value; terminates fund for
+                % rest of the simulation
+                if fundMoney(j+1, i) <= 0
+                    fundMoney(j+1, i) = 0;
+                    break
+                end
+            end        
+            finalfundvalue(n, i) = fundMoney(samplemonths + 1, i);      
+
+
+
+    compavgannreturnruns = zeros(TotalRuns, numofFunds);
+    compavgannreturn = zeros(1, numofFunds);
+
+    compavgMonthreturnruns = zeros(TotalRuns, numofFunds);
+    compavgMonthreturn = zeros(1, numofFunds);
+
+    compavgannreturn = mean(compavgannreturnruns);
+    compavgMonthreturn = mean(compavgMonthreturnruns);
+    
+
+
+    % calculates average compounded annual return
+    for m = 1:numofFunds
+        for p = 1:TotalRuns
+            compavgannreturnruns(p, m) = (finalfundvalue(p, m)/startmoney)^(1/(samplemonths/12)) - 1;
+            compavgMonthreturnruns(p, m) = (finalfundvalue(p, m)/startmoney)^(1/(samplemonths)) - 1;
+        end
+    end
+
+%}@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

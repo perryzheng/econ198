@@ -1,0 +1,162 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.2
+date	2010.02.09.17.19.05;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.01.22.23.04.55;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@'updated z_cvar, test weights for jing'
+@
+text
+@
+
+function z_expected_CVaR_01_22_for_jing(samplemonths, alltimedummy, starttimeperioddummy, endtimeperioddummy, expected_dummy)
+
+    if alltimedummy == 0
+        main(samplemonths, alltimedummy, starttimeperioddummy, endtimeperioddummy, expected_dummy)
+    end
+
+end
+
+function main(samplemonths, alltimedummy, starttimeperioddummy, endtimeperioddummy, expected_dummy)
+
+
+    %samplemonths = 36;
+
+    % savefilename = 'simulations_1_1.mat'
+    % savefilename = 'simulations_1_2.mat'
+    starttimeperioddummy = int2str(starttimeperioddummy);
+    endtimeperioddummy = int2str(endtimeperioddummy);
+
+    importdata = ['importdata_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    load(importdata)
+    savefilename = ['simulations_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    load(savefilename)
+
+    %exportresultsdata = ['exportresults_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    %load(exportresultsdata)
+    
+    outputfile = ['z_testweights_CVaR_' starttimeperioddummy '_' endtimeperioddummy '.mat'];
+    
+    
+    expectAnnReturn = expectReturn*12;
+    
+    % exportresultsdata = 'exportresults_1_1';
+    % exportresultsdata = 'exportresults_1_2';
+
+    if expected_dummy == 0
+        RiskFreeRate = historicalReturns6fact.arithAnnAvg(7)
+    elseif expected_dummy == 1
+        RiskFreeRate = expectAnnReturn(7); % use expected annual cash return as the risk free rate
+        % expectedReturnsObj = class_expectedreturns(expectReturn, expectSigma, expectCorr);
+    end
+    
+    % weightnames = ['Unlevered', 'Levered', 'Current'];
+    %{
+        weights = [0.385	0.147	0.129	0.139	0.082	0.12	0
+            0.454	0.173	0.152	0.164	0.096	0.141	-0.18
+            0.454	0.129	0.18	0.024	0.133	0.108	-0.041];
+    %}
+
+    %{
+    weightnames = ['Unlevered'
+        'vol 11%'
+        'vol 12%'
+        'vol 13%'
+        'vol 14%'
+        'vol 15%'];  
+    %}
+    
+    weights = [0.3849	0.1466	0.1285	0.1385	0.0817	0.1198	0.0000
+        0.4165	0.1587	0.1391	0.1499	0.0884	0.1296	-0.0821
+        0.4543	0.1731	0.1517	0.1635	0.0965	0.1414	-0.1805
+        0.4922	0.1875	0.1644	0.1772	0.1045	0.1532	-0.2789
+        0.5300	0.2019	0.1770	0.1908	0.1125	0.1649	-0.3772
+        0.5679	0.2164	0.1896	0.2044	0.1206	0.1767	-0.4756];
+
+    NumPorts = size(weights, 1);
+
+    colors = ['y', 'm', 'c', 'r', 'g', 'b', 'w', 'k', 'y', 'm', 'c', 'r', 'g', 'b', 'w', 'k']; 
+    figure
+    ho
+    for i = 1:NumPorts
+        numpoints = 1;
+        MVNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+            numpoints, histSims.arithRawFinalFundValue, weights(i, :), RiskFreeRate);     
+        EFplotter(MVNormWtsCVaREF, colors(i))
+
+    end
+    
+    % re-run the boject here for ALL weights, for ease of saving
+    MVNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+        NumPorts, histSims.arithRawFinalFundValue, weights, RiskFreeRate);     
+    %EFplotter(MVNormWtsCVaREF, 'r')
+    
+    save(outputfile, 'MVNormWtsCVaREF');
+
+    title('CVaR Efficient Frontier - normal MV weights')         
+    xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+    ylabel('Return (%)')
+
+end
+
+@
+
+
+1.1
+log
+@"added a script z_expected_CVaR_... to calculate the CVaR for some weights Jing ran MV on"
+@
+text
+@d3 1
+a3 2
+% savefilename = 'simulations_1_1.mat'
+savefilename = 'simulations_1_2.mat'
+d5 85
+a89 1
+load(savefilename)
+d91 1
+a91 1
+% exportresults = 'exportresults_1_1';
+a92 22
+exportresultsdata = 'exportresults_1_2';
+load(exportresultsdata)
+
+RiskFreeRate = historicalReturns6fact.arithAnnAvg(7)
+
+weightnames = ['Unlevered'; 'Levered'; Current];
+weights = [0.385	0.147	0.129	0.139	0.082	0.12	0
+0.454	0.173	0.152	0.164	0.096	0.141	-0.18
+0.454	0.129	0.18	0.024	0.133	0.108	-0.041];
+
+MVNormWtsCVaREF = subc_givenweightsCVaREF(samplemonths, ...
+    NumPorts, histSims.arithRawFinalFundValue, weights, RiskFreeRate);     
+EFplotter(MVNormWtsCVaREF, 'r')
+
+
+title('CVaR Efficient Frontier - normal MV weights')         
+xlabel('Risk (3-yr. CVaR $ - start with $1B)')
+ylabel('Return (%)')
+        
+        
+        
+        @
+

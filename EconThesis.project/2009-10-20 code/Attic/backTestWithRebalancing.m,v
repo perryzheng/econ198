@@ -1,0 +1,53 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function y = backTestWithRebalancing(weights, hist_rets, color, rebalancemonth)
+	numOfWeights = size(weights,1);
+	ret = zeros(numOfWeights, 1);
+	variance = portvar(hist_rets,weights)*12;
+	%variance = zeros(numOfWeights, 1);
+	for i=1:numOfWeights
+		y = calc_rebalance_cashflows_01(weights(i,:), hist_rets, rebalancemonth);
+		ret(i,1) = y{2};
+		%variance(i,1) = var(y{3});
+	end
+	ret
+	plot(sqrt(variance), ret, strcat('-',color),'LineWidth',2);
+	hold on
+
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

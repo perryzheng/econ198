@@ -1,0 +1,44 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.2
+date	2009.11.19.21.56.37;	author idw3;	state dead;
+branches;
+next	1.1;
+
+1.1
+date	2009.11.02.23.08.14;	author xz27;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@function y = calc_norm_variance(portWeights) 
+	temp = my_balance_evaluator(portWeights);
+	%portfolio_return_at_each_period = temp{3}
+	%variance = var(portfolio_return_at_each_period)
+	y = var(temp{3});
+end
+@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@@
+

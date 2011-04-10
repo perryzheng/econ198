@@ -1,0 +1,313 @@
+head	1.4;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+expand	@b@;
+
+
+1.4
+date	2010.02.24.05.05.07;	author idw3;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.02.10.07.50.11;	author idw3;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.02.08.08.16.45;	author idw3;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.02.08.08.09.38;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.4
+log
+@'given weights rebalancing works'
+@
+text
+@#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+[Econ Thesis Title]
+\end_layout
+
+\begin_layout Author
+Irvin Di Wang and Perry Zheng
+\end_layout
+
+\begin_layout Author
+Professor Emma Rasiel and Professor Aino Levonmaa, Faculty Advisors
+\end_layout
+
+\begin_layout Standard
+Honors Thesis submitted in partial fulfillment of the requirements for Graduatio
+n with Distinction in Economics in Trinity College of Duke University.
+\end_layout
+
+\begin_layout Date
+Duke University
+\end_layout
+
+\begin_layout Date
+Durham, North Carolina
+\end_layout
+
+\begin_layout Date
+April 15, 2009
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Table of Contents
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Acknowledgements
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+[Abstract text]
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+[Introduction text]
+\end_layout
+
+\begin_layout Section
+Background/Literature Review
+\end_layout
+
+\begin_layout Standard
+[Lit review text]
+\end_layout
+
+\begin_layout Section
+Methods
+\end_layout
+
+\begin_layout Standard
+[Methods]
+\end_layout
+
+\begin_layout Standard
+[Send in a 1 page summary of this to Dr.
+ Rasiel before Wed Feb 10, 2010 meeting]
+\end_layout
+
+\begin_layout Standard
+We have reproduced and implemented the concepts of the JPMorgan paper as
+ a starting point for our investigation of the value of rebalancing as a
+ consideration for allocating assets in the mean-CVaR framework.
+ The historical return data of our asset classes benchmarks are first tested
+ for first order monthly autocorrelation and then 'unsmoothed' to remove
+ autocorrelation.
+ Next, the historical return data are individually fit to marginal Generalized
+ Pareto Distributions before combining the historical correlation matrix
+ and fit to a joint t-Copula distribution.
+ We then run simulations for monthly returns for 3 years by drawing out
+ of the joint t-Copula distribution.
+ We optimize our efficient frontier for return and CVaR based on this simulation
+ dataset only.
+ 
+\end_layout
+
+\begin_layout Standard
+We begin the one-period (buy and hold) CVaR analysis by establishing a baseline
+ for comparison.
+ The weights of the mean-variance efficient frontiers for historical arithmetic
+ averages and unsmoothed historical arithmetic averages are applied to our
+ simulation data to determine the CVaR and return of each weight.
+ The pseudo-mean-CVaR efficient frontier derived from these mean-variance
+ weights are used as the starting weights for finding the optimal portfolio,
+ assuming there is another weight that can provide a lower CVaR and/or a
+ higher return.
+ We use MATLAB's built-in optimization function 'fmincon' for finding an
+ optimal efficient frontier.
+ The objective function to be minimized is the CVaR while the non-linear
+ constraint to be satisfied is a set return, the average return of the portfolio
+ across the simulations must be approximately equal to the constraint.
+ We generate an efficient frontier by using each of the historical mean-variance
+ portfolio returns as our non-linear constraints for finding the minimum
+ CVaR.
+ 
+\end_layout
+
+\begin_layout Standard
+Next, we investigate the ability for multi-period optimization and account
+ for rebalancing in constructing the efficient frontier.
+ We first implement a simple model that rebalances back to the target weight
+ every 12 months and incurs no transaction costs.
+ We integrate the rebalancing function to our objective function in calculating
+ portfolio CVaRs and into our non-linear constraint for calculating average
+ portfolio returns across all simulations for our 'fmincon' optimization.
+ We are currently investigating the use of a decision function for determining
+ whether to rebalance at each specified time period based on transaction
+ cost, deviation from the target weights, change in portfolio variance,
+ or change in portfolio CVaR.
+ 
+\end_layout
+
+\begin_layout Standard
+We will compare our CVaR based efficient frontiers to their respective mean-vari
+ance counterparts to determine the strengths and weaknesses of both methods.
+ We will use historical data as well as newly generated simulation data
+ for testing hypotheses.
+ We may also investigate the use of investor expectation in generating the
+ simulation returns by using the expected mean and expected standard deviation
+ of each asset class.
+ 
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+[Results, data, graphs]
+\end_layout
+
+\begin_layout Section
+Discussion
+\end_layout
+
+\begin_layout Standard
+[Interpretation of results, implications]
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Standard
+[Concluding thoughts]
+\end_layout
+
+\end_body
+\end_document
+@
+
+
+1.3
+log
+@'1 page methods summary v01'
+@
+text
+@d53 1
+a53 1
+Professor Emma Rasiel, Faculty Advisor
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d39 1
+d140 64
+@
+
+
+1.1
+log
+@'folder Thesis drafts; added first draft in .lyx format'
+@
+text
+@d44 26
+a69 1
+Title Page
+d101 2
+a102 2
+\begin_layout Section*
+Abstract
+d116 4
+d124 4
+d132 9
+d145 4
+d153 4
+d159 4
+@
+

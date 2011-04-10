@@ -1,0 +1,61 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@// @;
+expand	@b@;
+
+
+1.1
+date	2009.11.19.21.56.36;	author idw3;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@*** empty log message ***
+@
+text
+@
+
+function y = calc_norm_EF_01(returns, NumNormPorts, covar)   
+
+    %CalcCovariance = cov(fundReturns)
+
+    
+    global globalEFconstraints;
+    ConSet = globalEFconstraints.ConSet;
+
+    [NormEFPortRisk, NormEFPortReturn, NormEFPortWts] = portopt(returns, covar,...    
+        NumNormPorts, [], ConSet);
+    
+    
+    y = {NormEFPortReturn, NormEFPortWts, NormEFPortRisk}; 
+    
+
+    % [NormEFPortRisk, NormEFPortReturn, NormEFPortWts] = frontcon(returns, covar, NumNormPorts);
+    
+    
+    % plots efficient frontier, risk vs return
+    % figure
+    
+    
+    %{
+    plot(NormEFPortRisk, NormEFPortReturn, '-bo','LineWidth',0.5,...
+                    'MarkerEdgeColor','k',...
+                    'MarkerFaceColor', plotcolor,...
+                    'MarkerSize',3)
+
+    title('Normal Mean Vairance Efficient Frontier')         
+    xlabel('Risk (Standard Deviation %)')
+    ylabel('Return (%)')
+
+    %}
+    
+
+end@
